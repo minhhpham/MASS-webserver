@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+</head>
+<body>
+	<br>
+	<form method="POST" action="{{ url_for('input_size') }}" align="center" >
+		{{ nRow.csrf_token }}
+		<h2 align="center">How many population clusters do you have?</h2>
+		{{ nRow.NPop }}	
+		<h2 align="center">How many plants do you have?</h2>
+		{{ nRow.NPlant }}
+		<h2 align="center">What is the lifespan of your project?</h2>
+		{{ nRow.LifeSpan }}
+		<br><br>
+		<input type="submit" value="Next">
+	</form>
+
+
+</body>
+</html>

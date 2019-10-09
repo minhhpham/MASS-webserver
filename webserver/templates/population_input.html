@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+</head>
+<body>
+	<br>
+	<form method="POST" action="{{ url_for('population_input') }}" align="center">
+		{{ populations.csrf_token }}
+		<table class=blueTable align="center">
+			<tr>
+				<th>x1</th> <th>x2</th> <th>x3</th> <th>x4</th>
+			</tr>
+			{% for r in populations.rows %}
+			<tr>
+				<td>{{ r.r(readonly=true) }}</td>
+				<td>{{ r.Pr }}</td>
+				<td>{{ r.lat }}</td> 
+				<td>{{ r.lon }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+		
+		<br>
+		{{ populations.submit }}
+	</form>
+
+
+</body>
+</html>
