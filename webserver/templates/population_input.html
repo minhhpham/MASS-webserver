@@ -6,15 +6,22 @@
 </head>
 <body>
 	<br>
+	<h1 align="center">Input your populations</h1>
+	<br>
 	<form method="POST" action="{{ url_for('population_input') }}" align="center">
 		{{ populations.csrf_token }}
 		<table class=blueTable align="center">
-			<tr>
-				<th>x1</th> <th>x2</th> <th>x3</th> <th>x4</th>
+			<tr> <!-- Table headers  -->
+				<th>{{ populations.rows[0].r.label }}</th> 
+				<th>{{ populations.rows[0].Name.label }}</th> 
+				<th>{{ populations.rows[0].Pr.label }}</th> 
+				<th>{{ populations.rows[0].lat.label }}</th> 
+				<th>{{ populations.rows[0].lon.label }}</th> 
 			</tr>
 			{% for r in populations.rows %}
-			<tr>
+			<tr> <!-- Table rows -->
 				<td>{{ r.r(readonly=true) }}</td>
+				<td>{{ r.Name }}</td>
 				<td>{{ r.Pr }}</td>
 				<td>{{ r.lat }}</td> 
 				<td>{{ r.lon }}</td>
