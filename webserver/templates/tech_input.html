@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+</head>
+<body>
+	<br>
+	<h1 align="center">Select technologies from the list below</h1>
+	<br>
+	<form method="POST" action="{{ url_for('tech_input') }}" align="center">
+		{{ techs.csrf_token }}
+		<table class=blueTable align="center">
+			<tr> <!-- Table headers  -->
+				<th> Check to Select </th> 
+				<th> Technology </th> 
+				<th> Scale </th>
+				<th>{{ techs.default_techs.rows[0].Small.Capkt.label }}</th>
+				<th>{{ techs.default_techs.rows[0].Small.CCkt.label }}</th>
+				<th>{{ techs.default_techs.rows[0].Small.OCt.label }}</th>
+				<th>{{ techs.default_techs.rows[0].Small.SRWt.label }}</th>
+				<th>{{ techs.default_techs.rows[0].Small.GPt.label }}</th>
+			</tr>
+			{% for r in techs.default_techs.rows %}
+				<tr> <!-- Table rows -->
+					<td rowspan="3">{{ r.Select }}</td>
+					<td rowspan="3">{{ r.Technology(readonly=true) }}</td>
+					<td>Small</td> 
+					<td>{{ r.Small.Capkt }}</td> 
+					<td>{{ r.Small.CCkt }}</td> 
+					<td>{{ r.Small.OCt }}</td>
+					<td>{{ r.Small.SRWt }}</td> 
+					<td>{{ r.Small.GPt }}</td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td>{{ r.Medium.Capkt }}</td> 
+					<td>{{ r.Medium.CCkt }}</td> 
+					<td>{{ r.Medium.OCt }}</td>
+					<td>{{ r.Medium.SRWt }}</td> 
+					<td>{{ r.Medium.GPt }}</td> 								
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td>{{ r.Large.Capkt }}</td> 
+					<td>{{ r.Large.CCkt }}</td> 
+					<td>{{ r.Large.OCt }}</td>
+					<td>{{ r.Large.SRWt }}</td> 
+					<td>{{ r.Large.GPt }}</td> 								
+				</tr>
+			{% endfor %}
+		</table>
+		<br>
+		<h2>How many other technologies would you like to add?</h2>
+		{{ techs.n_additional }}
+		<br>
+		{{ techs.addMoreTechs }}
+
+		<br>
+
+		<table class=blueTable align="center">
+			{% if techs.additional_techs.rows.__len__() > 0 %}
+				<tr> <!-- Table headers  -->
+					<th> Technology </th> 
+					<th> Scale </th>
+					<th>{{ techs.additional_techs.rows[0].Small.Capkt.label }}</th>
+					<th>{{ techs.additional_techs.rows[0].Small.CCkt.label }}</th>
+					<th>{{ techs.additional_techs.rows[0].Small.OCt.label }}</th>
+					<th>{{ techs.additional_techs.rows[0].Small.SRWt.label }}</th>
+					<th>{{ techs.additional_techs.rows[0].Small.GPt.label }}</th>
+				</tr> 			
+				{% for r in techs.additional_techs.rows %}
+					<tr>
+						<td rowspan="3">{{ r.Technology }}</td>
+						<td>Small</td> 
+						<td>{{ r.Small.Capkt }}</td> 
+						<td>{{ r.Small.CCkt }}</td> 
+						<td>{{ r.Small.OCt }}</td>
+						<td>{{ r.Small.SRWt }}</td> 
+						<td>{{ r.Small.GPt }}</td>
+					</tr>
+					<tr>
+						<td>Medium</td> 
+						<td>{{ r.Medium.Capkt }}</td> 
+						<td>{{ r.Medium.CCkt }}</td> 
+						<td>{{ r.Medium.OCt }}</td>
+						<td>{{ r.Medium.SRWt }}</td> 
+						<td>{{ r.Medium.GPt }}</td> 								
+					</tr>
+					<tr>
+						<td>Large</td> 
+						<td>{{ r.Large.Capkt }}</td> 
+						<td>{{ r.Large.CCkt }}</td> 
+						<td>{{ r.Large.OCt }}</td>
+						<td>{{ r.Large.SRWt }}</td> 
+						<td>{{ r.Large.GPt }}</td> 								
+					</tr>
+				{% endfor %}
+			{% endif %}
+		</table>
+
+	</form>
+	<br>
+</body>
+</html>

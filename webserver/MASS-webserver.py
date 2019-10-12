@@ -2,7 +2,7 @@
 
 from flask import render_template, redirect, request, Flask, url_for, abort
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators
+from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField
 import yaml, sys, binascii, os
 
 with open("server_config.yaml", 'r') as stream:
@@ -97,14 +97,68 @@ def plant_input():
 
 	if request.method == 'POST':
 		if plants.submit.data:
-			return('submitted')
+			return(redirect(url_for('tech_input')))
 
 
 # ------------- webpage to ask for techs ---------------------------------------------------------------------
+class OneScale(FlaskForm): # defining technology numbers in each scale
+	Capkt = FloatField('Capkt (m3/year)')
+	CCkt = FloatField('CCkt ($/(m3/year))')
+	OCt = FloatField('OCt ($/m3)')
+	SRWt = FloatField('SRWt ($/m3)')
+	GPt = FloatField('GPt (gr CO2-eq/m3)')
+class OneTech(FlaskForm):
+	Select = BooleanField('Check to select')
+	Technology = StringField('Technology')
+	Small = FormField(OneScale)
+	Medium = FormField(OneScale)
+	Large = FormField(OneScale)
+class TechnologiesForm(FlaskForm):	
+	rows = FieldList(FormField(OneTech), min_entries = 0)	
+	
+class CombinedForm(FlaskForm):
+	default_techs = FormField(TechnologiesForm)
+	additional_techs = FormField(TechnologiesForm)
+	n_additional = IntegerField('Add more techs')
+	addMoreTechs = SubmitField('Input more Technologies')
+	submit = SubmitField('Next')
+
+@APP.route('/tech_input', methods = ['GET', 'POST'])
+def tech_input():
+	global config, techs
+	default_techs = config['techs']
+	techs = CombinedForm(n_additional = 0)
+	if request.method == 'GET':
+		# load default tech data from server_config.yaml file
+		for t in default_techs:
+			techs.default_techs.rows.append_entry({
+				'Technology': t,
+				'Small': default_techs[t]['Small'],
+				'Medium': default_techs[t]['Medium'],
+				'Large': default_techs[t]['Large']
+			})
+		print(techs.default_techs.rows[0].Technology.data)
+		return(render_template('tech_input.html', techs = techs))
+
+	if request.method == 'POST':
+		print(techs.default_techs.rows[0].Technology.data)
+		if techs.addMoreTechs.data:
+			# reset additional tech data
+			for r in range(techs.additional_techs.rows.__len__()):
+				techs.additional_techs.rows.pop_entry()
+			# add additional tech data
+			for i in range(techs.n_additional.data):
+				techs.additional_techs.rows.append_entry()
+			return(render_template('tech_input.html', techs = techs))
+		if techs.submit.data:
+			return('submitted')
+
+
+
 
 # ------------- webpage to ask for parameters ----------------------------------------------------------------
 
 # --------------------- END SERVER --------------------------------------------------------------------------#
 if __name__ == '__main__':
     APP.debug=True
-    APP.run(port = 100)
+    APP.run(port = 80, threaded=True)

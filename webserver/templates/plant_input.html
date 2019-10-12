@@ -18,7 +18,7 @@
 			</tr>
 			{% for r in plants.rows %}
 			<tr> <!-- Table rows -->
-				<td>{{ r.k(readonly=true) }}</td>
+				<td>{{ r.k.data }}</td>
 				<td>{{ r.LocationName }}</td>
 				<td>{{ r.lat }}</td> 
 				<td>{{ r.lon }}</td>
