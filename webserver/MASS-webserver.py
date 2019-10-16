@@ -129,6 +129,7 @@ def tech_input():
 	default_techs = config['techs']
 	techs = CombinedForm(n_additional = 0)
 	if request.method == 'GET':
+		print(url_for('plant_input'))
 		# load default tech data from server_config.yaml file
 		for t in default_techs:
 			techs.default_techs.rows.append_entry({
@@ -137,11 +138,9 @@ def tech_input():
 				'Medium': default_techs[t]['Medium'],
 				'Large': default_techs[t]['Large']
 			})
-		print(techs.default_techs.rows[0].Technology.data)
 		return(render_template('tech_input.html', techs = techs))
 
 	if request.method == 'POST':
-		print(techs.default_techs.rows[0].Technology.data)
 		if techs.addMoreTechs.data:
 			# reset additional tech data
 			for r in range(techs.additional_techs.rows.__len__()):
@@ -151,14 +150,33 @@ def tech_input():
 				techs.additional_techs.rows.append_entry()
 			return(render_template('tech_input.html', techs = techs))
 		if techs.submit.data:
-			return('submitted')
-
-
+			return(redirect(url_for('parameter_input')))
 
 
 # ------------- webpage to ask for parameters ----------------------------------------------------------------
+class OneParam(FlaskForm):
+	Label = StringField('Parameter')
+	Unit = StringField('Unit')
+	Value = FloatField('Value')
+class Params(FlaskForm):
+	rows = FieldList(FormField(OneParam), min_entries = 0)
+	submit = SubmitField('Submit')
 
-# --------------------- END SERVER --------------------------------------------------------------------------#
+@APP.route('/parameter_input', methods = ['POST', 'GET'])
+def parameter_input():
+	global params
+	default_params = config['params']
+	params = Params()
+	if request.method == 'GET':
+		for p in default_params:
+			params.rows.append_entry(p)			
+		return(render_template('param_input.html', params = params))
+
+	if request.method == 'POST':
+		return('TBA: review of input data')
+
+
+# --------------------- RUN SERVER --------------------------------------------------------------------------#
 if __name__ == '__main__':
     APP.debug=True
-    APP.run(port = 80, threaded=True)
+    APP.run(port = 10000, threaded=True)

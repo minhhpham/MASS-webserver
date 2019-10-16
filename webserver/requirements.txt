@@ -1,5 +1,4 @@
 pyyaml
-binascii
 flask
 WTForms
 flask_wtf

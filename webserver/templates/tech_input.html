@@ -24,13 +24,14 @@
 			{% for r in techs.default_techs.rows %}
 				<tr> <!-- Table rows -->
 					<td rowspan="3">{{ r.Select }}</td>
-					<td rowspan="3">{{ r.Technology(readonly=true) }}</td>
+					<td rowspan="3">{{ r.Technology.data }}</td>
 					<td>Small</td> 
 					<td>{{ r.Small.Capkt }}</td> 
 					<td>{{ r.Small.CCkt }}</td> 
 					<td>{{ r.Small.OCt }}</td>
 					<td>{{ r.Small.SRWt }}</td> 
 					<td>{{ r.Small.GPt }}</td>
+					<td>{{ r.Technology(type="hidden") }} </td>
 				</tr>
 				<tr>
 					<td>Medium</td> 
@@ -39,6 +40,7 @@
 					<td>{{ r.Medium.OCt }}</td>
 					<td>{{ r.Medium.SRWt }}</td> 
 					<td>{{ r.Medium.GPt }}</td> 								
+					<td>{{ r.Technology(type="hidden") }} </td>
 				</tr>
 				<tr>
 					<td>Large</td> 
@@ -46,7 +48,8 @@
 					<td>{{ r.Large.CCkt }}</td> 
 					<td>{{ r.Large.OCt }}</td>
 					<td>{{ r.Large.SRWt }}</td> 
-					<td>{{ r.Large.GPt }}</td> 								
+					<td>{{ r.Large.GPt }}</td>
+					<td>{{ r.Technology(type="hidden") }} </td>			
 				</tr>
 			{% endfor %}
 		</table>
@@ -98,7 +101,7 @@
 				{% endfor %}
 			{% endif %}
 		</table>
-
+	{{ techs.submit }}
 	</form>
 	<br>
 </body>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+</head>
+<body>
+	<br>
+	<h1 align="center">Input your parameters</h1>
+	<form method="POST" action="{{ url_for('parameter_input') }}" align="center">
+		{{ params.csrf_token }}
+		<table class=blueTable align="center">
+			<tr> <!-- Table headers  -->
+				<th>{{ params.rows[0].Label.label }}</th> 
+				<th>{{ params.rows[0].Unit.label }}</th> 
+				<th>{{ params.rows[0].Value.label }}</th> 				
+			</tr>
+			{% for r in params.rows %}
+			<tr> <!-- Table rows -->
+				<td>{{ r.Label }}</td>
+				<td>{{ r.Unit }}</td>
+				<td>{{ r.Value }}</td> 
+			</tr>
+			{% endfor %}
+		</table>
+		
+		<br>
+		{{ params.submit }}
+	</form>
+
+
+</body>
+</html>
