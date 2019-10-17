@@ -21,7 +21,8 @@ def index():
 
 # variables that will be decalared globally
 global nPop, nPlant, lifeSpan
-global populations, plants, techs, params
+global populations, plants, tech_form, techs, params 	# techs has class TechnologiesForm and has the input data
+														# tech_form is the form to be rendered to web interface
 #----------- web page to ask for input size -----------------------------------------------------------------
 class NRow(FlaskForm):
 	NPop = IntegerField('Number of populations', validators = [validators.InputRequired()])
@@ -59,7 +60,8 @@ def population_input():
 	global populations	
 	populations = PopulationsForm()
 	if request.method == 'GET':
-		if 'nPop' not in globals():
+		try: nPop
+		except NameError:
 			abort(400, 'Number of populations not found')
 		else:			
 			for i in range(nPop):
@@ -88,7 +90,8 @@ def plant_input():
 	global plants	
 	plants = PlantsForm()
 	if request.method == 'GET':
-		if 'nPlant' not in globals():
+		try: nPlant
+		except NameError:
 			abort(400, 'Number of plants not found')
 		else:
 			for i in range(nPlant):
@@ -127,31 +130,44 @@ class CombinedForm(FlaskForm):
 def tech_input():
 	global config, techs
 	default_techs = config['techs']
-	techs = CombinedForm(n_additional = 0)
+	tech_form = CombinedForm(n_additional = 0)
 	if request.method == 'GET':
-		print(url_for('plant_input'))
 		# load default tech data from server_config.yaml file
 		for t in default_techs:
-			techs.default_techs.rows.append_entry({
+			tech_form.default_techs.rows.append_entry({
 				'Technology': t,
 				'Small': default_techs[t]['Small'],
 				'Medium': default_techs[t]['Medium'],
 				'Large': default_techs[t]['Large']
 			})
-		return(render_template('tech_input.html', techs = techs))
+		return(render_template('tech_input.html', techs = tech_form))
 
 	if request.method == 'POST':
-		if techs.addMoreTechs.data:
+		if tech_form.addMoreTechs.data:
 			# reset additional tech data
-			for r in range(techs.additional_techs.rows.__len__()):
-				techs.additional_techs.rows.pop_entry()
+			for r in range(tech_form.additional_techs.rows.__len__()):
+				tech_form.additional_techs.rows.pop_entry()
 			# add additional tech data
-			for i in range(techs.n_additional.data):
-				techs.additional_techs.rows.append_entry()
-			return(render_template('tech_input.html', techs = techs))
-		if techs.submit.data:
+			for i in range(tech_form.n_additional.data):
+				tech_form.additional_techs.rows.append_entry()
+			return(render_template('tech_input.html', techs = tech_form))
+		if tech_form.submit.data:
+			techs = tech_combine(tech_form)
 			return(redirect(url_for('parameter_input')))
 
+def tech_combine(_techs):
+	""" Combine selected techs.default_techs and techs.additional_techs
+		return a TechnologiesForm object with selected techs
+	"""
+	selected_techs = TechnologiesForm()
+	for t in  _techs.default_techs.rows:
+		if t.Select.data: # if default tech is selected by user, add to selected_techs
+			selected_techs.rows.append_entry(t)
+	if _techs.additional_techs.rows.__len__() > 0:
+		for t in _techs.additional_techs.rows:
+			selected_techs.rows.append_entry(t)
+	return(selected_techs)
+			
 
 # ------------- webpage to ask for parameters ----------------------------------------------------------------
 class OneParam(FlaskForm):
@@ -160,7 +176,7 @@ class OneParam(FlaskForm):
 	Value = FloatField('Value')
 class Params(FlaskForm):
 	rows = FieldList(FormField(OneParam), min_entries = 0)
-	submit = SubmitField('Submit')
+	submit = SubmitField('Next')
 
 @APP.route('/parameter_input', methods = ['POST', 'GET'])
 def parameter_input():
@@ -173,7 +189,25 @@ def parameter_input():
 		return(render_template('param_input.html', params = params))
 
 	if request.method == 'POST':
-		return('TBA: review of input data')
+		return(redirect(url_for('review')))
+
+
+# ------------ review input data ----------------------------------------------------------------------------
+@APP.route('/review', methods = ['POST', 'GET'])
+def review():
+	global nPop, nPlant, lifeSpan, populations, plants, techs, params
+
+	if request.method == 'GET':
+		return(render_template('review.html', nPop = nPop, nPlant = nPlant, lifeSpan = lifeSpan,
+			populations = populations, plants = plants, techs = techs, params = params))
+
+# ------------ run optimizer ----------------------------------------------------------------------------------
+@APP.route('/run_optimizer', methods = ['POST'])
+def run_optimizer():
+	if request.form['command'] == 'Run optimizer':
+		return('TBA')
+	else:
+		abort(400, 'Unknown command')
 
 
 # --------------------- RUN SERVER --------------------------------------------------------------------------#

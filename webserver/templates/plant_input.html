@@ -18,14 +18,13 @@
 			</tr>
 			{% for r in plants.rows %}
 			<tr> <!-- Table rows -->
-				<td>{{ r.k.data }}</td>
+				<td>{{ r.k }}</td>
 				<td>{{ r.LocationName }}</td>
 				<td>{{ r.lat }}</td> 
 				<td>{{ r.lon }}</td>
 			</tr>
 			{% endfor %}
 		</table>
-		
 		<br>
 		{{ plants.submit }}
 	</form>

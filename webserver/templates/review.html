@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+</head>
+<body>
+	<br>
+	<h1 align="center">Please review your inputs</h1>
+	<br>
+	<!-- input size ----------------------------------------------------------------------------------------->
+	<table class=blueTable align="center">
+		<tr>
+			<th width="80%">Number of population clusters</th> 
+			<td width="20%"><b>{{ nPop }}</b></td>
+		</tr>
+		<tr>
+			<th width="80%">Number of plants</th> 
+			<td width="20%"><b>{{ nPlant }}</b></td>
+		</tr>
+		<tr>
+			<th width="80%">Project's lifespan</th> 
+			<td width="20%"><b>{{ lifeSpan }}</b></td>
+		</tr>
+	</table>		
+	<br>
+	<!-- populations ------------------------------------------------------------------------------------------>
+	<h2 align="center"> Populations </h2>
+	<table class=blueTable align="center">
+		<tr> <!-- Table headers  -->
+			<th>{{ populations.rows[0].r.label }}</th> 
+			<th>{{ populations.rows[0].Name.label }}</th> 
+			<th>{{ populations.rows[0].Pr.label }}</th> 
+			<th>{{ populations.rows[0].lat.label }}</th> 
+			<th>{{ populations.rows[0].lon.label }}</th> 
+		</tr>
+		{% for r in populations.rows %}
+		<tr> <!-- Table rows -->
+			<td>{{ r.r.data }}</td>
+			<td>{{ r.Name.data }}</td>
+			<td>{{ r.Pr.data }}</td>
+			<td>{{ r.lat.data }}</td> 
+			<td>{{ r.lon.data }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	<br>
+	<!-- plants ------------------------------------------------------------------------------------------------->
+	<h2 align="center"> Plants </h2>
+	<table class=blueTable align="center">
+		<tr> <!-- Table headers  -->
+			<th>{{ plants.rows[0].k.label }}</th> 
+			<th>{{ plants.rows[0].LocationName.label }}</th> 
+			<th>{{ plants.rows[0].lat.label }}</th> 
+			<th>{{ plants.rows[0].lon.label }}</th> 
+		</tr>
+		{% for r in plants.rows %}
+		<tr> <!-- Table rows -->
+			<td>{{ r.k.data }}</td>
+			<td>{{ r.LocationName.data }}</td>
+			<td>{{ r.lat.data }}</td> 
+			<td>{{ r.lon.data }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	<br>
+	<!-- Technologies  ------------------------------------------------------------------------------------------->
+	<h2 align="center"> Technologies </h2>
+	<table class=blueTable align="center">
+		{% if techs.rows.__len__() > 0 %}
+			<tr> <!-- Table headers  -->
+				<th> Technology </th> 
+				<th> Scale </th>
+				<th>{{ techs.rows[0].Small.Capkt.label }}</th>
+				<th>{{ techs.rows[0].Small.CCkt.label }}</th>
+				<th>{{ techs.rows[0].Small.OCt.label }}</th>
+				<th>{{ techs.rows[0].Small.SRWt.label }}</th>
+				<th>{{ techs.rows[0].Small.GPt.label }}</th>
+			</tr> 			
+			{% for r in techs.rows %}
+				<tr>
+					<td rowspan="3">{{ r.Technology.data.data }}</td>
+					<td>Small</td> 
+					<td>{{ r.Small.data.Capkt.data }}</td> 
+					<td>{{ r.Small.data.CCkt.data }}</td> 
+					<td>{{ r.Small.data.OCt.data }}</td>
+					<td>{{ r.Small.data.SRWt.data }}</td> 
+					<td>{{ r.Small.data.GPt.data }}</td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td>{{ r.Medium.data.Capkt.data }}</td> 
+					<td>{{ r.Medium.data.CCkt.data }}</td> 
+					<td>{{ r.Medium.data.OCt.data }}</td>
+					<td>{{ r.Medium.data.SRWt.data }}</td> 
+					<td>{{ r.Medium.data.GPt.data }}</td> 								
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td>{{ r.Large.data.Capkt.data }}</td> 
+					<td>{{ r.Large.data.CCkt.data }}</td> 
+					<td>{{ r.Large.data.OCt.data }}</td>
+					<td>{{ r.Large.data.SRWt.data }}</td> 
+					<td>{{ r.Large.data.GPt.data }}</td> 								
+				</tr>
+			{% endfor %}
+		{% endif %}
+	</table>
+	<br>
+	<!-- Parameters --------------------------------------------------------------------------------------->
+	<h2 align="center"> Parameters </h2>
+	<table class=blueTable align="center">
+		<tr> <!-- Table headers  -->
+			<th>{{ params.rows[0].Label.label }}</th> 
+			<th>{{ params.rows[0].Unit.label }}</th> 
+			<th>{{ params.rows[0].Value.label }}</th> 				
+		</tr>
+		{% for r in params.rows %}
+		<tr> <!-- Table rows -->
+			<td>{{ r.Label.data }}</td>
+			<td>{{ r.Unit.data }}</td>
+			<td>{{ r.Value.data }}</td> 
+		</tr>
+		{% endfor %}
+	</table>
+
+	<!-- RUN -->
+	<h2 align="center">Ready to run optimizer?</h2>
+	<form method="POST" action="{{ url_for('run_optimizer') }}" align="center">
+		<input name="command" type="submit" value="Run optimizer">
+	</form>
+
+</body>
+</html>
