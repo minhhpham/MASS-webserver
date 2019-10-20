@@ -7,7 +7,7 @@
 
 # Run
  * Run in Debug or Development mode: `python MASS-webserver.py`
- * Run as service (deployment mode): `sudo systemctl daemon-reload` then `sudo systemctl start MASS-flask`
+ * Run as service (deployment mode): `sudo systemctl daemon-reload && sudo systemctl start MASS-flask`
 
 # If run in deployment mode, need to configure nginx
  * `sudo apt-get install nginx`

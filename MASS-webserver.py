@@ -39,6 +39,7 @@ def input_size():
 			nPop = nRow.NPop.data
 			nPlant = nRow.NPlant.data
 			lifeSpan = nRow.LifeSpan.data
+			APP.logger.info("transfer to {}".format(url_for('population_input', _external=True)))
 			return(redirect(url_for('population_input', _external=True)))
 
 #----------- webpage to ask for populations -----------------------------------------------------------------
@@ -70,6 +71,7 @@ def population_input():
 
 	if request.method == 'POST':
 		if populations.submit.data:
+			APP.logger.info("transfer to {}".format(url_for('plant_input', _external=True)))
 			return(redirect(url_for('plant_input', _external=True)))
 
 	# TODO: calculate projected population
@@ -100,6 +102,7 @@ def plant_input():
 
 	if request.method == 'POST':
 		if plants.submit.data:
+			APP.logger.info("transfer to {}".format(url_for('tech_input', _external=True)))
 			return(redirect(url_for('tech_input', _external=True)))
 
 
@@ -153,6 +156,7 @@ def tech_input():
 			return(render_template('tech_input.html', techs = tech_form))
 		if tech_form.submit.data:
 			techs = tech_combine(tech_form)
+			APP.logger.info("transfer to {}".format(url_for('parameter_input', _external=True)))
 			return(redirect(url_for('parameter_input', _external=True)))
 
 def tech_combine(_techs):
@@ -189,6 +193,7 @@ def parameter_input():
 		return(render_template('param_input.html', params = params))
 
 	if request.method == 'POST':
+		APP.logger.info("transfer to {}".format(url_for('review', _external=True)))
 		return(redirect(url_for('review', _external=True)))
 
 
