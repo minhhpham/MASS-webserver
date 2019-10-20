@@ -39,7 +39,7 @@ def input_size():
 			nPop = nRow.NPop.data
 			nPlant = nRow.NPlant.data
 			lifeSpan = nRow.LifeSpan.data
-			return(redirect(url_for('population_input')))
+			return(redirect(url_for('population_input', _external=True)))
 
 #----------- webpage to ask for populations -----------------------------------------------------------------
 class OnePopulation(FlaskForm):
@@ -70,7 +70,7 @@ def population_input():
 
 	if request.method == 'POST':
 		if populations.submit.data:
-			return(redirect(url_for('plant_input')))
+			return(redirect(url_for('plant_input', _external=True)))
 
 	# TODO: calculate projected population
 
@@ -100,7 +100,7 @@ def plant_input():
 
 	if request.method == 'POST':
 		if plants.submit.data:
-			return(redirect(url_for('tech_input')))
+			return(redirect(url_for('tech_input', _external=True)))
 
 
 # ------------- webpage to ask for techs ---------------------------------------------------------------------
@@ -153,7 +153,7 @@ def tech_input():
 			return(render_template('tech_input.html', techs = tech_form))
 		if tech_form.submit.data:
 			techs = tech_combine(tech_form)
-			return(redirect(url_for('parameter_input')))
+			return(redirect(url_for('parameter_input', _external=True)))
 
 def tech_combine(_techs):
 	""" Combine selected techs.default_techs and techs.additional_techs
@@ -189,7 +189,7 @@ def parameter_input():
 		return(render_template('param_input.html', params = params))
 
 	if request.method == 'POST':
-		return(redirect(url_for('review')))
+		return(redirect(url_for('review', _external=True)))
 
 
 # ------------ review input data ----------------------------------------------------------------------------

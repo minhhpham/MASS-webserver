@@ -1,5 +1,0 @@
-[Unit]
-Description=Wastewater management web app
-After=network.target
-
-[Service]
