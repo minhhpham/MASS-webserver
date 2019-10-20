@@ -2,7 +2,7 @@ import os, sys, getpass, shutil
 
 CWD = os.getcwd()
 PythonPath = sys.executable
-User = getpass.getuser()
+User = os.getlogin()
 
 # create service file
 if os.path.exists("./MASS-flask.service"):

@@ -3,10 +3,3 @@ Description=Wastewater management web app
 After=network.target
 
 [Service]
-User=root
-WorkingDirectory=/mnt/c/Users/18133/Documents/work/MASS-webserver/webserver
-ExecStart=/usr/bin/python3 /mnt/c/Users/18133/Documents/work/MASS-webserver/webserver/MASS-webserver.py
-Restart=Always
-
-[Install]
-WantedBy=multi-user.target
