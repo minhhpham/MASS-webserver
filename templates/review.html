@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',_external=True,filename='TableStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
 	<br>
@@ -28,7 +28,7 @@
 	<h2 align="center"> Populations </h2>
 	<table class=blueTable align="center">
 		<tr> <!-- Table headers  -->
-			<th>{{ populations.rows[0].r.label }}</th> 
+			<th> Index </th> 
 			<th>{{ populations.rows[0].Name.label }}</th> 
 			<th>{{ populations.rows[0].Pr.label }}</th> 
 			<th>{{ populations.rows[0].lat.label }}</th> 
@@ -36,7 +36,7 @@
 		</tr>
 		{% for r in populations.rows %}
 		<tr> <!-- Table rows -->
-			<td>{{ r.r.data }}</td>
+			<td>{{ loop.index }}</td>
 			<td>{{ r.Name.data }}</td>
 			<td>{{ r.Pr.data }}</td>
 			<td>{{ r.lat.data }}</td> 
@@ -49,14 +49,14 @@
 	<h2 align="center"> Plants </h2>
 	<table class=blueTable align="center">
 		<tr> <!-- Table headers  -->
-			<th>{{ plants.rows[0].k.label }}</th> 
+			<th> Index </th> 
 			<th>{{ plants.rows[0].LocationName.label }}</th> 
 			<th>{{ plants.rows[0].lat.label }}</th> 
 			<th>{{ plants.rows[0].lon.label }}</th> 
 		</tr>
 		{% for r in plants.rows %}
 		<tr> <!-- Table rows -->
-			<td>{{ r.k.data }}</td>
+			<td>{{ loop.index }}</td>
 			<td>{{ r.LocationName.data }}</td>
 			<td>{{ r.lat.data }}</td> 
 			<td>{{ r.lon.data }}</td>

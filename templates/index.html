@@ -2,13 +2,13 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',_external=True,filename='TableStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
 	<br>
 	<h1 align="center">WELCOME!</h1>
 	<br>
-	<form action="{{ url_for('input_size', _external=True) }}" method="get" align="center">
+	<form action="{{ url_for('input_size') }}" method="get" align="center">
 	    <input type="submit" value="Start" />
 	</form>
 
