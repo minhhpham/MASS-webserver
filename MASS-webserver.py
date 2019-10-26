@@ -55,7 +55,7 @@ def input_size():
 #----------- webpage to ask for populations ------------------------------------------------------------------------------------------------------------
 class OnePopulation(FlaskForm):
 	Name = StringField('Cluster Name', validators = [validators.DataRequired()])
-	Pr = IntegerField('Current Population', validators = [validators.DataRequired(), validators.NumberRange(min=0)])
+	Pr = IntegerField('Current Population', validators = [validators.DataRequired()])
 	GrowthRate = FloatField('Population Growth Rate', validators = [validators.DataRequired()])
 	lat = FloatField('Latitude', validators = [validators.DataRequired()])
 	lon = FloatField('Longitude', validators = [validators.DataRequired()])
