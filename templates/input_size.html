@@ -5,11 +5,21 @@
 </head>
 <body>
 	<br>
+	{% if nRow.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in nRow.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li><font color="red">{{ nRow[field_name].label }}: {{ error }}</font></li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+	{% endif %}
+	<br>
 	<form method="POST" action="{{ url_for('input_size') }}" align="center" >
 		{{ nRow.csrf_token }}
 		<h2 align="center">How many population clusters do you have?</h2>
 		{{ nRow.NPop }}	
-		<h2 align="center">How many plants do you have?</h2>
+		<h2 align="center">How many candidate locations for implementation of plants do you have?</h2>
 		{{ nRow.NPlant }}
 		<h2 align="center">What is the lifespan of your project?</h2>
 		{{ nRow.LifeSpan }}

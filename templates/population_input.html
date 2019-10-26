@@ -14,7 +14,8 @@
 			<tr> <!-- Table headers  -->
 				<th> Index </th> 
 				<th>{{ populations.rows[0].Name.label }}</th> 
-				<th>{{ populations.rows[0].Pr.label }}</th> 
+				<th>{{ populations.rows[0].Pr.label }}</th>
+				<th>{{ populations.rows[0].GrowthRate.label }}</th>
 				<th>{{ populations.rows[0].lat.label }}</th> 
 				<th>{{ populations.rows[0].lon.label }}</th> 
 			</tr>
@@ -23,6 +24,7 @@
 				<td>{{ loop.index }}</td>
 				<td>{{ r.Name }}</td>
 				<td>{{ r.Pr }}</td>
+				<td>{{ r.GrowthRate }}</td>
 				<td>{{ r.lat }}</td> 
 				<td>{{ r.lon }}</td>
 			</tr>
@@ -30,7 +32,17 @@
 		</table>
 		
 		<br>
-		{{ populations.submit }}
+		<input type="submit" name = "command" value="Next">
+	</form>
+
+	<!-- lazy method: paste data from excel and parse -->
+	<br><br>
+	<h4 align="center">If you do not want to type the inputs one-by-one, just copy and paste the data from Excel and I will try to parse the inputs for you. (do not include the headers)</h2>
+	<form action="{{ url_for('population_input') }}" method="POST" align = "center">
+		{{ populations.csrf_token }}
+    	<textarea name="ExcelData" rows="5" cols="70"></textarea>
+    	<br>
+    	<input type="submit" name="command" value="Parse">
 	</form>
 
 

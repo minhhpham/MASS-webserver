@@ -3,98 +3,98 @@ techs:
   Bardenpho:
     Small:
       Capkt: 4745
-      CCkt: 58.439797
-      OCt: 1.9203428846294
-      SRWt: 0.132086026318648
+      CCkt: 58.44
+      OCt: 1.92
+      SRWt: 0.13
       GPt: 3.3
     Medium:
       Capkt: 5584865
-      CCkt: 8.520142
-      OCt: 0.587962138576869
-      SRWt: 0.0457017651062522
+      CCkt: 8.52
+      OCt: 0.59
+      SRWt: 0.05
       GPt: 0.39
     Large:
       Capkt: 282801270
-      CCkt: 5.42819
-      OCt: 0.52834
-      SRWt: 0.413957606482643
+      CCkt: 5.43
+      OCt: 0.53
+      SRWt: 0.41
       GPt: 1.08
   MBR:
     Small:
       Capkt: 4745
-      CCkt: 65.0096091701104
-      OCt: 0.833146863546462
-      SRWt: 0.132086026318648
+      CCkt: 65.01
+      OCt: 0.83
+      SRWt: 0.13
       GPt: 1.75
     Medium:
       Capkt: 5584865
-      CCkt: 9.72241747667586
-      OCt: 0.256161904841515
-      SRWt: 0.0457017651062522
+      CCkt: 9.72
+      OCt: 0.26
+      SRWt: 0.05
       GPt: 1.33
     Large:
       Capkt: 282801270
-      CCkt: 4.48548184657465
-      OCt: 0.187001068788844
-      SRWt: 0.413957606482643
+      CCkt: 4.49
+      OCt: 0.19
+      SRWt: 0.41
       GPt: 1.25
   MBR + UF:
     Small:
       Capkt: 4745
-      CCkt: 76.5809569548573
-      OCt: 1.89007520649339
-      SRWt: 0.832141965807482
+      CCkt: 76.58
+      OCt: 1.89
+      SRWt: 0.83
       GPt: 3.83
     Medium:
       Capkt: 5584865
-      CCkt: 12.2470617578318
-      OCt: 0.578694914005127
-      SRWt: 0.924602184230536
+      CCkt: 12.25
+      OCt: 0.58
+      SRWt: 0.92
       GPt: 2.91
     Large:
       Capkt: 282801270
-      CCkt: 8.20345241828218
-      OCt: 0.520012515781228
-      SRWt: 0.924602184230536
+      CCkt: 8.20
+      OCt: 0.52
+      SRWt: 0.92
       GPt: 2.84
   MBR + RO:
     Small:
       Capkt: 4745
-      CCkt: 175.143179502766
-      OCt: 4.20000445739751
-      SRWt: 0.832141965807482
-      GPt: 3.286
+      CCkt: 175.14
+      OCt: 4.20
+      SRWt: 0.83
+      GPt: 3.29
     Medium:
       Capkt: 5584865
-      CCkt: 25.5347182918315
-      OCt: 1.06421780097343
-      SRWt: 0.924602184230536
-      GPt: 2.866
+      CCkt: 25.53
+      OCt: 1.06
+      SRWt: 0.92
+      GPt: 2.87
     Large:
       Capkt: 282801270
-      CCkt: 16.2681599547309
-      OCt: 0.687199836413683
-      SRWt: 0.924602184230536
-      GPt: 2.786
+      CCkt: 16.27
+      OCt: 0.69
+      SRWt: 0.92
+      GPt: 2.79
   GAC + MF:
     Small:
       Capkt: 4745
-      CCkt: 39.0068790160358
-      OCt: 9.05370186656607
-      SRWt: 0.132086026318648
-      GPt: 32.9072
+      CCkt: 39.01
+      OCt: 9.05
+      SRWt: 0.13
+      GPt: 32.91
     Medium:
       Capkt: 5584865
-      CCkt: 5.86659655551005
-      OCt: 1.07505572983896
-      SRWt: 0.0457017651062522
-      GPt: 33.2144
+      CCkt: 5.87
+      OCt: 1.08
+      SRWt: 0.05
+      GPt: 33.21
     Large:
       Capkt: 282801270
-      CCkt: 3.16924445581914
-      OCt: 0.441265195560882
-      SRWt: 0.396258078955944
-      GPt: 33.5216
+      CCkt: 3.17
+      OCt: 0.44
+      SRWt: 0.40
+      GPt: 33.52
 
 # Parameters:
 params:

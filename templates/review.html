@@ -127,7 +127,8 @@
 	<!-- RUN -->
 	<h2 align="center">Ready to run optimizer?</h2>
 	<form method="POST" action="{{ url_for('run_optimizer') }}" align="center">
-		<input name="command" type="submit" value="Run optimizer">
+		{{ params.csrf_token }}
+		<input name="command" type="submit" value="Run optimizer">		
 	</form>
 
 </body>
