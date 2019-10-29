@@ -50,7 +50,7 @@ def input_size():
 	if request.method == 'POST':
 		if inputSize.validate_on_submit():
 			# if validate pass, save data to DB and redirect to next page
-			# TBD: someFunctionSavetoDB(inputSize). inputSize is of class InputSize
+			# TBD: someFunctionSavetoDB(inputSize, username, projectID). inputSize is of class InputSize
 			nPop = inputSize.NPop.data
 			nPlant = inputSize.NPlant.data
 			lifeSpan = inputSize.LifeSpan.data
@@ -95,7 +95,7 @@ def population_input():
 			# process saving data command
 			if populations.validate():
 				# if validation pass, save data to DB and redirect to next page
-				# TBD: someFunctionSavetoDB(populations). populations is of class PopulationsForm
+				# TBD: someFunctionSavetoDB(populations, username, projectID). populations is of class PopulationsForm
 				APP.logger.info('transfer to {}'.format(url_for('plant_input')))
 				return(redirect(url_for('plant_input')))
 			else:
@@ -143,7 +143,7 @@ def plant_input():
 			# process saving data command
 			if plants.validate():
 				# if validation pass, save data to DB and redirect to next page
-				# TBD: someFunctionSavetoDB(plants). plants if of class PlantsForm
+				# TBD: someFunctionSavetoDB(plants, username, projectID). plants if of class PlantsForm
 				APP.logger.info("transfer to {}".format(url_for('tech_input')))
 				return(redirect(url_for('tech_input')))
 			else:
@@ -215,7 +215,7 @@ def tech_input():
 		# process saving data command
 		elif tech_form.submit.data:
 			techs = misc.tech_combine(tech_form)
-			# TBD: someFunctionSavetoDB(techs). techs is of class TechnologiesForm
+			# TBD: someFunctionSavetoDB(techs, username, projectID). techs is of class TechnologiesForm
 			APP.logger.info("transfer to {}".format(url_for('parameter_input')))
 			return(redirect(url_for('parameter_input')))		
 		else:
@@ -245,7 +245,7 @@ def parameter_input():
 
 	# process POST requests
 	if request.method == 'POST':
-		# TBD: someFunctionSavetoDB(techs)
+		# TBD: someFunctionSavetoDB(techs, username, projectID)
 		APP.logger.info("transfer to {}".format(url_for('review')))
 		return(redirect(url_for('review')))
 
