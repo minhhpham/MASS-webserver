@@ -22,14 +22,15 @@ with open("server_config.yaml", 'r') as stream:
 
 # global variables for holding data (temporarily)
 global nPop, nPlant, lifeSpan
-global populations, plants, tech_form, techs, params 	# techs has class TechnologiesForm and has the input data
-														# tech_form is the form to be rendered to web interface
+global populations, plants, tech_form, techs, params 	
+	# techs has class TechnologiesForm and has the input data
+	# tech_form is the form to be rendered to web interface
 
 @APP.route('/', methods = ['GET'])
 def index():
 	return(render_template('index.html'))
 #----------- web page to ask for input size ---------------------------------------------------------------------------------------------------
-class NRow(FlaskForm):
+class InputSize(FlaskForm):
 	NPop = IntegerField('Number of populations', validators = [validators.InputRequired(), validators.NumberRange(min=0)])
 	NPlant = IntegerField('Number of plants', validators = [validators.InputRequired(), validators.NumberRange(min=0)])
 	LifeSpan = IntegerField('Life Span of project', validators = [validators.InputRequired(), validators.NumberRange(min=0)])	
@@ -39,18 +40,25 @@ def input_size():
 	""" render webpage to ask for input sizes, save data to global nPop, nPlant, lifeSpan 
 		then redirect to population_input """
 	global nPop, nPlant, lifeSpan
-	nRow = NRow()
-	if request.method == 'GET':		
-		return(render_template('input_size.html', nRow=nRow))
+	inputSize = InputSize()
+
+	# process GET requests
+	if request.method == 'GET':
+		return(render_template('input_size.html', inputSize=inputSize))
+
+	# process POST requests
 	if request.method == 'POST':
-		if nRow.validate_on_submit():
-			nPop = nRow.NPop.data
-			nPlant = nRow.NPlant.data
-			lifeSpan = nRow.LifeSpan.data
+		if inputSize.validate_on_submit():
+			# if validate pass, save data to DB and redirect to next page
+			# TBD: someFunctionSavetoDB(inputSize). inputSize is of class InputSize
+			nPop = inputSize.NPop.data
+			nPlant = inputSize.NPlant.data
+			lifeSpan = inputSize.LifeSpan.data
 			APP.logger.info("transfer to {}".format(url_for('population_input')))
 			return(redirect(url_for('population_input')))
 		else:
-			return(render_template('input_size.html', nRow=nRow))
+			# if validate fails, print out errors to web page
+			return(render_template('input_size.html', inputSize=inputSize))
 
 #----------- webpage to ask for populations ------------------------------------------------------------------------------------------------------------
 class OnePopulation(FlaskForm):
@@ -69,6 +77,7 @@ def population_input():
 	global nPop
 	global populations
 
+	# process GET requests
 	if request.method == 'GET':
 		APP.logger.info('creating a fresh populations form')
 		populations = PopulationsForm()
@@ -80,14 +89,20 @@ def population_input():
 				populations.rows.append_entry({'r': i+1})
 		return(render_template('population_input.html', populations = populations))
 
+	# process POST requests
 	if request.method == 'POST':
 		if request.form['command'] == 'Next':
+			# process saving data command
 			if populations.validate():
+				# if validation pass, save data to DB and redirect to next page
+				# TBD: someFunctionSavetoDB(populations). populations is of class PopulationsForm
 				APP.logger.info('transfer to {}'.format(url_for('plant_input')))
 				return(redirect(url_for('plant_input')))
 			else:
+				# if validation fails, print out errors to web page
 				return(render_template('population_input.html', populations = populations))
 		elif request.form['command'] == 'Parse':
+			# process parsing data command (lazy method for inputing data)
 			populations = Parse.fill_populations(request.form['ExcelData'], populations)
 			return(render_template('population_input.html', populations = populations))
 		else:
@@ -110,6 +125,7 @@ def plant_input():
 	global nPlant
 	global plants	
 	
+	# process GET request
 	if request.method == 'GET':
 		APP.logger.info('creating a fresh plants form')
 		plants = PlantsForm()
@@ -121,14 +137,20 @@ def plant_input():
 				plants.rows.append_entry({'k': i+1})
 			return(render_template('plant_input.html', plants = plants))
 
+	# process POST request
 	if request.method == 'POST':
 		if request.form['command'] == 'Next':
+			# process saving data command
 			if plants.validate():
+				# if validation pass, save data to DB and redirect to next page
+				# TBD: someFunctionSavetoDB(plants). plants if of class PlantsForm
 				APP.logger.info("transfer to {}".format(url_for('tech_input')))
 				return(redirect(url_for('tech_input')))
 			else:
+				# if validation fails, print errors to webpage
 				return(render_template('plant_input.html', plants = plants))
 		elif request.form['command'] == 'Parse':
+			# process parsing data command (lazy method for inputing data)
 			plants = Parse.fill_plants(request.form['ExcelData'], plants)
 			return(render_template('plant_input.html', plants = plants))
 		else:
@@ -166,6 +188,8 @@ def tech_input():
 	global config, techs
 	default_techs = config['techs']
 	tech_form = CombinedForm(n_additional = 0)
+
+	# process GET request
 	if request.method == 'GET':
 		# load default tech data from server_config.yaml file
 		for t in default_techs:
@@ -177,7 +201,9 @@ def tech_input():
 			})
 		return(render_template('tech_input.html', techs = tech_form))
 
+	# process POST request
 	if request.method == 'POST':
+		# process adding more techs command
 		if tech_form.addMoreTechs.data:
 			# reset additional tech data
 			for r in range(tech_form.additional_techs.rows.__len__()):
@@ -186,10 +212,14 @@ def tech_input():
 			for i in range(tech_form.n_additional.data):
 				tech_form.additional_techs.rows.append_entry()
 			return(render_template('tech_input.html', techs = tech_form))
-		if tech_form.submit.data:
+		# process saving data command
+		elif tech_form.submit.data:
 			techs = misc.tech_combine(tech_form)
+			# TBD: someFunctionSavetoDB(techs). techs is of class TechnologiesForm
 			APP.logger.info("transfer to {}".format(url_for('parameter_input')))
 			return(redirect(url_for('parameter_input')))		
+		else:
+			abort(400, 'Unknown request')
 
 # ------------- webpage to ask for parameters ---------------------------------------------------------------------------------------------------------
 class OneParam(FlaskForm):
@@ -206,12 +236,16 @@ def parameter_input():
 	global params
 	default_params = config['params']
 	params = ParamsForm()
+
+	# process GET requests
 	if request.method == 'GET':
 		for p in default_params:
 			params.rows.append_entry(p)			
 		return(render_template('param_input.html', params = params))
 
+	# process POST requests
 	if request.method == 'POST':
+		# TBD: someFunctionSavetoDB(techs)
 		APP.logger.info("transfer to {}".format(url_for('review')))
 		return(redirect(url_for('review')))
 
