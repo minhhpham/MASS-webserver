@@ -20,6 +20,7 @@ APP.config['SECRET_KEY'] = os.urandom(32)
 APP.config['UPLOAD_FOLDER'] = 'data'
 
 # load config from server_config.yaml
+global config
 with open("server_config.yaml", 'r') as stream:
     try:
         config = yaml.safe_load(stream)
