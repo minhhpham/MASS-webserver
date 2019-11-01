@@ -3,16 +3,23 @@
 from flask import render_template, redirect, request, Flask, url_for, abort, send_from_directory
 from flask_wtf import FlaskForm, csrf
 from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField
-import yaml, sys, binascii, os
+import yaml, sys, binascii, os, hashlib
 from server_scripts import Parse, misc
+from server_scripts import auth
 
 # --------------------- CONFIGURATIONS -------------------------------------------------------------------------------------------------------
+global APP
 APP = Flask(__name__)
+
+# Cross-site scripting protection
 CSRF = csrf.CSRFProtect()
 CSRF.init_app(APP)
 APP.config['SECRET_KEY'] = os.urandom(32)
+
+# data folder
 APP.config['UPLOAD_FOLDER'] = 'data'
 
+# load config from server_config.yaml
 with open("server_config.yaml", 'r') as stream:
     try:
         config = yaml.safe_load(stream)
@@ -20,7 +27,10 @@ with open("server_config.yaml", 'r') as stream:
         print(exc)
         sys.exit()
 
-# global variables for holding data (temporarily)
+# login manager
+auth.login_manager.init_app(APP)
+
+# declare global variables for holding data (temporarily)
 global nPop, nPlant, lifeSpan
 global populations, plants, tech_form, techs, params 	
 	# techs has class TechnologiesForm and has the input data
@@ -36,6 +46,7 @@ class InputSize(FlaskForm):
 	LifeSpan = IntegerField('Life Span of project', validators = [validators.InputRequired(), validators.NumberRange(min=0)])	
 
 @APP.route('/input_size', methods=['GET', 'POST'])
+@auth.login_required
 def input_size():
 	""" render webpage to ask for input sizes, save data to global nPop, nPlant, lifeSpan 
 		then redirect to population_input """
@@ -71,6 +82,7 @@ class PopulationsForm(FlaskForm):
 	rows = FieldList(FormField(OnePopulation), min_entries = 0)
 
 @APP.route('/population_input', methods=['GET', 'POST'])
+@auth.login_required
 def population_input():
 	""" render webpage to ask for population input, save data to global populations (class PopulationsForm) 
 		then redirect to plant_input """
@@ -119,6 +131,7 @@ class PlantsForm(FlaskForm):
 	rows = FieldList(FormField(OnePlant), min_entries = 0)
 
 @APP.route('/plant_input', methods = ['GET', 'POST'])
+@auth.login_required
 def plant_input():
 	""" render webpage to ask for plants input, save data to global plants (class PlantsForm) 
 		then redirect to tech_input """
@@ -182,6 +195,7 @@ class CombinedForm(FlaskForm):
 	submit = SubmitField('Next')
 
 @APP.route('/tech_input', methods = ['GET', 'POST'])
+@auth.login_required
 def tech_input():
 	""" render webpage to ask for plants input, save data to global techs (class TechnologiesForm) 
 		then redirect to parameter_input"""
@@ -231,6 +245,7 @@ class ParamsForm(FlaskForm):
 	submit = SubmitField('Next')
 
 @APP.route('/parameter_input', methods = ['POST', 'GET'])
+@auth.login_required
 def parameter_input():
 	""" render webpage to ask for parameter input, save data to global params (class ParamsForm) """
 	global params
@@ -252,6 +267,7 @@ def parameter_input():
 
 # ------------ review input data ----------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/review', methods = ['POST', 'GET'])
+@auth.login_required
 def review():
 	""" review input data before running optimizer
 		TODO: create links for editing data """
@@ -263,6 +279,7 @@ def review():
 
 # ------------ run optimizer -------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/run_optimizer', methods = ['POST'])
+@auth.login_required
 def run_optimizer():
 	global nPop, nPlant, lifeSpan, populations, plants, techs, params
 	if request.form['command'] == 'Run optimizer':
@@ -271,6 +288,25 @@ def run_optimizer():
 	else:
 		abort(400, 'Unknown command')
 
+# ------------ login webpage -------------------------------------------------------------------------------------------------------------------------------------------
+@APP.route('/login', methods = ['GET', 'POST'])
+def login():
+	if request.method == 'GET':
+		return(render_template('login.html', login_failed = False))
+
+	if request.method == 'POST':
+		username = request.form['username']
+		password_hashed = hashlib.md5(request.form['password']).digest()
+		user = auth.User(username)
+		user.authenticate(password_hashed)
+
+		if user.is_authenticated():
+			auth.login_user(user)
+			# redirect to requested page
+			return(redirect(url_for(str(request.args.get("next"))[1:])))
+		else:
+			# print errors to webpage
+			return(render_template('login.html', login_failed = True))
 
 # --------------------- RUN SERVER ---------------------------------------------------------------------------------------------------------------------------------------#
 if __name__ == '__main__':
