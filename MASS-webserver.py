@@ -56,7 +56,7 @@ def projects():
         username = auth.current_user.get_id()
         APP.logger.info('Display projects page for user {}'.format(username))
         existing_projects = db.getProjects(username = username) # pls give me a list of tuple {project_name, p_desc}
-        return(render_template('projects.html', create_project = False, existing_projects = existing_projects, populations=populations))
+        return(render_template('projects.html', create_project = False, existing_projects = existing_projects))
 
     # process POST requests
     if request.method == 'POST':
