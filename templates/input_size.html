@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<title>Water Reclamation System Planning</title>
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('index') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('index') }}">Contact</a></li>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+
 	<br>
 	{% if inputSize.errors %}
     <ul class="errors">

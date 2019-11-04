@@ -1,10 +1,11 @@
-from flask_login import LoginManager, login_user, login_required
+from flask_login import LoginManager, login_user, login_required, current_user
 
 # User model
 class User():
 	def __init__(self, username):
 		self.username = username
 		self.authenticated = False
+		self.current_project_name = None
 
 	def is_active(self):
 		# all users are active
@@ -24,6 +25,14 @@ class User():
 	def authenticate(self, password):
 		# TODO: create authentication process when database is ready
 		self.authenticated = True
+
+	def set_project(self, project_name):
+		# set current project user is working on
+		self.current_project_name = project_name
+
+	def get_project(self):
+		# get current project user is working on
+		return(self.current_project_name)
 
 login_manager = LoginManager()
 login_manager.login_view = 'login' # points to login webpage
