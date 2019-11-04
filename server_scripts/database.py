@@ -18,9 +18,9 @@ def init_db():
 	table_names = ['Users', 'Projects', 'Ns', 'Populations', 'Plants', 'Technologies', 'Parameters']
 	for table_name in table_names:
 		cursor.execute("""
-			SELECT * FROM information_schema.tables WHERE table_name=%s
+			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
 		""", (table_name,))
-		if cursor.rowcount is None:
+		if cursor.fetchone()[0] == 0:
 			init_table(table_name)
 
 	cursor.close()
@@ -46,81 +46,77 @@ def init_table(table_name):
 							username	varchar(255),
 							project_name varchar(255),	
 							p_desc		varchar(255),
-							PRIMARY KEY(username, project_name),
-							FOREIGN KEY(username) REFERENCES Users			
+							PRIMARY KEY(username, project_name)		
 						)
 			""")
 		elif table_name == 'Ns':
 			cursor.execute("""
 						CREATE TABLE Ns(
 							username	varchar(255),
-							pid			int,	
+							project_name varchar(255),	
 							n1		int,
 							n2		int,
 							n3		int,
-							PRIMARY KEY(username, pid),
-							FOREIGN KEY(username) REFERENCES Users
+							PRIMARY KEY(username, project_name)
 						)
 			""")
 		elif table_name == 'Populations':
 			cursor.execute("""
 								CREATE TABLE Populations(
 									username	varchar(255),
-									pid			int,
+									project_name varchar(255),
 									index 		int,	
 									pname		varchar(255), -- represent Cluster name
 									psize		    int NOT NULL CHECK (psize >= 0), -- represent Current Population
 									pgrowthrate	float, -- represent Population Growth Rate
 									lat		    float, -- represent Latitude
 									long	    float, -- represent Longitude
-									PRIMARY KEY(username, pid, index)
+									PRIMARY KEY(username, project_name, index)
 								)
 			""")
 		elif table_name == 'Plants':
 			cursor.execute("""
 								CREATE TABLE Plants(
 									username	varchar(255),
-									pid			int,
+									project_name varchar(255),
 									index 		int,	
 									locname		varchar(255), -- represent Cluster name
 									lat		float, -- represent Latitude
 									long		float, -- represent Longitude
-									PRIMARY KEY(username, pid, index)
+									PRIMARY KEY(username, project_name, index)
 								)
 					""")
 		elif table_name == 'Technologies':
 			cursor.execute("""
 								CREATE TABLE Technologies(
 									username	varchar(255),
-									pid			int,
+									project_name varchar(255),
 									index 		int,	
 									Capkt		float,
 									CCkt		float, 
 									OCt			float, 
 									SRWt		float,
 									GPt			float,
-									PRIMARY KEY(username, pid, index)
+									PRIMARY KEY(username, project_name, index)
 								)
 							""")
 		elif table_name == 'Params':
 			cursor.execute("""
 								CREATE TABLE Params(
 									username	varchar(255),
-									pid			int,
+									project_name varchar(255),
 									index 		int,	
 									label		varchar(255), 
 									unit		varchar(255), 
 									value		float, 
-									PRIMARY KEY(username, pid, index),
-									FOREIGN KEY(username) REFERENCES Users,
-									FOREIGN KEY(pid) REFERENCES Projects,
-									FOREIGN KEY(index) REFERENCES Pops
+									PRIMARY KEY(username, project_name, index)
 								)
 			""")
 		else:
 			pass
 	except(Exception, psycopg2.DatabaseError) as error:
 		print(error)
+		conn.commit()
 
 def register_user(username, password_hased):
 	return
@@ -135,19 +131,18 @@ def getProjects(username):
 
 		# Select projects
 		cursor.execute("SELECT project_name, p_desc FROM Projects WHERE username = %s", (username,))
-		vals = cur.fetchall() # Get the result
+		vals = cursor.fetchall() # Get the result
 
-		# close communication with the PostgreSQL database server
-		cursor.close()
-		# commit the changes
-		conn.commit()
-	except(Exception, psycopg2.DatabaseError) as error:
-		vals = []
+		# Put into desired format
+		finalVals = []
+		for v in vals:
+			finalVals.append({"project_name": v[0], "p_desc": v[1]})
+
+	except(psycopg2.DatabaseError) as error:
 		print(error)
-	finally:
-		if conn is not None:
-			conn.close()
-	return vals
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	return finalVals
 
 # Creates a new project
 def saveProject(username, project_name, p_desc):
@@ -156,79 +151,54 @@ def saveProject(username, project_name, p_desc):
 
 		vals = (username, project_name, p_desc)
 		cursor.execute("INSERT INTO Projects VALUES (%s, %s, %s)", vals)
-		# close communication with the PostgreSQL database server
-		cursor.close()
-		# commit the changes
-		conn.commit()
-	except(Exception, psycopg2.DatabaseError) as error:
+
+	except(psycopg2.DatabaseError) as error:
 		print(error)
-	finally:
-		if conn is not None:
-			conn.close()
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
 
 # Inserts an Inputsize for a given user and projectID
-def saveInputSize(inputSize, username, projectID):
+def saveInputSize(inputSize, username, project_name):
 	try:
 		cursor = conn.cursor()
 
-		vals = (username, projectID, inputSize.NPlant.data, inputSize.NPop.data, inputSize.LifeSpan.data)
-		cursor.execute("INSERT INTO Ns VALUES (%s, %d, %d, %d, %d)", vals)
-		# close communication with the PostgreSQL database server
-		cursor.close()
-		# commit the changes
-		conn.commit()
-	except(Exception, psycopg2.DatabaseError) as error:
+		vals = (username, project_name, inputSize.NPlant.data, inputSize.NPop.data, inputSize.LifeSpan.data)
+		cursor.execute("INSERT INTO Ns VALUES (%s, %s, %s, %s, %s)", vals)
+		
+	except(psycopg2.DatabaseError) as error:
 		print(error)
-	finally:
-		if conn is not None:
-			conn.close()
-
-# Updates an Inputsize for a given user and projectID
-def saveInputSize(inputSize, username, projectID):
-	try:
-		cursor = conn.cursor()
-
-		vals = (inputSize.NPlant.data, inputSize.NPop.data, inputSize.LifeSpan.data, username, projectID)
-		cursor.execute("UPDATE Ns SET n1=%d, n2=%d, n3=%d WHERE username=%s AND pid=%d", vals)
-		# close communication with the PostgreSQL database server
-		cursor.close()
-		# commit the changes
-		conn.commit()
-	except(Exception, psycopg2.DatabaseError) as error:
-		print(error)
-	finally:
-		if conn is not None:
-			conn.close()
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
 
 # Retrieve an Inputsize for a given user and projectID
 # 	Returns an InputSize object
-def getInputSize(username, projectID):
+def getInputSize(username, project_name):
 	try:
 		cursor = conn.cursor()
 
-		vals = (username, projectID)
+		vals = (username, project_name)
 
-		# Selec
-		cursor.execute("SELECT n1, n2, n3 FROM Ns WHERE username = %s AND pid = %d", vals)
-		vals = cur.fetchone() # Get the result
+		cursor.execute("SELECT n1, n2, n3 FROM Ns WHERE username = %s AND project_name = %s", vals)
+		vals = cursor.fetchone() # Get the result
 
-		# Create the new object
 		newInputSize = {}
-		newInputSize["numplants"] = vals[0]
-		newInputSize["numpops"] = vals[1]
-		newInputSize["durations"] = vals[2]
-
-		# close communication with the PostgreSQL database server
-		cursor.close()
-		# commit the changes
-		conn.commit()
-	except(Exception, psycopg2.DatabaseError) as error:
-		newInputSize = {}
+		if vals is None:
+			newInputSize["numplants"] = None
+			newInputSize["numpops"] = None
+			newInputSize["durations"] = None
+		else:
+			newInputSize["numplants"] = vals[0]
+			newInputSize["numpops"] = vals[1]
+			newInputSize["durations"] = vals[2]
+	except(psycopg2.DatabaseError) as error:
 		print(error)
-	finally:
-		if conn is not None:
-			conn.close()
-	return newInputSizes
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	return newInputSize
 
 init_db()
 

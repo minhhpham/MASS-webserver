@@ -111,7 +111,7 @@ def input_size():
     if request.method == 'POST':
         if inputSize.validate_on_submit():
             # if validate pass, save data to DB and redirect to next page
-            db.saveInputSize(inputSize, username, projectID)
+            db.saveInputSize(inputSize, username, current_project)
             # -- old codes --
             # nPop = inputSize.NPop.data
             # nPlant = inputSize.NPlant.data
@@ -140,8 +140,15 @@ def population_input():
         then redirect to plant_input """
     # global nPop
     # global populations
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
 
     populations = PopulationsForm()
+    existing_data = db.getInputSize(username, current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
+    # If data exist, fill in the form
+    if existing_data['numpops'] is not None:
+        nPop = existing_data['numpops']
+
     # process GET requests
     if request.method == 'GET':
         APP.logger.info('creating a fresh populations form')
