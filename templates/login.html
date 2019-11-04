@@ -13,7 +13,8 @@
         {% if login_failed %}
         	<p><font color="red">Wrong Username or Password</font></p>
         {% endif %}
-        <p align="center"><input type=submit value=Login>
+        <p align="center"><input type=submit value=Login></p>
+        <p align="center"><a href="{{ url_for('register') }}">Create an account</a></p>
     </form>
 </body>
 </html>

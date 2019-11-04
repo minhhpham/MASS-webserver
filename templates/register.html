@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+</head>
+<body>
+	<br>
+    <h2 align="left"> Create a new user account </h2>
+    <form action="{{ url_for('register') }}" method="POST" align="left">
+    	<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+        <p align="left">First and Last name: <input type=text name="fullname"></p>
+        <p align="left">username           : <input type=text name="username"></p>
+        <p align="left">Password           : <input type=password name="password"></p>
+        <p align="left">Email              : <input type=text name="email"></p>
+        <p align="left"><input type=submit name= register value=submit></p>
+    </form>
+</body>
+</html>
+
+            

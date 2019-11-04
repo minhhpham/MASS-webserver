@@ -370,6 +370,22 @@ def logout():
         APP.logger.error('Error when trying to log out: {}'.format(e))
     return('<h2>logged out</h2>')
 
+# ------------ user register webpage -------------------------------------------------------------------------------------------------------------------------------------------
+@APP.route('/register', methods = ['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return(render_template('register.html', login_failed = False))
+
+    if request.method == 'POST':
+        if request.form['register'] == 'submit':
+            fullname = request.form['fullname']
+            username = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            someFunctionSavetoDB(fullname, username, password, email)
+        else:
+            abort(400, 'Unknown request')
+
 # --------------------- RUN SERVER ---------------------------------------------------------------------------------------------------------------------------------------#
 if __name__ == '__main__':
     APP.debug=True
