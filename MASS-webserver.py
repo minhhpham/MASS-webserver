@@ -6,6 +6,7 @@ from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField
 import yaml, sys, binascii, os, hashlib
 from server_scripts import Parse, misc
 from server_scripts import auth
+from server_scripts import database as db
 
 # --------------------- CONFIGURATIONS -------------------------------------------------------------------------------------------------------
 global APP
@@ -54,8 +55,8 @@ def projects():
     if request.method == 'GET':
         username = auth.current_user.get_id()
         APP.logger.info('Display projects page for user {}'.format(username))
-        existing_projects = someFunctionQueryDB(username = username) # pls give me a list of tuple {project_name, p_desc}
-        return(render_template('projects.html', create_project = False, existing_projects = existing_projects))
+        existing_projects = db.getProjects(username = username) # pls give me a list of tuple {project_name, p_desc}
+        return(render_template('projects.html', create_project = False, existing_projects = existing_projects, populations=populations))
 
     # process POST requests
     if request.method == 'POST':
@@ -63,7 +64,7 @@ def projects():
             project_name = request.form['project_name']
             p_desc = request.form['p_desc']
             # save project to DB
-            someFunctionSavetoDB(project_name, p_desc)
+            db.saveProject(auth.current_user.get_id(), project_name, p_desc)
             # switch current project to this project
             auth.current_user.set_project(project_name)
             # redirect to input pages
@@ -96,7 +97,7 @@ def input_size():
 
     # process GET requests
     if request.method == 'GET':
-        existing_data = someFunctionQueryDB(username, current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
+        existing_data = db.getInputSize(username, current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
         # If data exist, fill in the form
         if existing_data['numpops'] is not None:
             input_size.NPop.data = existing_data['numpops']
@@ -110,7 +111,7 @@ def input_size():
     if request.method == 'POST':
         if inputSize.validate_on_submit():
             # if validate pass, save data to DB and redirect to next page
-            someFunctionSavetoDB(inputSize, username, projectID)
+            db.saveInputSize(inputSize, username, projectID)
             # -- old codes --
             # nPop = inputSize.NPop.data
             # nPlant = inputSize.NPlant.data

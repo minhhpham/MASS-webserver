@@ -21,20 +21,19 @@
 	<br>
 	<h2 align="center"> Select from existing Projects: </h2>
 	<form align="center" method="POST" action="{{ url_for('projects') }}">
+		{{ populations.csrf_token }}
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
 				<th>Project Name</th> 
 				<th>Project Description</th> 
 			</tr>
 			<tr> <!-- Table rows -->
-			{% if len(existing_projects) > 0 %}
 				{% for p in existing_projects %}
 					<td>
 						<input type="submit" name="select project" value="{{ p['project_name'] }}" style="background:none;border:none;color:#069;text-decoration:underline;cursor: pointer;">
 					</td>
 					<td>{{ p['p_desc'] }}</td>
 				{% endfor %}
-			{% endif %}
 			</tr>
 		</table>
 	</form>
