@@ -21,26 +21,26 @@
 	<br>
 	<h2 align="center"> Select from existing Projects: </h2>
 	<form align="center" method="POST" action="{{ url_for('projects') }}">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
 				<th>Project Name</th> 
 				<th>Project Description</th> 
 			</tr>
-			<tr> <!-- Table rows -->
-			{% if len(existing_projects) > 0 %}
-				{% for p in existing_projects %}
+			{% for p in existing_projects %}
+			<tr> <!-- Table rows -->	
 					<td>
 						<input type="submit" name="select project" value="{{ p['project_name'] }}" style="background:none;border:none;color:#069;text-decoration:underline;cursor: pointer;">
 					</td>
 					<td>{{ p['p_desc'] }}</td>
-				{% endfor %}
-			{% endif %}
 			</tr>
+			{% endfor %}
 		</table>
 	</form>
 	<br>
 	<h2 align="center">Or create a new project:</h2>
 	<form align="center" method="POST" action="{{ url_for('projects') }}">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<p align="center">Project name: <input type="text" name="project_name"> </p>
 		<p align="center">Project Description:<textarea name="p_desc" rows="2" cols="50"></textarea></p>
 		<p align="center"><input type="submit" value="Create project" name="command"></p>
