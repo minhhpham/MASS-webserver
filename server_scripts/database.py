@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 import yaml
 
 global config    # initialized in MASS-webserver.py
@@ -127,22 +128,17 @@ def authenticate_user(username, password_hashed):
 # Returns a list of projects
 def getProjects(username):
 	try:
-		cursor = conn.cursor()
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 		# Select projects
 		cursor.execute("SELECT project_name, p_desc FROM Projects WHERE username = %s", (username,))
 		vals = cursor.fetchall() # Get the result
 
-		# Put into desired format
-		finalVals = []
-		for v in vals:
-			finalVals.append({"project_name": v[0], "p_desc": v[1]})
-
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
 	cursor.close()
-	return finalVals
+	return vals
 
 # Creates a new project
 def saveProject(username, project_name, p_desc):
@@ -199,6 +195,23 @@ def getInputSize(username, project_name):
 	# close communication with the PostgreSQL database server
 	cursor.close()
 	return newInputSize
+
+# Retrieve a population for a given user and projectID
+# 	Returns an list of dictionaries with the column names
+def getPopulations(username, project_name):
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+		vals = (username, project_name)
+
+		cursor.execute("SELECT * FROM populations WHERE username = %s AND project_name = %s", vals)
+		vals = cursor.fetchone() # Get the result
+
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	return vals
 
 init_db()
 
