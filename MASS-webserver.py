@@ -60,7 +60,7 @@ def projects():
 
     # process POST requests
     if request.method == 'POST':
-        if request.form['command'] == 'Create project':
+        if 'command' in request.form and request.form['command'] == 'Create project':
             project_name = request.form['project_name']
             p_desc = request.form['p_desc']
             # save project to DB
@@ -69,7 +69,8 @@ def projects():
             auth.current_user.set_project(project_name)
             # redirect to input pages
             return(redirect(url_for('input_size')))
-        elif request.form['select project'] is not None:
+        elif 'select project' in request.form:
+            project_name = request.form['select project']
             # switch to selected project
             auth.current_user.set_project(project_name)
             # redirect to input pages
@@ -92,7 +93,7 @@ def input_size():
         then redirect to population_input """
     # global nPop, nPlant, lifeSpan
     username = auth.current_user.get_id()
-    current_project = auth.current_user.get_project()
+    current_project = auth.current_user.current_project_name
     inputSize = InputSize()
 
     # process GET requests
@@ -142,22 +143,25 @@ def population_input():
     # global populations
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
-
     populations = PopulationsForm()
-    existing_data = db.getInputSize(username, current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
-    # If data exist, fill in the form
-    if existing_data['numpops'] is not None:
-        nPop = existing_data['numpops']
+
+    existing_data = db.getInputSize(username, current_project)
+    # If numpops exist, create the form with numpops rows
+    if existing_data['numpops'] is not None and existing_data['numpops'] > 0:
+        numpops = existing_data['numpops']
+        for i in range(numpops):
+            populations.rows.append_entry({'r': i+1})
+    else: # throw error
+        abort(400, 'Number of populations not given')
 
     # process GET requests
     if request.method == 'GET':
-        APP.logger.info('creating a fresh populations form')
-        try: nPop
-        except NameError:
-            abort(400, 'Number of populations not found')
-        else:
-            for i in range(nPop):
-                populations.rows.append_entry({'r': i+1})
+        # Find existing data in the populations table
+        existing_data = db.SomeFunctionQueryDB(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        # fill in existing data to populations form
+        if len(existing_data) > 0:
+            for r in range(min(len(existing_data), numpops)):
+                populations.rows[i].data = existing_data[i]
         return(render_template('population_input.html', populations = populations))
 
     # process POST requests
@@ -171,6 +175,7 @@ def population_input():
                 return(redirect(url_for('plant_input')))
             else:
                 # if validation fails, print out errors to web page
+                APP.logger.infor('validation for population_input failed: {}', populations.errors)
                 return(render_template('population_input.html', populations = populations))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
@@ -365,7 +370,7 @@ def login():
                 # redirect to requested page
                 return(redirect(url_for(str(request.args.get('next'))[1:])))
             else: # return to Projects page
-                return(redirect(url_for('index')))            
+                return(redirect(url_for('projects')))
         else:
             # print errors to webpage
             return(render_template('login.html', login_failed = True))
@@ -374,6 +379,7 @@ def login():
 def logout():
     try: 
         logout_user()
+        auth.current_user.authenticated = False
     except Exception as e:
         APP.logger.error('Error when trying to log out: {}'.format(e))
     return('<h2>logged out</h2>')
