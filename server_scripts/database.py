@@ -55,9 +55,9 @@ def init_table(table_name):
 						CREATE TABLE Ns(
 							username	varchar(255),
 							project_name varchar(255),	
-							n1		int,
-							n2		int,
-							n3		int,
+							NPop		int,
+							NPlant		int,
+							LifeSpan	int,
 							PRIMARY KEY(username, project_name)
 						)
 			""")
@@ -67,23 +67,23 @@ def init_table(table_name):
 									username	varchar(255),
 									project_name varchar(255),
 									index 		int,	
-									pname		varchar(255), -- represent Cluster name
-									psize		    int NOT NULL CHECK (psize >= 0), -- represent Current Population
-									pgrowthrate	float, -- represent Population Growth Rate
+									Name		varchar(255), -- represent Cluster name
+									Pr		    int NOT NULL CHECK (Pr >= 0), -- represent Current Population
+									GrowthRate	float, -- represent Population Growth Rate
 									lat		    float, -- represent Latitude
-									long	    float, -- represent Longitude
+									lon		    float, -- represent Longitude
 									PRIMARY KEY(username, project_name, index)
 								)
 			""")
 		elif table_name == 'Plants':
 			cursor.execute("""
 								CREATE TABLE Plants(
-									username	varchar(255),
-									project_name varchar(255),
-									index 		int,	
-									locname		varchar(255), -- represent Cluster name
-									lat		float, -- represent Latitude
-									long		float, -- represent Longitude
+									username			varchar(255),
+									project_name 		varchar(255),
+									index 				int,	
+									LocationName		varchar(255), -- represent Cluster name
+									lat					float, -- represent Latitude
+									lon					float, -- represent Longitude
 									PRIMARY KEY(username, project_name, index)
 								)
 					""")
@@ -107,9 +107,9 @@ def init_table(table_name):
 									username	varchar(255),
 									project_name varchar(255),
 									index 		int,	
-									label		varchar(255), 
-									unit		varchar(255), 
-									value		float, 
+									Label		varchar(255), 
+									Unit		varchar(255), 
+									Value		float, 
 									PRIMARY KEY(username, project_name, index)
 								)
 			""")
@@ -155,8 +155,19 @@ def saveProject(username, project_name, p_desc):
 	# commit the changes
 	conn.commit()
 
-# Inserts an Inputsize for a given user and projectID
+# Inserts an Inputsize for a given user and projectID, update records if data exists
 def saveInputSize(inputSize, username, project_name):
+	# first check if records exist in database
+	existing_data = getInputSize(username, project_name)
+	if existing_data is not None:
+		# delete records if exists and then insert again
+		try:
+			cursor = conn.cursor()
+			cursor.execute("DELETE FROM Ns WHERE username = %s AND project_name = %s", (username, project_name))
+		except(psycopg2.DatabaseError) as error:
+			print(error)
+
+	# insert records
 	try:
 		cursor = conn.cursor()
 
@@ -178,7 +189,7 @@ def getInputSize(username, project_name):
 
 		vals = (username, project_name)
 
-		cursor.execute("SELECT n1, n2, n3 FROM Ns WHERE username = %s AND project_name = %s", vals)
+		cursor.execute("SELECT NPop, NPlant, LifeSpan FROM Ns WHERE username = %s AND project_name = %s", vals)
 		vals = cursor.fetchone() # Get the result
 
 		newInputSize = {}
@@ -205,13 +216,45 @@ def getPopulations(username, project_name):
 		vals = (username, project_name)
 
 		cursor.execute("SELECT * FROM populations WHERE username = %s AND project_name = %s", vals)
-		vals = cursor.fetchone() # Get the result
+		vals = cursor.fetchall() # Get the result
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
 	cursor.close()
 	return vals
+
+# Inserts populations table for a given user and projectID
+# update records if exists
+# otherwise insert
+# populations has class PopulationsForm
+def savePopulations(populations, username, project_name):
+	existing_data = getPopulations(username, project_name)
+	if existing_data is not None:
+	# delete existing record first, then insert
+		try:
+			cursor = conn.cursor()
+			cursor.execute("DELETE FROM populations WHERE username = %s AND project_name = %s", (username, project_name))
+		except(psycopg2.DatabaseError) as error:
+			print(error)
+	# insert data
+	try:
+		cursor = conn.cursor()
+
+		index = 0
+		for r in populations.rows:
+			index = index + 1
+			vals = (username, project_name, index, r.Name.data, r.Pr.data, r.GrowthRate.data, r.lat.data, r.lon.data)
+			cursor.execute("INSERT INTO populations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", vals)
+		
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
+
+
 
 init_db()
 

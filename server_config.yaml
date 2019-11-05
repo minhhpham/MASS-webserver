@@ -1,8 +1,8 @@
 # Database config
 db:
-  dbname: 'OptimizerDB'
-  user: 'Optimizer'
-  password: 'what is password?'
+  dbname: 'optimizerdb'
+  user: 'optimizer'
+  password: '123456'
   port: 5432
 
 # Available Technologies:

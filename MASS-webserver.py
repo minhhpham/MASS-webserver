@@ -93,23 +93,27 @@ def input_size():
         then redirect to population_input """
     # global nPop, nPlant, lifeSpan
     username = auth.current_user.get_id()
-    current_project = auth.current_user.current_project_name
+    current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
     inputSize = InputSize()
 
     # process GET requests
     if request.method == 'GET':
+        APP.logger.info('GET input_size for {}.{}'.format(username, current_project))
         existing_data = db.getInputSize(username, current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
         # If data exist, fill in the form
         if existing_data['numpops'] is not None:
-            input_size.NPop.data = existing_data['numpops']
+            inputSize.NPop.data = existing_data['numpops']
         if existing_data['numplants'] is not None:
-            input_size.NPop.data = existing_data['numplants']
+            inputSize.NPlant.data = existing_data['numplants']
         if existing_data['durations'] is not None:
-            input_size.NPop.data = existing_data['durations']    
+            inputSize.LifeSpan.data = existing_data['durations']    
         return(render_template('input_size.html', inputSize=inputSize))
 
     # process POST requests
     if request.method == 'POST':
+        APP.logger.info('POST input_size for {}.{}'.format(username, current_project))
         if inputSize.validate_on_submit():
             # if validate pass, save data to DB and redirect to next page
             db.saveInputSize(inputSize, username, current_project)
@@ -143,25 +147,30 @@ def population_input():
     # global populations
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
     populations = PopulationsForm()
-
-    existing_data = db.getInputSize(username, current_project)
-    # If numpops exist, create the form with numpops rows
-    if existing_data['numpops'] is not None and existing_data['numpops'] > 0:
-        numpops = existing_data['numpops']
-        for i in range(numpops):
-            populations.rows.append_entry({'r': i+1})
-    else: # throw error
-        abort(400, 'Number of populations not given')
 
     # process GET requests
     if request.method == 'GET':
+        # If numpops exist, create the form with numpops rows
+        existing_data = db.getInputSize(username, current_project)
+        if existing_data['numpops'] is not None and existing_data['numpops'] > 0:
+            numpops = existing_data['numpops']
+            for i in range(numpops):
+                populations.rows.append_entry({'r': i+1})
+        else: # throw error
+            abort(400, 'Number of populations not given')
         # Find existing data in the populations table
-        existing_data = db.SomeFunctionQueryDB(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        existing_data = db.getPopulations(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
         # fill in existing data to populations form
-        if len(existing_data) > 0:
-            for r in range(min(len(existing_data), numpops)):
-                populations.rows[i].data = existing_data[i]
+        if existing_data is not None:
+            for i in range(min(len(existing_data), numpops)):
+                populations.rows[i].Name.data = existing_data[i]['name']
+                populations.rows[i].Pr.data = existing_data[i]['pr']
+                populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']
+                populations.rows[i].lat.data = existing_data[i]['lat']
+                populations.rows[i].lon.data = existing_data[i]['lon']
         return(render_template('population_input.html', populations = populations))
 
     # process POST requests
@@ -170,12 +179,12 @@ def population_input():
             # process saving data command
             if populations.validate():
                 # if validation pass, save data to DB and redirect to next page
-                # TBD: someFunctionSavetoDB(populations, username, projectID). populations is of class PopulationsForm
-                APP.logger.info('transfer to {}'.format(url_for('plant_input')))
+                db.savePopulations(populations, username, current_project)
+                APP.logger.info('Validation passed!. transfer to {}'.format(url_for('plant_input')))
                 return(redirect(url_for('plant_input')))
             else:
                 # if validation fails, print out errors to web page
-                APP.logger.infor('validation for population_input failed: {}', populations.errors)
+                APP.logger.info('validation for population_input failed: {}', populations.errors)
                 return(render_template('population_input.html', populations = populations))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
@@ -199,8 +208,7 @@ class PlantsForm(FlaskForm):
 def plant_input():
     """ render webpage to ask for plants input, save data to global plants (class PlantsForm) 
         then redirect to tech_input """
-    global nPlant
-    global plants    
+    return('TBD')
     
     # process GET request
     if request.method == 'GET':
