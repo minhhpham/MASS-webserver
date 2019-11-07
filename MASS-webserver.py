@@ -289,13 +289,23 @@ class CombinedForm(FlaskForm):
 def tech_input():
     """ render webpage to ask for plants input, save data to global techs (class TechnologiesForm) 
         then redirect to parameter_input"""
-    global config, techs
+    global config
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
+
+    # load default tech data from server_config.yaml file
     default_techs = config['techs']
     tech_form = CombinedForm(n_additional = 0)
 
+
+    existing_data = someFunctionQueryDB(username, current_project) # give me everything in the DB
+    # TODO (M): pre-fill form data with data from database
+
     # process GET request
     if request.method == 'GET':
-        # load default tech data from server_config.yaml file
+        # fill in default techs numbers to the form object
         for t in default_techs:
             tech_form.default_techs.rows.append_entry({
                 'Technology': t,
@@ -318,8 +328,9 @@ def tech_input():
             return(render_template('tech_input.html', techs = tech_form))
         # process saving data command
         elif tech_form.submit.data:
+            # TODO: data validation
             techs = misc.tech_combine(tech_form)
-            # TBD: someFunctionSavetoDB(techs, username, projectID). techs is of class TechnologiesForm
+            someFunctionSavetoDB(techs, username, projectID) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
             APP.logger.info("transfer to {}".format(url_for('parameter_input')))
             return(redirect(url_for('parameter_input')))        
         else:
@@ -338,9 +349,16 @@ class ParamsForm(FlaskForm):
 @auth.login_required
 def parameter_input():
     """ render webpage to ask for parameter input, save data to global params (class ParamsForm) """
-    global params
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
+
     default_params = config['params']
     params = ParamsForm()
+
+    existing_data = someFunctionQueryDB(username, current_project) # give me everything in the DB
+    # TODO (M): pre-fill form data with data from database
 
     # process GET requests
     if request.method == 'GET':
@@ -350,7 +368,8 @@ def parameter_input():
 
     # process POST requests
     if request.method == 'POST':
-        # TBD: someFunctionSavetoDB(techs, username, projectID)
+        # TODO (M): data validation
+        someFunctionSavetoDB(username, current_project)
         APP.logger.info("transfer to {}".format(url_for('review')))
         return(redirect(url_for('review')))
 

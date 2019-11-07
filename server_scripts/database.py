@@ -16,7 +16,7 @@ conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["us
 def init_db():
 	""" initialize tables if not found in the database """
 	cursor = conn.cursor()
-	table_names = ['Users', 'Projects', 'Ns', 'Populations', 'Plants', 'Technologies', 'Parameters']
+	table_names = ['users', 'projects', 'ns', 'populations', 'plants', 'technologies', 'parameters']
 	for table_name in table_names:
 		cursor.execute("""
 			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
@@ -92,7 +92,10 @@ def init_table(table_name):
 								CREATE TABLE Technologies(
 									username	varchar(255),
 									project_name varchar(255),
-									index 		int,	
+									index 		int,
+									type		varchar(255),
+									TechnologyName varchar(255),
+									Scale		varchar(255),
 									Capkt		float,
 									CCkt		float, 
 									OCt			float, 

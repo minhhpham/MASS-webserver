@@ -32,11 +32,11 @@
 	<form method="POST" action="{{ url_for('input_size') }}" align="center" >
 		{{ inputSize.csrf_token }}
 		<h2 align="center">How many population clusters do you have?</h2>
-		{{ inputSize.NPop }}	
+		<p align="center">{{ inputSize.NPop }}	</p>
 		<h2 align="center">How many candidate locations for implementation of plants do you have?</h2>
-		{{ inputSize.NPlant }}
+		<p align="center">{{ inputSize.NPlant }}</p>
 		<h2 align="center">What is the lifespan of your project?</h2>
-		{{ inputSize.LifeSpan }}
+		<p align="center">{{ inputSize.LifeSpan }}</p>
 		<br><br>
 		<input type="submit" value="Next">
 	</form>
