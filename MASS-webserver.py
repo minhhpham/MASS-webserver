@@ -91,7 +91,6 @@ class InputSize(FlaskForm):
 def input_size():
     """ render webpage to ask for input sizes, save data to global nPop, nPlant, lifeSpan 
         then redirect to population_input """
-    # global nPop, nPlant, lifeSpan
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -143,8 +142,6 @@ class PopulationsForm(FlaskForm):
 def population_input():
     """ render webpage to ask for population input, save data to global populations (class PopulationsForm) 
         then redirect to plant_input """
-    # global nPop
-    # global populations
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -180,15 +177,19 @@ def population_input():
             if populations.validate():
                 # if validation pass, save data to DB and redirect to next page
                 db.savePopulations(populations, username, current_project)
-                APP.logger.info('Validation passed!. transfer to {}'.format(url_for('plant_input')))
+                APP.logger.info('populations validation passed! user %s, project %s', username, current_project)
                 return(redirect(url_for('plant_input')))
             else:
                 # if validation fails, print out errors to web page
-                APP.logger.info('validation for population_input failed: {}', populations.errors)
+                APP.logger.info('validation for population_input failed! user %s, project %s. Errors: {}', username, current_project, populations.errors)
                 return(render_template('population_input.html', populations = populations))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
+            numpops = db.getInputSize(username, current_project)['numpops']
+            for i in range(numpops):
+                populations.rows.append_entry({'r': i+1})
             populations = Parse.fill_populations(request.form['ExcelData'], populations)
+            APP.logger.info('Lazy data parsed in populations form! user %s, project %s', username, current_project)
             return(render_template('population_input.html', populations = populations))
         else:
             abort(400, 'Unknown request')
@@ -208,19 +209,31 @@ class PlantsForm(FlaskForm):
 def plant_input():
     """ render webpage to ask for plants input, save data to global plants (class PlantsForm) 
         then redirect to tech_input """
-    return('TBD')
-    
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
+    plants = PlantsForm()
+
     # process GET request
     if request.method == 'GET':
-        APP.logger.info('creating a fresh plants form')
-        plants = PlantsForm()
-        try: nPlant
-        except NameError:
-            abort(400, 'Number of plants not found')
-        else:
-            for i in range(nPlant):
-                plants.rows.append_entry({'k': i+1})
-            return(render_template('plant_input.html', plants = plants))
+        # If numpops exist, create the form with numpops rows
+        existing_data = db.getInputSize(username, current_project)
+        if existing_data['numplants'] is not None and existing_data['numplants'] > 0:
+            numplants = existing_data['numplants']
+            for i in range(numplants):
+                plants.rows.append_entry({'r': i+1})
+        else: # throw error
+            abort(400, 'Number of plants not given')
+        # Find existing data in the plants table
+        existing_data = db.someFunctionQueryDB(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        # fill in existing data to populations form
+        if existing_data is not None:
+            for i in range(min(len(existing_data), numpops)):
+                plants.rows[i].LocationName.data = existing_data[i]['name']
+                plants.rows[i].lat.data = existing_data[i]['lat']
+                plants.rows[i].lon.data = existing_data[i]['lon']
+        return(render_template('plant_input.html', plants = plants))
 
     # process POST request
     if request.method == 'POST':
@@ -228,15 +241,20 @@ def plant_input():
             # process saving data command
             if plants.validate():
                 # if validation pass, save data to DB and redirect to next page
-                # TBD: someFunctionSavetoDB(plants, username, projectID). plants if of class PlantsForm
-                APP.logger.info("transfer to {}".format(url_for('tech_input')))
+                db.someFunctionSavetoDB(plants, username, current_project)
+                APP.logger.info('plants validation passed! user %s, project %s', username, current_project)
                 return(redirect(url_for('tech_input')))
             else:
-                # if validation fails, print errors to webpage
+                # if validation fails, print out errors to web page
+                APP.logger.info('validation for plants_input failed! user %s, project %s. Errors: {}', username, current_project, plants.errors)
                 return(render_template('plant_input.html', plants = plants))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
-            plants = Parse.fill_plants(request.form['ExcelData'], plants)
+            numplants = db.getInputSize(username, current_project)['numplants']
+            for i in range(numplants):
+                numplants.rows.append_entry({'r': i+1})
+            numplants = Parse.fill_plants(request.form['ExcelData'], plants)
+            APP.logger.info('Lazy data parsed in plants form! user %s, project %s', username, current_project)
             return(render_template('plant_input.html', plants = plants))
         else:
             abort(400, 'Unknown request')
@@ -373,6 +391,7 @@ def login():
         user.authenticate(password_hashed)
 
         if user.is_authenticated():
+            APP.logger.info('AUTH: user %s logged in', user.get_id())
             auth.login_user(user)
             if request.args.get("next") is not None:
                 # redirect to requested page
@@ -383,10 +402,11 @@ def login():
             # print errors to webpage
             return(render_template('login.html', login_failed = True))
 
-@APP.route("/logout")
+@APP.route("/logout", methods = ['GET'])
 def logout():
-    try: 
-        logout_user()
+    try:
+        APP.logger.info('AUTH: user %s logged out', auth.current_user.get_id())
+        auth.logout_user()
         auth.current_user.authenticated = False
     except Exception as e:
         APP.logger.error('Error when trying to log out: {}'.format(e))

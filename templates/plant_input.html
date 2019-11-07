@@ -2,9 +2,22 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('index') }}">Contact</a></li>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	<h1 align="center">Input your plants</h1>
 	<form method="POST" action="{{ url_for('plant_input') }}" align="center">
