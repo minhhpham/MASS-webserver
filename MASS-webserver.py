@@ -41,7 +41,8 @@ auth.login_manager.init_app(APP)
 
 @APP.route('/', methods = ['GET'])
 def index():
-    return(render_template('index.html'))
+    username = auth.current_user.get_id()
+    return(render_template('index.html', Identity = username))
 
 #----------- web page to handle project requests ------------------------------------------------------
 @APP.route('/projects', methods = ['GET', 'POST'])
@@ -51,12 +52,14 @@ def projects():
         User can select a project from this page, we then set user.current_project_name to the selected project
         Also handle requests to create new projects
     """
+    next_page = 'input_size'
+
     # process GET requests
     if request.method == 'GET':
         username = auth.current_user.get_id()
         APP.logger.info('Display projects page for user {}'.format(username))
         existing_projects = db.getProjects(username = username) # pls give me a list of tuple {project_name, p_desc}
-        return(render_template('projects.html', create_project = False, existing_projects = existing_projects))
+        return(render_template('projects.html', create_project = False, existing_projects = existing_projects, Identity = username))
 
     # process POST requests
     if request.method == 'POST':
@@ -74,7 +77,7 @@ def projects():
             # switch to selected project
             auth.current_user.set_project(project_name)
             # redirect to input pages
-            return(redirect(url_for('input_size')))
+            return(redirect(url_for(next_page)))
         else:
             abort(400, 'Unknown request')
 
@@ -91,6 +94,8 @@ class InputSize(FlaskForm):
 def input_size():
     """ render webpage to ask for input sizes, save data to global nPop, nPlant, lifeSpan 
         then redirect to population_input """
+    next_page = 'population_input'
+    prev_page = 'projects'
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -108,7 +113,7 @@ def input_size():
             inputSize.NPlant.data = existing_data['numplants']
         if existing_data['durations'] is not None:
             inputSize.LifeSpan.data = existing_data['durations']    
-        return(render_template('input_size.html', inputSize=inputSize))
+        return(render_template('input_size.html', inputSize=inputSize, prev_page = prev_page, Identity = username))
 
     # process POST requests
     if request.method == 'POST':
@@ -120,12 +125,12 @@ def input_size():
             # nPop = inputSize.NPop.data
             # nPlant = inputSize.NPlant.data
             # lifeSpan = inputSize.LifeSpan.data
-            APP.logger.info("validation succeed! Transfer to {}".format(url_for('population_input')))
-            return(redirect(url_for('population_input')))
+            APP.logger.info("validation succeed! Transfer to {}".format(url_for(next_page)))
+            return(redirect(url_for(next_page)))
         else:
             # if validate fails, print out errors to web page and log
             APP.logger.info("validation failed! Reload page input size")
-            return(render_template('input_size.html', inputSize=inputSize))
+            return(render_template('input_size.html', inputSize=inputSize, prev_page = prev_page))
 
 #----------- webpage to ask for populations ------------------------------------------------------------------------------------------------------------
 class OnePopulation(FlaskForm):
@@ -142,6 +147,8 @@ class PopulationsForm(FlaskForm):
 def population_input():
     """ render webpage to ask for population input, save data to global populations (class PopulationsForm) 
         then redirect to plant_input """
+    next_page = 'tech_input'
+    prev_page = 'input_size'
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -168,7 +175,7 @@ def population_input():
                 populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']
                 populations.rows[i].lat.data = existing_data[i]['lat']
                 populations.rows[i].lon.data = existing_data[i]['lon']
-        return(render_template('population_input.html', populations = populations))
+        return(render_template('population_input.html', populations = populations, prev_page = prev_page))
 
     # process POST requests
     if request.method == 'POST':
@@ -178,11 +185,11 @@ def population_input():
                 # if validation pass, save data to DB and redirect to next page
                 db.savePopulations(populations, username, current_project)
                 APP.logger.info('populations validation passed! user %s, project %s', username, current_project)
-                return(redirect(url_for('plant_input')))
+                return(redirect(url_for(next_page)))
             else:
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for population_input failed! user %s, project %s. Errors: {}', username, current_project, populations.errors)
-                return(render_template('population_input.html', populations = populations))
+                return(render_template('population_input.html', populations = populations, prev_page = prev_page))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
             numpops = db.getInputSize(username, current_project)['numpops']
@@ -190,7 +197,7 @@ def population_input():
                 populations.rows.append_entry({'r': i+1})
             populations = Parse.fill_populations(request.form['ExcelData'], populations)
             APP.logger.info('Lazy data parsed in populations form! user %s, project %s', username, current_project)
-            return(render_template('population_input.html', populations = populations))
+            return(render_template('population_input.html', populations = populations, prev_page = prev_page))
         else:
             abort(400, 'Unknown request')
 
@@ -209,6 +216,8 @@ class PlantsForm(FlaskForm):
 def plant_input():
     """ render webpage to ask for plants input, save data to global plants (class PlantsForm) 
         then redirect to tech_input """
+    prev_page = 'tech_input'
+    next_page = 'parameter_input'
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -233,7 +242,7 @@ def plant_input():
                 plants.rows[i].LocationName.data = existing_data[i]['name']
                 plants.rows[i].lat.data = existing_data[i]['lat']
                 plants.rows[i].lon.data = existing_data[i]['lon']
-        return(render_template('plant_input.html', plants = plants))
+        return(render_template('plant_input.html', plants = plants, prev_page = prev_page))
 
     # process POST request
     if request.method == 'POST':
@@ -243,11 +252,11 @@ def plant_input():
                 # if validation pass, save data to DB and redirect to next page
                 db.someFunctionSavetoDB(plants, username, current_project)
                 APP.logger.info('plants validation passed! user %s, project %s', username, current_project)
-                return(redirect(url_for('tech_input')))
+                return(redirect(url_for(next_page)))
             else:
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for plants_input failed! user %s, project %s. Errors: {}', username, current_project, plants.errors)
-                return(render_template('plant_input.html', plants = plants))
+                return(render_template('plant_input.html', plants = plants, prev_page = prev_page))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
             numplants = db.getInputSize(username, current_project)['numplants']
@@ -255,7 +264,7 @@ def plant_input():
                 numplants.rows.append_entry({'r': i+1})
             numplants = Parse.fill_plants(request.form['ExcelData'], plants)
             APP.logger.info('Lazy data parsed in plants form! user %s, project %s', username, current_project)
-            return(render_template('plant_input.html', plants = plants))
+            return(render_template('plant_input.html', plants = plants, prev_page = prev_page))
         else:
             abort(400, 'Unknown request')
 
@@ -290,6 +299,8 @@ def tech_input():
     """ render webpage to ask for plants input, save data to global techs (class TechnologiesForm) 
         then redirect to parameter_input"""
     global config
+    prev_page = 'population_input'
+    next_page = 'plant_input'
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -313,7 +324,7 @@ def tech_input():
                 'Medium': default_techs[t]['Medium'],
                 'Large': default_techs[t]['Large']
             })
-        return(render_template('tech_input.html', techs = tech_form))
+        return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page))
 
     # process POST request
     if request.method == 'POST':
@@ -325,14 +336,14 @@ def tech_input():
             # add additional tech data
             for i in range(tech_form.n_additional.data):
                 tech_form.additional_techs.rows.append_entry()
-            return(render_template('tech_input.html', techs = tech_form))
+            return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page))
         # process saving data command
         elif tech_form.submit.data:
             # TODO: data validation
             techs = misc.tech_combine(tech_form)
             someFunctionSavetoDB(techs, username, projectID) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
             APP.logger.info("transfer to {}".format(url_for('parameter_input')))
-            return(redirect(url_for('parameter_input')))        
+            return(redirect(url_for(next_page)))
         else:
             abort(400, 'Unknown request')
 
@@ -349,6 +360,8 @@ class ParamsForm(FlaskForm):
 @auth.login_required
 def parameter_input():
     """ render webpage to ask for parameter input, save data to global params (class ParamsForm) """
+    prev_page = 'plant_input'
+    next_page = 'review'
     username = auth.current_user.get_id()
     current_project = auth.current_user.get_project()
     if current_project is None:
@@ -364,14 +377,14 @@ def parameter_input():
     if request.method == 'GET':
         for p in default_params:
             params.rows.append_entry(p)            
-        return(render_template('param_input.html', params = params))
+        return(render_template('param_input.html', params = params, prev_page = prev_page))
 
     # process POST requests
     if request.method == 'POST':
         # TODO (M): data validation
         someFunctionSavetoDB(username, current_project)
-        APP.logger.info("transfer to {}".format(url_for('review')))
-        return(redirect(url_for('review')))
+        APP.logger.info("transfer to {}".format(url_for(next_page)))
+        return(redirect(url_for(next_page)))
 
 
 # ------------ review input data ----------------------------------------------------------------------------------------------------------------------------------
@@ -446,6 +459,11 @@ def register():
             someFunctionSavetoDB(fullname, username, password, email)
         else:
             abort(400, 'Unknown request')
+
+# ------------- Contact page (static) --------------------------------------------------------------------------------------------------------------------------------------------
+@APP.route('/contact', methods = ['GET'])
+def Contact():
+    return(render_template('Contact.html'))
 
 # --------------------- RUN SERVER ---------------------------------------------------------------------------------------------------------------------------------------#
 if __name__ == '__main__':

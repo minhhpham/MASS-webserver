@@ -25,7 +25,10 @@
 		</table>
 		
 		<br>
-		{{ params.submit }}
+		<p align="center">
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			{{ params.submit }} 
+		</p>
 	</form>
 
 

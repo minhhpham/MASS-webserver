@@ -13,7 +13,10 @@
 	   <li class="active">	<a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
 	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
-	   <li>					<a href="{{ url_for('index') }}">Contact</a></li>
+	   <li>					<a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
 	</ul>
 	</div>
 
@@ -43,7 +46,7 @@
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<table align="center">
 			<tr align="left">
-				<td>Project Name</td><td><input type="text" name="project_name"></td>
+				<td>Project Name</td><td><input required type="text" name="project_name"></td>
 			</tr>
 			<tr align="left">
 				<td>Project Description</td><td><textarea name="p_desc" rows="2" cols="50"></textarea></td>

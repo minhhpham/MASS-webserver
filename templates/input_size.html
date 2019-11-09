@@ -12,7 +12,10 @@
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('login') }}">Login</a></li>
 	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
-	   <li><a href="{{ url_for('index') }}">Contact</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
 	</ul>
 	</div>
 
@@ -38,7 +41,10 @@
 		<h2 align="center">What is the lifespan of your project?</h2>
 		<p align="center">{{ inputSize.LifeSpan }}</p>
 		<br><br>
-		<input type="submit" value="Next">
+		<p align="center">
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			<input type="submit" value="Next"> 
+		</p>
 	</form>
 
 
