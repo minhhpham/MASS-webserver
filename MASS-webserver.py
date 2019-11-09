@@ -2,7 +2,7 @@
 
 from flask import render_template, redirect, request, Flask, url_for, abort, send_from_directory
 from flask_wtf import FlaskForm, csrf
-from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField
+from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField, SelectField
 import yaml, sys, binascii, os, hashlib
 from server_scripts import Parse, misc
 from server_scripts import auth
@@ -130,7 +130,7 @@ def input_size():
         else:
             # if validate fails, print out errors to web page and log
             APP.logger.info("validation failed! Reload page input size")
-            return(render_template('input_size.html', inputSize=inputSize, prev_page = prev_page))
+            return(render_template('input_size.html', inputSize=inputSize, prev_page = prev_page, Identity = username))
 
 #----------- webpage to ask for populations ------------------------------------------------------------------------------------------------------------
 class OnePopulation(FlaskForm):
@@ -175,7 +175,7 @@ def population_input():
                 populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']
                 populations.rows[i].lat.data = existing_data[i]['lat']
                 populations.rows[i].lon.data = existing_data[i]['lon']
-        return(render_template('population_input.html', populations = populations, prev_page = prev_page))
+        return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
 
     # process POST requests
     if request.method == 'POST':
@@ -189,7 +189,7 @@ def population_input():
             else:
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for population_input failed! user %s, project %s. Errors: {}', username, current_project, populations.errors)
-                return(render_template('population_input.html', populations = populations, prev_page = prev_page))
+                return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
             numpops = db.getInputSize(username, current_project)['numpops']
@@ -197,7 +197,7 @@ def population_input():
                 populations.rows.append_entry({'r': i+1})
             populations = Parse.fill_populations(request.form['ExcelData'], populations)
             APP.logger.info('Lazy data parsed in populations form! user %s, project %s', username, current_project)
-            return(render_template('population_input.html', populations = populations, prev_page = prev_page))
+            return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
         else:
             abort(400, 'Unknown request')
 
@@ -208,6 +208,8 @@ class OnePlant(FlaskForm):
     LocationName = StringField('Location Name')
     lat = FloatField('Latitude')
     lon = FloatField('Longitude')
+    existing_location = BooleanField('Existing Location?')
+    existing_tech = SelectField('Technology at existing location')
 class PlantsForm(FlaskForm):
     rows = FieldList(FormField(OnePlant), min_entries = 0)
 
@@ -232,6 +234,7 @@ def plant_input():
             numplants = existing_data['numplants']
             for i in range(numplants):
                 plants.rows.append_entry({'r': i+1})
+                plants.rows[i].existing_tech.choices = [(1,'N/A'), (2,'TEST')]
         else: # throw error
             abort(400, 'Number of plants not given')
         # Find existing data in the plants table
@@ -256,7 +259,7 @@ def plant_input():
             else:
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for plants_input failed! user %s, project %s. Errors: {}', username, current_project, plants.errors)
-                return(render_template('plant_input.html', plants = plants, prev_page = prev_page))
+                return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
             numplants = db.getInputSize(username, current_project)['numplants']
@@ -264,7 +267,7 @@ def plant_input():
                 numplants.rows.append_entry({'r': i+1})
             numplants = Parse.fill_plants(request.form['ExcelData'], plants)
             APP.logger.info('Lazy data parsed in plants form! user %s, project %s', username, current_project)
-            return(render_template('plant_input.html', plants = plants, prev_page = prev_page))
+            return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
         else:
             abort(400, 'Unknown request')
 
@@ -324,7 +327,7 @@ def tech_input():
                 'Medium': default_techs[t]['Medium'],
                 'Large': default_techs[t]['Large']
             })
-        return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page))
+        return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, Identity = username))
 
     # process POST request
     if request.method == 'POST':
@@ -336,7 +339,7 @@ def tech_input():
             # add additional tech data
             for i in range(tech_form.n_additional.data):
                 tech_form.additional_techs.rows.append_entry()
-            return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page))
+            return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, Identity = username))
         # process saving data command
         elif tech_form.submit.data:
             # TODO: data validation
@@ -377,7 +380,7 @@ def parameter_input():
     if request.method == 'GET':
         for p in default_params:
             params.rows.append_entry(p)            
-        return(render_template('param_input.html', params = params, prev_page = prev_page))
+        return(render_template('param_input.html', params = params, prev_page = prev_page, Identity = username))
 
     # process POST requests
     if request.method == 'POST':
@@ -397,7 +400,7 @@ def review():
 
     if request.method == 'GET':
         return(render_template('review.html', nPop = nPop, nPlant = nPlant, lifeSpan = lifeSpan,
-            populations = populations, plants = plants, techs = techs, params = params))
+            populations = populations, plants = plants, techs = techs, params = params, Identity = username))
 
 # ------------ run optimizer -------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/run_optimizer', methods = ['POST'])
