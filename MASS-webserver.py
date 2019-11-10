@@ -238,7 +238,7 @@ def plant_input():
         else: # throw error
             abort(400, 'Number of plants not given')
         # Find existing data in the plants table
-        existing_data = db.someFunctionQueryDB(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        existing_data = db.getPopulations(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
         # fill in existing data to populations form
         if existing_data is not None:
             for i in range(min(len(existing_data), numpops)):
@@ -253,7 +253,7 @@ def plant_input():
             # process saving data command
             if plants.validate():
                 # if validation pass, save data to DB and redirect to next page
-                db.someFunctionSavetoDB(plants, username, current_project)
+                db.savePlants(plants, username, current_project)
                 APP.logger.info('plants validation passed! user %s, project %s', username, current_project)
                 return(redirect(url_for(next_page)))
             else:
@@ -314,7 +314,7 @@ def tech_input():
     tech_form = CombinedForm(n_additional = 0)
 
 
-    existing_data = someFunctionQueryDB(username, current_project) # give me everything in the DB
+    existing_data = db.getTechnologies(username, current_project) # give me everything in the DB
     # TODO (M): pre-fill form data with data from database
 
     # process GET request
@@ -344,7 +344,7 @@ def tech_input():
         elif tech_form.submit.data:
             # TODO: data validation
             techs = misc.tech_combine(tech_form)
-            someFunctionSavetoDB(techs, username, projectID) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
+            db.saveTechnologies(techs, username, current_project) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
             APP.logger.info("transfer to {}".format(url_for('parameter_input')))
             return(redirect(url_for(next_page)))
         else:
@@ -373,7 +373,7 @@ def parameter_input():
     default_params = config['params']
     params = ParamsForm()
 
-    existing_data = someFunctionQueryDB(username, current_project) # give me everything in the DB
+    existing_data = db.getParams(username, current_project) # give me everything in the DB
     # TODO (M): pre-fill form data with data from database
 
     # process GET requests
@@ -385,7 +385,7 @@ def parameter_input():
     # process POST requests
     if request.method == 'POST':
         # TODO (M): data validation
-        someFunctionSavetoDB(username, current_project)
+        db.saveParams(params, username, current_project)
         APP.logger.info("transfer to {}".format(url_for(next_page)))
         return(redirect(url_for(next_page)))
 
@@ -459,7 +459,9 @@ def register():
             username = request.form['username']
             password = request.form['password']
             email = request.form['email']
-            someFunctionSavetoDB(fullname, username, password, email)
+            success = db.registerUser(fullname, username, password, email)
+            if not success:
+                pass # Handle error 
         else:
             abort(400, 'Unknown request')
 
