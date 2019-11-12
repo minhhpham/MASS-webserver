@@ -85,6 +85,8 @@ def init_table(table_name):
 									LocationName		varchar(255), -- represent Cluster name
 									lat					float, -- represent Latitude
 									lon					float, -- represent Longitude
+									existing_location	boolean,
+									existing_tech		varchar(255),
 									PRIMARY KEY(username, project_name, index)
 								)
 					""")
@@ -94,7 +96,7 @@ def init_table(table_name):
 									username	varchar(255),
 									project_name varchar(255),
 									index 		int,
-									type		varchar(255),
+									default_tech	BOOLEAN NOT NULL,
 									TechnologyName varchar(255),
 									Scale		varchar(255),
 									Capkt		float,
@@ -257,8 +259,8 @@ def savePlants(plants, username, project_name):
 		index = 0
 		for r in plants.rows:
 			index = index + 1
-			vals = (username, project_name, index, r.LocationName.data, r.lat.data, r.lon.data)
-			cursor.execute('''INSERT INTO plants VALUES (%s, %s, %s, %s, %s, %s)
+			vals = (username, project_name, index, r.LocationName.data, r.lat.data, r.lon.data, r.existing_location.data, r.existing_tech.data)
+			cursor.execute('''INSERT INTO plants VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
 				ON CONFLICT (username, project_name, index) DO
 				UPDATE SET locationname=EXCLUDED.locationname, lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
 	except(psycopg2.DatabaseError) as error:
@@ -303,20 +305,48 @@ def getTechnologies(username, project_name):
 	cursor.close()
 	return vals
 
+def getSelectedTechnologies(username, project_name):
+	""" Get technologies that were selected by user after submitting tech form """
+	techs_db = getTechnologies(username, project_name)
+	output = [('1', 'N/A')] # initialize output set
+	for r in techs_db:
+		techs_found = [o[1] for o in output]
+		if r['technologyname'] not in techs_found:
+			# append this new tech to output
+			output.append((str(len(output)+1), r['technologyname']))
+	return(output)
+
 # Insert technologies table, update if present
 # Technologies is a technologiesform object
 def saveTechnologies(tech, username, project_name):
+	# wipe existing data
+	try:
+		cursor = conn.cursor()
+		cursor.execute('''DELETE FROM technologies WHERE username = %s AND project_name = %s''', [username, project_name])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
 	# insert data
 	try:
 		cursor = conn.cursor()
 
 		index = 0
-		# for r in tech.rows:
-			# index = index + 1
-			# vals = (username, project_name, index, r.type.data, r.TechnologyName.data, r.lon.data)
-			# cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-				# ON CONFLICT (username, project_name, index) DO
-				# UPDATE SET locationname=EXCLUDED.locationname, lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
+		for r in tech.rows:
+			# insert small scale
+			index = index + 1
+			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Small',
+					r.Small.Capkt.data.data, r.Small.CCkt.data.data, r.Small.OCt.data.data, r.Small.SRWt.data.data, r.Small.GPt.data.data)
+			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+			# insert medium scale
+			index = index + 1
+			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Medium',
+					r.Medium.Capkt.data.data, r.Medium.CCkt.data.data, r.Medium.OCt.data.data, r.Medium.SRWt.data.data, r.Medium.GPt.data.data)
+			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+			# insert large scale
+			index = index + 1
+			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Large',
+					r.Large.Capkt.data.data, r.Large.CCkt.data.data, r.Large.OCt.data.data, r.Large.SRWt.data.data, r.Large.GPt.data.data)
+			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server

@@ -2,12 +2,29 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	<h1 align="center">Please review your inputs</h1>
 	<br>
+	<h2 align="center">Project {{ project_name }}</h2>
 	<!-- input size ----------------------------------------------------------------------------------------->
 	<table class=blueTable align="center">
 		<tr>
@@ -29,18 +46,21 @@
 	<table class=blueTable align="center">
 		<tr> <!-- Table headers  -->
 			<th> Index </th> 
-			<th>{{ populations.rows[0].Name.label }}</th> 
-			<th>{{ populations.rows[0].Pr.label }}</th> 
-			<th>{{ populations.rows[0].lat.label }}</th> 
-			<th>{{ populations.rows[0].lon.label }}</th> 
+			<th> Cluster Name </th> 
+			<th> Current Population </th> 
+			<th> Population Growth Rate </th> 
+			<th> Latitude </th> 
+			<th> Longitude </th> 
+			<th></th> 
 		</tr>
-		{% for r in populations.rows %}
+		{% for r in populations %}
 		<tr> <!-- Table rows -->
-			<td>{{ loop.index }}</td>
-			<td>{{ r.Name.data }}</td>
-			<td>{{ r.Pr.data }}</td>
-			<td>{{ r.lat.data }}</td> 
-			<td>{{ r.lon.data }}</td>
+			<td>{{ r['index'] }}</td>
+			<td>{{ r['name'] }}</td>
+			<td>{{ r['pr'] }}</td>
+			<td>{{ r['growthrate'] }}</td>
+			<td>{{ r['lat'] }}</td> 
+			<td>{{ r['lon'] }}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -50,16 +70,20 @@
 	<table class=blueTable align="center">
 		<tr> <!-- Table headers  -->
 			<th> Index </th> 
-			<th>{{ plants.rows[0].LocationName.label }}</th> 
-			<th>{{ plants.rows[0].lat.label }}</th> 
-			<th>{{ plants.rows[0].lon.label }}</th> 
+			<th> Location Name </th> 
+			<th> Latitude </th> 
+			<th> Longitude</th> 
+			<th> Existing Location? </th>
+			<th> Existing Technology </th>
 		</tr>
-		{% for r in plants.rows %}
+		{% for r in plants %}
 		<tr> <!-- Table rows -->
-			<td>{{ loop.index }}</td>
-			<td>{{ r.LocationName.data }}</td>
-			<td>{{ r.lat.data }}</td> 
-			<td>{{ r.lon.data }}</td>
+			<td>{{ r['index'] }}</td>
+			<td>{{ r['locationname'] }}</td>
+			<td>{{ r['lat'] }}</td> 
+			<td>{{ r['lon'] }}</td>
+			<td>{{ r['existing_location'] }}</td>
+			<td>{{ r['existing_tech'] }}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -67,42 +91,48 @@
 	<!-- Technologies  ------------------------------------------------------------------------------------------->
 	<h2 align="center"> Technologies </h2>
 	<table class=blueTable align="center">
-		{% if techs.rows.__len__() > 0 %}
+		{% if techs|length > 0 %}
 			<tr> <!-- Table headers  -->
 				<th> Technology </th> 
 				<th> Scale </th>
-				<th>{{ techs.rows[0].Small.Capkt.label }}</th>
-				<th>{{ techs.rows[0].Small.CCkt.label }}</th>
-				<th>{{ techs.rows[0].Small.OCt.label }}</th>
-				<th>{{ techs.rows[0].Small.SRWt.label }}</th>
-				<th>{{ techs.rows[0].Small.GPt.label }}</th>
+				<th> Capkt (m3/year) </th>
+				<th> CCkt ($/(m3/year))</th>
+				<th> OCt ($/m3) </th>
+				<th> SRWt ($/m3) </th>
+				<th> GPt (gr CO2-eq/m3) </th>
 			</tr> 			
-			{% for r in techs.rows %}
-				<tr>
-					<td rowspan="3">{{ r.Technology.data.data }}</td>
-					<td>Small</td> 
-					<td>{{ r.Small.data.Capkt.data }}</td> 
-					<td>{{ r.Small.data.CCkt.data }}</td> 
-					<td>{{ r.Small.data.OCt.data }}</td>
-					<td>{{ r.Small.data.SRWt.data }}</td> 
-					<td>{{ r.Small.data.GPt.data }}</td>
-				</tr>
-				<tr>
-					<td>Medium</td> 
-					<td>{{ r.Medium.data.Capkt.data }}</td> 
-					<td>{{ r.Medium.data.CCkt.data }}</td> 
-					<td>{{ r.Medium.data.OCt.data }}</td>
-					<td>{{ r.Medium.data.SRWt.data }}</td> 
-					<td>{{ r.Medium.data.GPt.data }}</td> 								
-				</tr>
-				<tr>
-					<td>Large</td> 
-					<td>{{ r.Large.data.Capkt.data }}</td> 
-					<td>{{ r.Large.data.CCkt.data }}</td> 
-					<td>{{ r.Large.data.OCt.data }}</td>
-					<td>{{ r.Large.data.SRWt.data }}</td> 
-					<td>{{ r.Large.data.GPt.data }}</td> 								
-				</tr>
+			{% for r in techs %}
+				{% if r['scale'] == 'Small' %}
+					<tr>
+						<td rowspan="3">{{ r['technologyname'] }}</td>
+						<td> Small </td> 
+						<td>{{ r['capkt'] }}</td> 
+						<td>{{ r['cckt'] }}</td> 
+						<td>{{ r['oct'] }}</td>
+						<td>{{ r['srwt'] }}</td> 
+						<td>{{ r['gpt'] }}</td>
+					</tr>
+				{% endif %}
+				{% if r['scale'] == 'Medium' %}
+					<tr>
+						<td> Medium </td> 
+						<td>{{ r['capkt'] }}</td> 
+						<td>{{ r['cckt'] }}</td> 
+						<td>{{ r['oct'] }}</td>
+						<td>{{ r['srwt'] }}</td> 
+						<td>{{ r['gpt'] }}</td>
+					</tr>
+				{% endif %}								
+				{% if r['scale'] == 'Large' %}
+					<tr>
+						<td> Large </td> 
+						<td>{{ r['capkt'] }}</td> 
+						<td>{{ r['cckt'] }}</td> 
+						<td>{{ r['oct'] }}</td>
+						<td>{{ r['srwt'] }}</td> 
+						<td>{{ r['gpt'] }}</td>
+					</tr>
+				{% endif %}
 			{% endfor %}
 		{% endif %}
 	</table>
@@ -111,15 +141,15 @@
 	<h2 align="center"> Parameters </h2>
 	<table class=blueTable align="center">
 		<tr> <!-- Table headers  -->
-			<th>{{ params.rows[0].Label.label }}</th> 
-			<th>{{ params.rows[0].Unit.label }}</th> 
-			<th>{{ params.rows[0].Value.label }}</th> 				
+			<th> label </th> 
+			<th> Unit </th> 
+			<th> Value </th> 				
 		</tr>
-		{% for r in params.rows %}
+		{% for r in params %}
 		<tr> <!-- Table rows -->
-			<td>{{ r.Label.data }}</td>
-			<td>{{ r.Unit.data }}</td>
-			<td>{{ r.Value.data }}</td> 
+			<td>{{ r['label'] }}</td>
+			<td>{{ r['unit'] }}</td>
+			<td>{{ r['value'] }}</td> 
 		</tr>
 		{% endfor %}
 	</table>
@@ -127,7 +157,7 @@
 	<!-- RUN -->
 	<h2 align="center">Ready to run optimizer?</h2>
 	<form method="POST" action="{{ url_for('run_optimizer') }}" align="center">
-		{{ params.csrf_token }}
+		<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 		<input name="command" type="submit" value="Run optimizer">		
 	</form>
 

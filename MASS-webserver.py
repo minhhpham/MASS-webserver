@@ -188,7 +188,7 @@ def population_input():
                 return(redirect(url_for(next_page)))
             else:
                 # if validation fails, print out errors to web page
-                APP.logger.info('validation for population_input failed! user %s, project %s. Errors: {}', username, current_project, populations.errors)
+                APP.logger.info('validation for population_input failed! user %s, project %s. Errors: %s', username, current_project, str(populations.errors))
                 return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
@@ -226,30 +226,40 @@ def plant_input():
         abort(400, 'No project selected')
     plants = PlantsForm()
 
+    # find the technology choices for the form
+    tech_choices = db.getSelectedTechnologies(username, current_project)
+    if len(tech_choices)==0:
+        abort(400, 'No technology data was found to create plant form. Perhaps you did not submit the tech_input form.')
+
+
     # process GET request
     if request.method == 'GET':
-        # If numpops exist, create the form with numpops rows
+        # If numplants exist, create the form with numplants rows
         existing_data = db.getInputSize(username, current_project)
         if existing_data['numplants'] is not None and existing_data['numplants'] > 0:
             numplants = existing_data['numplants']
             for i in range(numplants):
                 plants.rows.append_entry({'r': i+1})
-                plants.rows[i].existing_tech.choices = [(1,'N/A'), (2,'TEST')]
+                plants.rows[i].existing_tech.choices = tech_choices
         else: # throw error
             abort(400, 'Number of plants not given')
         # Find existing data in the plants table
-        existing_data = db.getPopulations(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        existing_data = db.getPlants(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
         # fill in existing data to populations form
         if existing_data is not None:
-            for i in range(min(len(existing_data), numpops)):
-                plants.rows[i].LocationName.data = existing_data[i]['name']
+            for i in range(min(len(existing_data), numplants)):
+                plants.rows[i].LocationName.data = existing_data[i]['locationname']
                 plants.rows[i].lat.data = existing_data[i]['lat']
                 plants.rows[i].lon.data = existing_data[i]['lon']
-        return(render_template('plant_input.html', plants = plants, prev_page = prev_page))
+        return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
 
     # process POST request
     if request.method == 'POST':
         if request.form['command'] == 'Next':
+            # set tech choices for data validation
+            numplants = db.getInputSize(username, current_project)['numplants']
+            for i in range(numplants):
+                plants.rows[i].existing_tech.choices = tech_choices
             # process saving data command
             if plants.validate():
                 # if validation pass, save data to DB and redirect to next page
@@ -258,7 +268,7 @@ def plant_input():
                 return(redirect(url_for(next_page)))
             else:
                 # if validation fails, print out errors to web page
-                APP.logger.info('validation for plants_input failed! user %s, project %s. Errors: {}', username, current_project, plants.errors)
+                APP.logger.info('validation for plants_input failed! user %s, project %s. Errors: %s', username, current_project, str(plants.errors))
                 return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
@@ -285,6 +295,7 @@ class OneTech(FlaskForm):
     Small = FormField(OneScale)
     Medium = FormField(OneScale)
     Large = FormField(OneScale)
+    default_tech = BooleanField('Does this belong to default tech?')
 class TechnologiesForm(FlaskForm):    
     rows = FieldList(FormField(OneTech), min_entries = 0)    
     
@@ -313,13 +324,9 @@ def tech_input():
     default_techs = config['techs']
     tech_form = CombinedForm(n_additional = 0)
 
-
-    existing_data = db.getTechnologies(username, current_project) # give me everything in the DB
-    # TODO (M): pre-fill form data with data from database
-
     # process GET request
     if request.method == 'GET':
-        # fill in default techs numbers to the form object
+        # initialize form with default tech data from config file
         for t in default_techs:
             tech_form.default_techs.rows.append_entry({
                 'Technology': t,
@@ -327,6 +334,9 @@ def tech_input():
                 'Medium': default_techs[t]['Medium'],
                 'Large': default_techs[t]['Large']
             })
+        # fill in data from database to the form object
+        existing_data = db.getTechnologies(username, current_project) # give me everything in the DB
+        tech_form = misc.fill_dbdata_tech(tech_form, existing_data)
         return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, Identity = username))
 
     # process POST request
@@ -391,21 +401,34 @@ def parameter_input():
 
 
 # ------------ review input data ----------------------------------------------------------------------------------------------------------------------------------
-@APP.route('/review', methods = ['POST', 'GET'])
+@APP.route('/review', methods = ['GET'])
 @auth.login_required
 def review():
     """ review input data before running optimizer
         TODO: create links for editing data """
-    global nPop, nPlant, lifeSpan, populations, plants, techs, params
+    prev_page = 'parameter_input'
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
+    ### first pull data from db ###
+    input_size = db.getInputSize(username, current_project)
+    populations = db.getPopulations(username, current_project)
+    plants = db.getPlants(username, current_project)
+    techs = db.getTechnologies(username, current_project)
+    params = db.getParams(username, current_project)
+
+    # global nPop, nPlant, lifeSpan, populations, plants, techs, params
 
     if request.method == 'GET':
-        return(render_template('review.html', nPop = nPop, nPlant = nPlant, lifeSpan = lifeSpan,
-            populations = populations, plants = plants, techs = techs, params = params, Identity = username))
+        return(render_template('review.html', nPop = input_size['numpops'], nPlant = input_size['numplants'], lifeSpan = input_size['durations'],
+            populations = populations, plants = plants, techs = techs, params = params, Identity = username, project_name = current_project))
 
 # ------------ run optimizer -------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/run_optimizer', methods = ['POST'])
 @auth.login_required
 def run_optimizer():
+    return('TBA')
     global nPop, nPlant, lifeSpan, populations, plants, techs, params
     if request.form['command'] == 'Run optimizer':
         misc.write_excel(populations, plants, techs, params, APP.config['UPLOAD_FOLDER'], filename = 'Data.xls')

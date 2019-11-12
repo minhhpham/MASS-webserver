@@ -23,6 +23,16 @@
 
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
+	{% if plants.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in plants.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li><font color="red">{{ plants[field_name].label }}: {{ error }}</font></li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+	{% endif %}
+	<br>
 	<h1 align="center">Input your plants</h1>
 	<form method="POST" action="{{ url_for('plant_input') }}" align="center">
 		{{ plants.csrf_token }}

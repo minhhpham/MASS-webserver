@@ -2,9 +2,35 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+	<br>
+	{% if techs.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in techs.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li><font color="red">{{ techs[field_name].label }}: {{ error }}</font></li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+	{% endif %}
 	<br>
 	<h1 align="center">Select technologies from the list below</h1>
 	<br>
@@ -101,7 +127,10 @@
 				{% endfor %}
 			{% endif %}
 		</table>
-	{{ techs.submit }}
+	<p align="center">
+		<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+		{{ techs.submit }}
+	</p>
 	</form>
 	<br>
 </body>
