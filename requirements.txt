@@ -3,3 +3,5 @@ flask
 WTForms
 flask_wtf
 xlwt
+flask-login
+psycopg2

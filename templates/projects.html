@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+</head>
+<body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li>					<a href="{{ url_for('index') }}">Home</a></li>
+	   <li class="active">	<a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
+	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li>					<a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+	<br>
+	<h2 align="center"> Select from existing Projects: </h2>
+	<form align="center" method="POST" action="{{ url_for('projects') }}">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		<table class=blueTable align="center">
+			<tr> <!-- Table headers  -->
+				<th>Project Name</th> 
+				<th>Project Description</th> 
+			</tr>
+			{% for p in existing_projects %}
+			<tr> <!-- Table rows -->	
+					<td>
+						<input type="submit" name="select project" value="{{ p['project_name'] }}" style="background:none;border:none;color:#069;text-decoration:underline;cursor: pointer;">
+					</td>
+					<td>{{ p['p_desc'] }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</form>
+	<br>
+	<h2 align="center">Or create a new project:</h2>
+	<form align="center" method="POST" action="{{ url_for('projects') }}">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		<table align="center">
+			<tr align="left">
+				<td>Project Name</td><td><input required type="text" name="project_name"></td>
+			</tr>
+			<tr align="left">
+				<td>Project Description</td><td><textarea name="p_desc" rows="2" cols="50"></textarea></td>
+			</tr>
+		</table>
+		<br>
+		<p align="center"><input type="submit" value="Create project" name="command"></p>
+	</form>
+
+</body>
+</html>

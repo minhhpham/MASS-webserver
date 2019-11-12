@@ -2,9 +2,35 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+	<br>
+	{% if populations.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in populations.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li><font color="red">{{ populations[field_name].label }}: {{ error }}</font></li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+	{% endif %}
 	<br>
 	<h1 align="center">Input your populations</h1>
 	<br>
@@ -32,7 +58,10 @@
 		</table>
 		
 		<br>
-		<input type="submit" name = "command" value="Next">
+		<p align="center">
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			<input type="submit" name = "command" value="Next">
+		</p>
 	</form>
 
 	<!-- lazy method: paste data from excel and parse -->
@@ -40,9 +69,9 @@
 	<h4 align="center">If you do not want to type the inputs one-by-one, just copy and paste the data from Excel and I will try to parse the inputs for you. (do not include the headers)</h2>
 	<form action="{{ url_for('population_input') }}" method="POST" align = "center">
 		{{ populations.csrf_token }}
-    	<textarea name="ExcelData" rows="5" cols="70"></textarea>
+    	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
     	<br>
-    	<input type="submit" name="command" value="Parse">
+    	<p align="center"><input type="submit" name="command" value="Parse"></p>
 	</form>
 
 

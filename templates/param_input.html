@@ -2,9 +2,25 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	<h1 align="center">Input your parameters</h1>
 	<form method="POST" action="{{ url_for('parameter_input') }}" align="center">
@@ -25,7 +41,10 @@
 		</table>
 		
 		<br>
-		{{ params.submit }}
+		<p align="center">
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			{{ params.submit }} 
+		</p>
 	</form>
 
 

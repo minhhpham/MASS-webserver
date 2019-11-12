@@ -2,19 +2,54 @@
 <html>
 <head>
 	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='HelpTips.css') }}">
 </head>
 <body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+	<br>
+	{% if plants.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in plants.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li><font color="red">{{ plants[field_name].label }}: {{ error }}</font></li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+	{% endif %}
 	<br>
 	<h1 align="center">Input your plants</h1>
 	<form method="POST" action="{{ url_for('plant_input') }}" align="center">
 		{{ plants.csrf_token }}
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
-				<th> Index </th> 
+				<th> Index 
+					<div class="help-tip"><p>If you have an existing location that you do not want to modify, please do NOT include it. If you have an existing location that you want to change the scale but keep the existing technology, please check the box on the fifth column and select the technology. If you have an existing location but you are willing to implement a new technlogy on it, please check the box on the fifth columns and leave the sixth column empty. </p></div>
+				</th> 
 				<th>{{ plants.rows[0].LocationName.label }}</th> 
 				<th>{{ plants.rows[0].lat.label }}</th> 
 				<th>{{ plants.rows[0].lon.label }}</th> 
+				<th>{{ plants.rows[0].existing_location.label }}
+					<div class="help-tip"><p>Is this location currently operating?</p></div>
+				</th>
+				<th>{{ plants.rows[0].existing_tech.label }}
+					<div class="help-tip"><p>What is the technology used in this current location (N/A for non-current location or you are willing to change the technology for a current location)?. Should be one of the selected technologies in the previous page</p></div>
+				</th>
 			</tr>
 			{% for r in plants.rows %}
 			<tr> <!-- Table rows -->
@@ -22,11 +57,16 @@
 				<td>{{ r.LocationName }}</td>
 				<td>{{ r.lat }}</td> 
 				<td>{{ r.lon }}</td>
+				<td>{{ r.existing_location }}</td>
+				<td>{{ r.existing_tech }}</td>
 			</tr>
 			{% endfor %}
 		</table>
 		<br>
-		<input type="submit" name="command" value="Next">
+		<p align="center">
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			<input type="submit" name="command" value="Next">
+		</p>
 	</form>
 
 	<!-- lazy method: paste data from excel and parse -->
@@ -34,9 +74,9 @@
 	<h4 align="center">If you do not want to type the inputs one-by-one, just copy and paste the data from Excel and I will try to parse the inputs for you. (do not include the headers)</h2>
 	<form action="{{ url_for('plant_input') }}" method="POST" align = "center">
 		{{ plants.csrf_token }}
-    	<textarea name="ExcelData" rows="5" cols="70"></textarea>
+    	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
     	<br>
-    	<input type="submit" name="command" value="Parse">
+    	<p align="center"><input type="submit" name="command" value="Parse"></p>
 	</form>
 
 </body>

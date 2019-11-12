@@ -1,3 +1,10 @@
+# Database config
+db:
+  dbname: 'optimizerdb'
+  user: 'optimizer'
+  password: '123456'
+  port: 5432
+
 # Available Technologies:
 techs:
   Bardenpho:

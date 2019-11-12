@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+
+</head>
+<body>
+    <!-- NAVIGATION BAR -->
+    <div id='cssmenu'>
+    <ul>
+       <li>                 <a href="{{ url_for('index') }}">Home</a></li>
+       <li>                 <a href="{{ url_for('projects') }}">Projects</a></li>
+       <li class="active">  <a href="{{ url_for('login') }}">Login</a></li>
+       <li>                 <a href="{{ url_for('logout') }}">Logout</a></li>
+       <li>                 <a href="{{ url_for('Contact') }}">Contact</a></li>
+    </ul>
+    </div>
+
+    <!-- NAVIGATION BAR ENDS -->
+	<br>
+    <h2 align="center"> Create a new user account </h2>
+    <form action="{{ url_for('register') }}" method="POST">        
+    	<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+        <table align="center">
+            <tr>
+                <td>First and Last name</td>   <td><input type=text name="fullname"></td>
+            </tr>
+            <tr>
+                <td>Username</td>              <td><input type=text name="username"></td>
+            </tr>
+            <tr>
+                <td>Password</td>              <td><input type=password name="password"></td>
+            </tr>
+            <tr>
+                <td>Email</td>                 <td><input type=text name="email"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+
+            

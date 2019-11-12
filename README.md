@@ -1,9 +1,12 @@
 # Install requirements
- * Install Python (either version 2 or 3.6+) and python-pip.
+ * Install Python 3 and python-pip3. For example, `sudo apt-get install python3`
+ * Install PostgreSQL. For example, `sudo apt-get install postgresql`
+ * Start PosgreSQL and configure database information in `server_config.yaml`
  * Clone/Download this repository: `git clone https://github.com/minhhpham/MASS-webserver/webapp`
  * `cd MASS-webserver`
- * Use `pip` or `pip3` depending on your version: `pip install -r requirements.txt`
+ * `pip3 install -r requirements.txt`
  * Use `python` or `python3` depending on version: `sudo python setup.py`
+
 
 # Run
  * Run in Debug or Development mode: `python MASS-webserver.py`

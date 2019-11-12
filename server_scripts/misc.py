@@ -2,9 +2,80 @@ from math import sin, cos, acos, radians
 from xlwt import Workbook
 from flask_wtf import FlaskForm, csrf
 from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField
-import os
-	
+import os, yaml
+
+global config    # initialized in MASS-webserver.py
+with open("server_config.yaml", 'r') as stream:
+    try:
+        config = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+        sys.exit()
+
 """ HELPER FUNCTIONS """
+def fill_dbdata_tech(tech_form, existing_data):
+	""" Fill a CombinedForm object with existing data from database 
+		existing_data is a list of tuple from the db
+	"""
+	if len(existing_data) == 0: # no existing data in db
+		return(tech_form)
+
+	assert len(existing_data)%3 == 0
+
+	# loop through each tech in existing_data
+	for techid in range(int(len(existing_data)/3)):
+		row = techid*3 # rowid in existing_data
+		selected_tech = existing_data[row]['technologyname']
+		if selected_tech in config['techs'].keys():
+			# fill this in default_techs
+			for r in range(tech_form.default_techs.rows.__len__()):
+				if tech_form.default_techs.rows[r].Technology.data == selected_tech:
+					# fill this default tech's data
+					tech_form.default_techs.rows[r].Select.data = True
+					tech_form.default_techs.rows[r].Small.Capkt.data = existing_data[row]['capkt']
+					tech_form.default_techs.rows[r].Small.CCkt.data = existing_data[row]['cckt']
+					tech_form.default_techs.rows[r].Small.OCt.data = existing_data[row]['oct']
+					tech_form.default_techs.rows[r].Small.SRWt.data = existing_data[row]['srwt']
+					tech_form.default_techs.rows[r].Small.GPt.data = existing_data[row]['gpt']
+
+					tech_form.default_techs.rows[r].Medium.Capkt.data = existing_data[row+1]['capkt']
+					tech_form.default_techs.rows[r].Medium.CCkt.data = existing_data[row+1]['cckt']
+					tech_form.default_techs.rows[r].Medium.OCt.data = existing_data[row+1]['oct']
+					tech_form.default_techs.rows[r].Medium.SRWt.data = existing_data[row+1]['srwt']
+					tech_form.default_techs.rows[r].Medium.GPt.data = existing_data[row+1]['gpt']
+
+					tech_form.default_techs.rows[r].Large.Capkt.data = existing_data[row+2]['capkt']
+					tech_form.default_techs.rows[r].Large.CCkt.data = existing_data[row+2]['cckt']
+					tech_form.default_techs.rows[r].Large.OCt.data = existing_data[row+2]['oct']
+					tech_form.default_techs.rows[r].Large.SRWt.data = existing_data[row+2]['srwt']
+					tech_form.default_techs.rows[r].Large.GPt.data = existing_data[row+2]['gpt']
+
+		else:
+			# fill this in additional_techs
+			# first create a new row
+			tech_form.additional_techs.rows.append_entry()
+			r = tech_form.additional_techs.rows.__len__() - 1 # current row id in additional_techs
+			tech_form.additional_techs.rows[r].Technology.data = existing_data[row]['technologyname']
+
+			tech_form.additional_techs.rows[r].Small.Capkt.data = existing_data[row]['capkt']
+			tech_form.additional_techs.rows[r].Small.CCkt.data = existing_data[row]['cckt']
+			tech_form.additional_techs.rows[r].Small.OCt.data = existing_data[row]['oct']
+			tech_form.additional_techs.rows[r].Small.SRWt.data = existing_data[row]['srwt']
+			tech_form.additional_techs.rows[r].Small.GPt.data = existing_data[row]['gpt']
+
+			tech_form.additional_techs.rows[r].Medium.Capkt.data = existing_data[row+1]['capkt']
+			tech_form.additional_techs.rows[r].Medium.CCkt.data = existing_data[row+1]['cckt']
+			tech_form.additional_techs.rows[r].Medium.OCt.data = existing_data[row+1]['oct']
+			tech_form.additional_techs.rows[r].Medium.SRWt.data = existing_data[row+1]['srwt']
+			tech_form.additional_techs.rows[r].Medium.GPt.data = existing_data[row+1]['gpt']
+
+			tech_form.additional_techs.rows[r].Large.Capkt.data = existing_data[row+2]['capkt']
+			tech_form.additional_techs.rows[r].Large.CCkt.data = existing_data[row+2]['cckt']
+			tech_form.additional_techs.rows[r].Large.OCt.data = existing_data[row+2]['oct']
+			tech_form.additional_techs.rows[r].Large.SRWt.data = existing_data[row+2]['srwt']
+			tech_form.additional_techs.rows[r].Large.GPt.data = existing_data[row+2]['gpt']
+	# done looping through existing_data
+	return(tech_form)
 
 class OneScale(FlaskForm): # defining technology numbers in each scale
 	Capkt = FloatField('Capkt (m3/year)')
@@ -18,6 +89,7 @@ class OneTech(FlaskForm):
 	Small = FormField(OneScale)
 	Medium = FormField(OneScale)
 	Large = FormField(OneScale)
+	default_tech = BooleanField('Does this belong to default tech?')
 class TechnologiesForm(FlaskForm):	
 	rows = FieldList(FormField(OneTech), min_entries = 0)
 
@@ -28,9 +100,12 @@ def tech_combine(_techs):
 	selected_techs = TechnologiesForm()
 	for t in  _techs.default_techs.rows:
 		if t.Select.data: # if default tech is selected by user, add to selected_techs
+			t.default_tech.data = True	# identifier for database's boolean field
 			selected_techs.rows.append_entry(t)
+
 	if _techs.additional_techs.rows.__len__() > 0:
 		for t in _techs.additional_techs.rows:
+			t.default_tech.data = False # identifier for database's boolean field
 			selected_techs.rows.append_entry(t)
 	return(selected_techs)
 
@@ -91,31 +166,31 @@ def write_excel(populations, plants, techs, params, directory, filename):
 	t = 0
 	for techid in range(techs.rows.__len__()):
 		r = 3*techid		
-		sheet1.write_merge(r+1, r+3, 9, 9, techs.rows[techid].Technology.data.data)
+		sheet1.write_merge(r+1, r+3, 9, 9, techs.rows[techid].Technology.data)
 		t+=1
 		sheet1.write(r+1, 10, 'Small')
 		sheet1.write(r+1, 11, t)
-		sheet1.write(r+1, 12, techs.rows[techid].Small.Capkt.data.data)
-		sheet1.write(r+1, 13, techs.rows[techid].Small.CCkt.data.data)
-		sheet1.write(r+1, 14, techs.rows[techid].Small.OCt.data.data)
-		sheet1.write(r+1, 15, techs.rows[techid].Small.SRWt.data.data)
-		sheet1.write(r+1, 16, techs.rows[techid].Small.GPt.data.data)
+		sheet1.write(r+1, 12, techs.rows[techid].Small.Capkt.data)
+		sheet1.write(r+1, 13, techs.rows[techid].Small.CCkt.data)
+		sheet1.write(r+1, 14, techs.rows[techid].Small.OCt.data)
+		sheet1.write(r+1, 15, techs.rows[techid].Small.SRWt.data)
+		sheet1.write(r+1, 16, techs.rows[techid].Small.GPt.data)
 		t+=1
 		sheet1.write(r+2, 10, 'Medium')
 		sheet1.write(r+2, 11, t)
-		sheet1.write(r+2, 12, techs.rows[techid].Medium.Capkt.data.data)
-		sheet1.write(r+2, 13, techs.rows[techid].Medium.CCkt.data.data)
-		sheet1.write(r+2, 14, techs.rows[techid].Medium.OCt.data.data)
-		sheet1.write(r+2, 15, techs.rows[techid].Medium.SRWt.data.data)
-		sheet1.write(r+2, 16, techs.rows[techid].Medium.GPt.data.data)
+		sheet1.write(r+2, 12, techs.rows[techid].Medium.Capkt.data)
+		sheet1.write(r+2, 13, techs.rows[techid].Medium.CCkt.data)
+		sheet1.write(r+2, 14, techs.rows[techid].Medium.OCt.data)
+		sheet1.write(r+2, 15, techs.rows[techid].Medium.SRWt.data)
+		sheet1.write(r+2, 16, techs.rows[techid].Medium.GPt.data)
 		t+=1
 		sheet1.write(r+3, 10, 'Large')
 		sheet1.write(r+3, 11, t)
-		sheet1.write(r+3, 12, techs.rows[techid].Large.Capkt.data.data)
-		sheet1.write(r+3, 13, techs.rows[techid].Large.CCkt.data.data)
-		sheet1.write(r+3, 14, techs.rows[techid].Large.OCt.data.data)
-		sheet1.write(r+3, 15, techs.rows[techid].Large.SRWt.data.data)
-		sheet1.write(r+3, 16, techs.rows[techid].Large.GPt.data.data)
+		sheet1.write(r+3, 12, techs.rows[techid].Large.Capkt.data)
+		sheet1.write(r+3, 13, techs.rows[techid].Large.CCkt.data)
+		sheet1.write(r+3, 14, techs.rows[techid].Large.OCt.data)
+		sheet1.write(r+3, 15, techs.rows[techid].Large.SRWt.data)
+		sheet1.write(r+3, 16, techs.rows[techid].Large.GPt.data)
 
 	# write parameters to columns 17 to 19
 	sheet1.write(0, 17, 'Parameter'); sheet1.write(0, 18, 'Unit'); sheet1.write(0, 19, 'Value')
