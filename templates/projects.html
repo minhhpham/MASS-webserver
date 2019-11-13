@@ -4,6 +4,7 @@
 	<title>Water Reclamation System Planning</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='HelpTips.css') }}">
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -23,6 +24,10 @@
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	<h2 align="center"> Select from existing Projects: </h2>
+	<table align="center">
+		<tr><td><div class="help-tip" align="center"><p> We save data for each of your projects. You can come back later to review a project's data. You can submit computing requests for multiple projects, we have a computing queue for the optimizer and will notify you once calculation for a project is done. </p></div></td></tr>
+	</table>
+	<br>
 	<form align="center" method="POST" action="{{ url_for('projects') }}">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<table class=blueTable align="center">

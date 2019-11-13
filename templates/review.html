@@ -83,7 +83,7 @@
 			<td>{{ r['lat'] }}</td> 
 			<td>{{ r['lon'] }}</td>
 			<td>{{ r['existing_location'] }}</td>
-			<td>{{ r['existing_tech'] }}</td>
+			<td>{{ tech_choices[r['existing_tech']|int-1][1] }}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -158,7 +158,10 @@
 	<h2 align="center">Ready to run optimizer?</h2>
 	<form method="POST" action="{{ url_for('run_optimizer') }}" align="center">
 		<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
-		<input name="command" type="submit" value="Run optimizer">		
+		<p>
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			<input name="command" type="submit" value="Run optimizer">
+		</p>
 	</form>
 
 </body>

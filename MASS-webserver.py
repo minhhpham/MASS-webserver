@@ -251,6 +251,8 @@ def plant_input():
                 plants.rows[i].LocationName.data = existing_data[i]['locationname']
                 plants.rows[i].lat.data = existing_data[i]['lat']
                 plants.rows[i].lon.data = existing_data[i]['lon']
+                plants.rows[i].existing_location.data = existing_data[i]['existing_location']
+                plants.rows[i].existing_tech.data = existing_data[i]['existing_tech']
         return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
 
     # process POST request
@@ -274,7 +276,8 @@ def plant_input():
             # process parsing data command (lazy method for inputing data)
             numplants = db.getInputSize(username, current_project)['numplants']
             for i in range(numplants):
-                numplants.rows.append_entry({'r': i+1})
+                plants.rows.append_entry({'r': i+1})
+                plants.rows[i].existing_tech.choices = tech_choices
             numplants = Parse.fill_plants(request.form['ExcelData'], plants)
             APP.logger.info('Lazy data parsed in plants form! user %s, project %s', username, current_project)
             return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
@@ -401,7 +404,7 @@ def parameter_input():
 
 
 # ------------ review input data ----------------------------------------------------------------------------------------------------------------------------------
-@APP.route('/review', methods = ['GET'])
+@APP.route('/review', methods = ['GET', 'POST'])
 @auth.login_required
 def review():
     """ review input data before running optimizer
@@ -415,6 +418,7 @@ def review():
     input_size = db.getInputSize(username, current_project)
     populations = db.getPopulations(username, current_project)
     plants = db.getPlants(username, current_project)
+    tech_choices = db.getSelectedTechnologies(username, current_project)
     techs = db.getTechnologies(username, current_project)
     params = db.getParams(username, current_project)
 
@@ -422,7 +426,8 @@ def review():
 
     if request.method == 'GET':
         return(render_template('review.html', nPop = input_size['numpops'], nPlant = input_size['numplants'], lifeSpan = input_size['durations'],
-            populations = populations, plants = plants, techs = techs, params = params, Identity = username, project_name = current_project))
+            populations = populations, plants = plants, techs = techs, params = params, tech_choices = tech_choices,
+            prev_page = prev_page, Identity = username, project_name = current_project))
 
 # ------------ run optimizer -------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/run_optimizer', methods = ['POST'])

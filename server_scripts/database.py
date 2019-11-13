@@ -229,6 +229,13 @@ def getPopulations(username, project_name):
 # otherwise insert
 # populations has class PopulationsForm
 def savePopulations(populations, username, project_name):
+	# wipe existing data
+	try:
+		cursor = conn.cursor()
+		cursor.execute('''DELETE FROM populations WHERE username = %s AND project_name = %s''', [username, project_name])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
 	# insert data
 	try:
 		cursor = conn.cursor()
@@ -237,10 +244,7 @@ def savePopulations(populations, username, project_name):
 		for r in populations.rows:
 			index = index + 1
 			vals = (username, project_name, index, r.Name.data, r.Pr.data, r.GrowthRate.data, r.lat.data, r.lon.data)
-			cursor.execute('''INSERT INTO populations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-				ON CONFLICT (username, project_name, index) DO
-				UPDATE SET name=EXCLUDED.name, pr=EXCLUDED.pr, growthrate=EXCLUDED.growthrate, 
-				lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
+			cursor.execute('''INSERT INTO populations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 		
 	except(psycopg2.DatabaseError) as error:
 		print(error)
@@ -252,6 +256,13 @@ def savePopulations(populations, username, project_name):
 # Insert plants table, update if present
 # plants is a plantsform object
 def savePlants(plants, username, project_name):
+	# wipe existing data
+	try:
+		cursor = conn.cursor()
+		cursor.execute('''DELETE FROM plants WHERE username = %s AND project_name = %s''', [username, project_name])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
 	# insert data
 	try:
 		cursor = conn.cursor()
@@ -260,9 +271,8 @@ def savePlants(plants, username, project_name):
 		for r in plants.rows:
 			index = index + 1
 			vals = (username, project_name, index, r.LocationName.data, r.lat.data, r.lon.data, r.existing_location.data, r.existing_tech.data)
-			cursor.execute('''INSERT INTO plants VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-				ON CONFLICT (username, project_name, index) DO
-				UPDATE SET locationname=EXCLUDED.locationname, lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
+			print(vals)
+			cursor.execute('''INSERT INTO plants VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
