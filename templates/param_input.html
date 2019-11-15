@@ -33,8 +33,10 @@
 			</tr>
 			{% for r in params.rows %}
 			<tr> <!-- Table rows -->
-				<td>{{ r.Label }}</td>
-				<td>{{ r.Unit }}</td>
+				{{ r.Label(type="hidden") }}
+				{{ r.Unit(type="hidden") }}
+				<td>{{ r.Label.data }}</td>
+				<td>{{ r.Unit.data }}</td>
 				<td>{{ r.Value }}</td> 
 			</tr>
 			{% endfor %}

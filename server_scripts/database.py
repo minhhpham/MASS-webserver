@@ -343,18 +343,18 @@ def saveTechnologies(tech, username, project_name):
 		for r in tech.rows:
 			# insert small scale
 			index = index + 1
-			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Small',
-					r.Small.Capkt.data.data, r.Small.CCkt.data.data, r.Small.OCt.data.data, r.Small.SRWt.data.data, r.Small.GPt.data.data)
+			vals = (username, project_name, index, r.default_tech.data, r.Technology.data, 'Small',
+					r.Small.Capkt.data, r.Small.CCkt.data, r.Small.OCt.data, r.Small.SRWt.data, r.Small.GPt.data)
 			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 			# insert medium scale
 			index = index + 1
-			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Medium',
-					r.Medium.Capkt.data.data, r.Medium.CCkt.data.data, r.Medium.OCt.data.data, r.Medium.SRWt.data.data, r.Medium.GPt.data.data)
+			vals = (username, project_name, index, r.default_tech.data, r.Technology.data, 'Medium',
+					r.Medium.Capkt.data, r.Medium.CCkt.data, r.Medium.OCt.data, r.Medium.SRWt.data, r.Medium.GPt.data)
 			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 			# insert large scale
 			index = index + 1
-			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Large',
-					r.Large.Capkt.data.data, r.Large.CCkt.data.data, r.Large.OCt.data.data, r.Large.SRWt.data.data, r.Large.GPt.data.data)
+			vals = (username, project_name, index, r.default_tech.data, r.Technology.data, 'Large',
+					r.Large.Capkt.data, r.Large.CCkt.data, r.Large.OCt.data, r.Large.SRWt.data, r.Large.GPt.data)
 			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)

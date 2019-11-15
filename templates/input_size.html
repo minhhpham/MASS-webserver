@@ -2,6 +2,7 @@
 <html>
 <head>
 	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='HelpTips.css') }}">
 	<title>Water Reclamation System Planning</title>
 </head>
 <body>
@@ -32,21 +33,31 @@
     </ul>
 	{% endif %}
 	<br>
+	<h2 align="center">Project Information</h2>
 	<form method="POST" action="{{ url_for('input_size') }}" align="center" >
 		{{ inputSize.csrf_token }}
-		<h2 align="center">How many population clusters do you have?</h2>
-		<p align="center">{{ inputSize.NPop }}	</p>
-		<h2 align="center">How many candidate locations for implementation of plants do you have?</h2>
-		<p align="center">{{ inputSize.NPlant }}</p>
-		<h2 align="center">What is the lifespan of your project?</h2>
-		<p align="center">{{ inputSize.LifeSpan }}</p>
+		<table align="center">
+			<tr align="left">
+				<td> Total number of population clusters in the selected water service area: </td>
+				<td> {{ inputSize.NPop }} </td>
+			</tr>
+			<tr align="left">
+				<td>
+					Total number of candidate locations for implementation:
+					<div class="help-tip"><p>Including existing locations that you are willing to modify</p></div>
+				</td>
+				<td> {{ inputSize.NPlant }} </td>
+			</tr>
+			<tr align="left">
+				<td> Lifespan of the design: </td>
+				<td> {{ inputSize.LifeSpan }} </td>
+			</tr>
+		</table>
 		<br><br>
 		<p align="center">
 			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
 			<input type="submit" value="Next"> 
 		</p>
 	</form>
-
-
 </body>
 </html>

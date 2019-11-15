@@ -66,12 +66,16 @@
 
 	<!-- lazy method: paste data from excel and parse -->
 	<br><br>
-	<h4 align="center">If you do not want to type the inputs one-by-one, just copy and paste the data from Excel and I will try to parse the inputs for you. (do not include the headers)</h2>
+	<p align="center">
+		<strong> The data can also be copied and pasted from an Excel spreadsheet to the box below </strong>
+		<br>
+		<strong> (Excel table should have the same size as the table above and exclude the headers) </strong>
+	</p>
 	<form action="{{ url_for('population_input') }}" method="POST" align = "center">
 		{{ populations.csrf_token }}
     	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
     	<br>
-    	<p align="center"><input type="submit" name="command" value="Parse"></p>
+    	<p align="center"><input type="submit" name="command" value="Insert Data"></p>
 	</form>
 
 

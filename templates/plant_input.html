@@ -48,7 +48,7 @@
 					<div class="help-tip"><p>Is this location currently operating?</p></div>
 				</th>
 				<th>{{ plants.rows[0].existing_tech.label }}
-					<div class="help-tip"><p>What is the technology used in this current location (N/A for non-current location or you are willing to change the technology for a current location)?. Should be one of the selected technologies in the previous page</p></div>
+					<div class="help-tip"><p>What is the technology used in this current location? (N/A for non-current location or you are willing to change the technology for a current location) If a technology is not found in the drop-down list, click "Back" to return to the previous page and input that technology</p></div>
 				</th>
 			</tr>
 			{% for r in plants.rows %}
@@ -71,12 +71,16 @@
 
 	<!-- lazy method: paste data from excel and parse -->
 	<br><br>
-	<h4 align="center">If you do not want to type the inputs one-by-one, just copy and paste the data from Excel and I will try to parse the inputs for you. (You can ignore the last 2 columns. Do not include the headers)</h4>
+	<p align="center">
+		<strong> The data can also be copied and pasted from an Excel spreadsheet to the box below </strong>
+		<br>
+		<strong> (Excel table should have the same size as the table above minus the last two columns and exclude the headers) </strong>
+	</p>
 	<form action="{{ url_for('plant_input') }}" method="POST" align = "center">
 		{{ plants.csrf_token }}
     	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
     	<br>
-    	<p align="center"><input type="submit" name="command" value="Parse"></p>
+    	<p align="center"><input type="submit" name="command" value="Insert Data"></p>
 	</form>
 
 </body>

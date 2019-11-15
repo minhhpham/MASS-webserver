@@ -32,7 +32,7 @@
     </ul>
 	{% endif %}
 	<br>
-	<h1 align="center">Select technologies from the list below</h1>
+	<h1 align="center">Select the treatment technologies for implementation in the candidate sites</h1>
 	<br>
 	<form method="POST" action="{{ url_for('tech_input') }}" align="center">
 		{{ techs.csrf_token }}
@@ -79,11 +79,13 @@
 				</tr>
 			{% endfor %}
 		</table>
+
 		<br>
-		<h2>How many other technologies would you like to add?</h2>
-		{{ techs.n_additional }}
-		<br>
-		{{ techs.addMoreTechs }}
+		<h2>If any technology is not listed above, insert them below</h2>
+		<p align="center">
+			Total number of additional technologies:
+			{{ techs.n_additional }} {{ techs.addMoreTechs }}
+		</p>
 
 		<br>
 

@@ -22,6 +22,7 @@ def fill_dbdata_tech(tech_form, existing_data):
 
 	assert len(existing_data)%3 == 0
 
+	count_additional_techs = 0 # count number of additional techs
 	# loop through each tech in existing_data
 	for techid in range(int(len(existing_data)/3)):
 		row = techid*3 # rowid in existing_data
@@ -51,6 +52,7 @@ def fill_dbdata_tech(tech_form, existing_data):
 					tech_form.default_techs.rows[r].Large.GPt.data = existing_data[row+2]['gpt']
 
 		else:
+			count_additional_techs = count_additional_techs + 1
 			# fill this in additional_techs
 			# first create a new row
 			tech_form.additional_techs.rows.append_entry()
@@ -75,6 +77,7 @@ def fill_dbdata_tech(tech_form, existing_data):
 			tech_form.additional_techs.rows[r].Large.SRWt.data = existing_data[row+2]['srwt']
 			tech_form.additional_techs.rows[r].Large.GPt.data = existing_data[row+2]['gpt']
 	# done looping through existing_data
+	tech_form.n_additional.data = count_additional_techs
 	return(tech_form)
 
 class OneScale(FlaskForm): # defining technology numbers in each scale
@@ -94,19 +97,20 @@ class TechnologiesForm(FlaskForm):
 	rows = FieldList(FormField(OneTech), min_entries = 0)
 
 def tech_combine(_techs):
-	""" Combine selected techs.default_techs and techs.additional_techs
+	""" _techs has class CombinedForm
+		Combine selected _techs.default_techs and _techs.additional_techs
 		return a TechnologiesForm object with selected techs
 	"""
 	selected_techs = TechnologiesForm()
 	for t in  _techs.default_techs.rows:
 		if t.Select.data: # if default tech is selected by user, add to selected_techs
 			t.default_tech.data = True	# identifier for database's boolean field
-			selected_techs.rows.append_entry(t)
+			selected_techs.rows.append_entry(t.data)
 
 	if _techs.additional_techs.rows.__len__() > 0:
 		for t in _techs.additional_techs.rows:
 			t.default_tech.data = False # identifier for database's boolean field
-			selected_techs.rows.append_entry(t)
+			selected_techs.rows.append_entry(t.data)
 	return(selected_techs)
 
 def distance(lat1, lon1, lat2, lon2):

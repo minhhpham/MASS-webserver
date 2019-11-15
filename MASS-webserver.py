@@ -190,7 +190,7 @@ def population_input():
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for population_input failed! user %s, project %s. Errors: %s', username, current_project, str(populations.errors))
                 return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
-        elif request.form['command'] == 'Parse':
+        elif request.form['command'] == 'Insert Data':
             # process parsing data command (lazy method for inputing data)
             numpops = db.getInputSize(username, current_project)['numpops']
             for i in range(numpops):
@@ -208,7 +208,7 @@ class OnePlant(FlaskForm):
     LocationName = StringField('Location Name')
     lat = FloatField('Latitude')
     lon = FloatField('Longitude')
-    existing_location = BooleanField('Existing Location?')
+    existing_location = BooleanField('Existing Location')
     existing_tech = SelectField('Technology at existing location')
 class PlantsForm(FlaskForm):
     rows = FieldList(FormField(OnePlant), min_entries = 0)
@@ -272,7 +272,7 @@ def plant_input():
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for plants_input failed! user %s, project %s. Errors: %s', username, current_project, str(plants.errors))
                 return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
-        elif request.form['command'] == 'Parse':
+        elif request.form['command'] == 'Insert Data':
             # process parsing data command (lazy method for inputing data)
             numplants = db.getInputSize(username, current_project)['numplants']
             for i in range(numplants):
