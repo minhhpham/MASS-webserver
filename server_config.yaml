@@ -126,3 +126,6 @@ params:
   - Label: 'alpha'
     Unit: 'Ratio'
     Value: 0.9
+
+# MAPBOX ACCESS KEY
+MAPBOX_KEY: 'pk.eyJ1IjoibWluaGhwaGFtIiwiYSI6ImNrMzljZGZ4eDAxeHIzbnJyZ2IzczR0NTkifQ.4z38nBjZddXTCtyuTEafPQ'

@@ -4,6 +4,10 @@
 	<title>Water Reclamation System Planning</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <style> #map { width: 50%; height: 500px} </style>
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -23,8 +27,26 @@
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	<h1 align="center">Please review your inputs</h1>
-	<br>
 	<h2 align="center">Project {{ project_name }}</h2>
+
+	<!-------- DISPLAY POPULATIONS AND LOCATIONS ON MAPBOX ------------------------------->
+	<div id="this is for alignment" align="center">
+        <div id="map"></div>
+        <script>
+            L.mapbox.accessToken = '{{MAPBOX_KEY}}';
+            var map = L.mapbox.map('map', 'mapbox.streets');
+            var population_layer = L.mapbox.featureLayer()
+				                           .setGeoJSON({{population_markers|safe}})
+                 					       .addTo(map);
+	        var plant_layer = L.mapbox.featureLayer()
+				                           .setGeoJSON({{plant_markers|safe}})
+                 					       .addTo(map);
+            map.fitBounds(population_layer.getBounds().extend(plant_layer.getBounds()));
+            map.scrollWheelZoom.disable();
+        </script>
+    </div>
+    <br><br>
+
 	<!-- input size ----------------------------------------------------------------------------------------->
 	<table class=blueTable align="center">
 		<tr>
@@ -66,7 +88,7 @@
 	</table>
 	<br>
 	<!-- plants ------------------------------------------------------------------------------------------------->
-	<h2 align="center"> Plants </h2>
+	<h2 align="center"> Potential Locations </h2>
 	<table class=blueTable align="center">
 		<tr> <!-- Table headers  -->
 			<th> Index </th> 
@@ -153,6 +175,7 @@
 		</tr>
 		{% endfor %}
 	</table>
+	<br>
 
 	<!-- RUN -->
 	<h2 align="center">Ready to run optimizer?</h2>
@@ -163,6 +186,7 @@
 			<input name="command" type="submit" value="Run optimizer">
 		</p>	
 	</form>
+	<br>
 
 </body>
 </html>

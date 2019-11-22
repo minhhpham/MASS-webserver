@@ -4,8 +4,7 @@ from flask import render_template, redirect, request, Flask, url_for, abort, sen
 from flask_wtf import FlaskForm, csrf
 from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField, SelectField
 import yaml, sys, binascii, os, hashlib
-from server_scripts import Parse, misc
-from server_scripts import auth
+from server_scripts import Parse, misc, auth, mapmaker
 from server_scripts import database as db
 
 # --------------------- CONFIGURATIONS -------------------------------------------------------------------------------------------------------
@@ -16,6 +15,7 @@ APP = Flask(__name__)
 CSRF = csrf.CSRFProtect()
 CSRF.init_app(APP)
 APP.config['SECRET_KEY'] = os.urandom(32)
+
 
 # data folder
 APP.config['UPLOAD_FOLDER'] = 'data'
@@ -422,11 +422,14 @@ def review():
     techs = db.getTechnologies(username, current_project)
     params = db.getParams(username, current_project)
 
-    # global nPop, nPlant, lifeSpan, populations, plants, techs, params
+    # create markers for the map
+    population_markers = mapmaker.createPopulationsGeoJson(populations)
+    plant_markers = mapmaker.createLocationsGeoJson(plants)
 
     if request.method == 'GET':
         return(render_template('review.html', nPop = input_size['numpops'], nPlant = input_size['numplants'], lifeSpan = input_size['durations'],
             populations = populations, plants = plants, techs = techs, params = params, tech_choices = tech_choices,
+            population_markers = population_markers, plant_markers = plant_markers, MAPBOX_KEY = config['MAPBOX_KEY'],
             prev_page = prev_page, Identity = username, project_name = current_project))
 
 # ------------ run optimizer -------------------------------------------------------------------------------------------------------------------------------------------

@@ -33,7 +33,7 @@
     </ul>
 	{% endif %}
 	<br>
-	<h1 align="center">Input your plants</h1>
+	<h1 align="center">Input your potential/existing water plant locations</h1>
 	<form method="POST" action="{{ url_for('plant_input') }}" align="center">
 		{{ plants.csrf_token }}
 		<table class=blueTable align="center">
@@ -79,7 +79,6 @@
 	<form action="{{ url_for('plant_input') }}" method="POST" align = "center">
 		{{ plants.csrf_token }}
     	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
-    	<br>
     	<p align="center"><input type="submit" name="command" value="Insert Data"></p>
 	</form>
 
