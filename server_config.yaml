@@ -1,7 +1,7 @@
 # Database config
 db:
   dbname: 'optimizerdb'
-  user: 'optimizer'
+  user: 'optimizer1'
   password: '123456'
   port: 5432
 

@@ -16,7 +16,11 @@ conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["us
 def init_db():
 	""" initialize tables if not found in the database """
 	cursor = conn.cursor()
+<<<<<<< HEAD
+	table_names = ['users', 'projects', 'users_has_projects', 'ns', 'populations', 'plants', 'technologies', 'parameters']
+=======
 	table_names = ['users', 'projects', 'ns', 'populations', 'plants', 'technologies', 'params']
+>>>>>>> 27d8ebb2a16cb262470647fc8c5ef5fea02b3ee4
 	for table_name in table_names:
 		cursor.execute("""
 			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
@@ -34,7 +38,7 @@ def init_table(table_name):
 	try:
 		if table_name == 'users':
 			cursor.execute("""
-				CREATE TABLE Users(
+				CREATE TABLE users(
 					username		varchar(255),
 					password_hashed	varchar(1024),	-- big space in case we need cryptography later
 					full_name		varchar(255),
@@ -45,79 +49,126 @@ def init_table(table_name):
 		elif table_name == 'projects':
 			cursor.execute("""
 						CREATE TABLE Projects(
-							username	varchar(255),
-							project_name varchar(255),	
-							p_desc		varchar(255),
-							PRIMARY KEY(username, project_name)		
+							project_id VARCHAR(25) NOT NULL,
+  							project_name VARCHAR(255) NULL,
+  							project_desc VARCHAR(255) NULL,		
+						)
+			""")
+		elif table_name == 'users_has_projects':
+			cursor.execute("""
+						CREATE TABLE Projects(
+						username VARCHAR(255) NOT NULL,
+  						project_id VARCHAR(25) NOT NULL,
+  						PRIMARY KEY (username, project_id),
+  						-- constraint statement allows developer to rename the auto generated foreign key for communication purpose
+  						-- However, more importantly, using constraint statement also allows to refer to the PK including two columns 
+						  CONSTRAINT fk_tab_users
+						    FOREIGN KEY (username)
+						    REFERENCES users (username)
+						    ON DELETE NO ACTION
+						    ON UPDATE NO ACTION,
+						  CONSTRAINT fk_tab_projects
+						    FOREIGN KEY (project_id)
+						    REFERENCES projects(project_id)
+						    ON DELETE NO ACTION
+						    ON UPDATE NO ACTION);	
 						)
 			""")
 		elif table_name == 'ns':
 			cursor.execute("""
 						CREATE TABLE Ns(
-							username	varchar(255),
-							project_name varchar(255),	
-							NPop		int,
-							NPlant		int,
-							LifeSpan	int,
-							PRIMARY KEY(username, project_name)
-						)
+							nsid SERIAL NOT NULL,
+							NPop INT NULL,
+							NPlant INT NULL,
+							LifeSpan INT NULL,
+							username VARCHAR(255) NOT NULL,
+							project_id VARCHAR(25) NOT NULL,
+							PRIMARY KEY (nsid, username, project_id),
+							 -- INDEX fk_ns_users_has_projects1_idx (username, project_id) ,
+							CONSTRAINT fk_ns_users_has_projects1
+							    FOREIGN KEY (username , project_id)
+							    REFERENCES users_has_projects (username , project_id)
+							    ON DELETE NO ACTION
+							    ON UPDATE NO ACTION)
 			""")
 		elif table_name == 'populations':
 			cursor.execute("""
 								CREATE TABLE Populations(
-									username	varchar(255),
-									project_name varchar(255),
-									index 		int,	
-									Name		varchar(255), -- represent Cluster name
-									Pr		    int NOT NULL CHECK (Pr >= 0), -- represent Current Population
-									GrowthRate	float, -- represent Population Growth Rate
-									lat		    float, -- represent Latitude
-									lon		    float, -- represent Longitude
-									PRIMARY KEY(username, project_name, index)
-								)
+									popid SERIAL NOT NULL,
+									mindex INT NULL,
+									mname VARCHAR(255) NULL,
+									Pr INT NULL,
+									GrowthRate FLOAT NULL,
+									lat FLOAT NULL,
+									lon FLOAT NULL,
+									username VARCHAR(255) NOT NULL,
+									project_id VARCHAR(25) NOT NULL,
+									PRIMARY KEY (popid, username, project_id),
+									--  INDEX fk_populations_users_has_projects1_idx (username, project_id) ,
+									CONSTRAINT fk_populations_users_has_projects1
+									    FOREIGN KEY (username , project_id)
+									    REFERENCES users_has_projects (username , project_id)
+									    ON DELETE NO ACTION
+									    ON UPDATE NO ACTION)
 			""")
 		elif table_name == 'plants':
 			cursor.execute("""
 								CREATE TABLE Plants(
-									username			varchar(255),
-									project_name 		varchar(255),
-									index 				int,	
-									LocationName		varchar(255), -- represent Cluster name
-									lat					float, -- represent Latitude
-									lon					float, -- represent Longitude
-									existing_location	boolean,
-									existing_tech		varchar(255),
-									PRIMARY KEY(username, project_name, index)
-								)
+									planid SERIAL NOT NULL,
+  									mindex INT NULL,
+  									LocationName VARCHAR(255) NULL,
+  									lat FLOAT NULL,
+  									lon FLOAT NULL,
+  									username VARCHAR(255) NOT NULL,
+  									project_id VARCHAR(25) NOT NULL,
+  									PRIMARY KEY (planid, username, project_id),
+									--  INDEX fk_plants_users_has_projects1_idx (username, project_id) ,
+									CONSTRAINT fk_plants_users_has_projects1
+									    FOREIGN KEY (username , project_id)
+									    REFERENCES users_has_projects (username , project_id)
+									    ON DELETE NO ACTION
+									    ON UPDATE NO ACTION)
 					""")
 		elif table_name == 'technologies':
 			cursor.execute("""
 								CREATE TABLE Technologies(
-									username	varchar(255),
-									project_name varchar(255),
-									index 		int,
-									default_tech	BOOLEAN NOT NULL,
-									TechnologyName varchar(255),
-									Scale		varchar(255),
-									Capkt		float,
-									CCkt		float, 
-									OCt			float, 
-									SRWt		float,
-									GPt			float,
-									PRIMARY KEY(username, project_name, index)
-								)
+									techid SERIAL NOT NULL,
+								  mindex INT NULL,
+								  mtype VARCHAR(255) NULL,
+								  TechnologyName VARCHAR(255) NULL,
+								  Scale VARCHAR(255) NULL,
+								  Capkt FLOAT NULL,
+								  Cckt FLOAT NULL,
+								  mOct FLOAT NULL,
+								  SRWt FLOAT NULL,
+								  Gpt FLOAT NULL,
+								  username VARCHAR(255) NOT NULL,
+								  project_id VARCHAR(25) NOT NULL,
+								  PRIMARY KEY (techid, username, project_id),
+								--  INDEX fk_technologies_users_has_projects1_idx (username, project_id) ,
+								  CONSTRAINT fk_technologies_users_has_projects1
+								    FOREIGN KEY (username , project_id)
+								    REFERENCES users_has_projects (username , project_id)
+								    ON DELETE NO ACTION
+								    ON UPDATE NO ACTION)
 							""")
 		elif table_name == 'params':
 			cursor.execute("""
 								CREATE TABLE Params(
-									username	varchar(255),
-									project_name varchar(255),
-									index 		int,	
-									Label		varchar(255), 
-									Unit		varchar(255), 
-									Value		float, 
-									PRIMARY KEY(username, project_name, index)
-								)
+									paramid SERIAL NOT NULL,
+									mIndex INT NULL,
+									Label VARCHAR(255) NULL,
+									Unit VARCHAR(255) NULL,
+									mValue FLOAT NULL,
+									username VARCHAR(255) NOT NULL,
+									project_id VARCHAR(25) NOT NULL,
+									PRIMARY KEY (paramid, username, project_id),
+									 -- INDEX fk_Params_users_has_projects1_idx (username, project_id) ,
+									CONSTRAINT fk_Params_users_has_projects1
+									FOREIGN KEY (username , project_id)
+									REFERENCES users_has_projects (username , project_id)
+									    ON DELETE NO ACTION
+									    ON UPDATE NO ACTION)
 			""")
 		else:
 			pass
@@ -229,13 +280,6 @@ def getPopulations(username, project_name):
 # otherwise insert
 # populations has class PopulationsForm
 def savePopulations(populations, username, project_name):
-	# wipe existing data
-	try:
-		cursor = conn.cursor()
-		cursor.execute('''DELETE FROM populations WHERE username = %s AND project_name = %s''', [username, project_name])
-	except(psycopg2.DatabaseError) as error:
-		print(error)
-
 	# insert data
 	try:
 		cursor = conn.cursor()
@@ -244,7 +288,10 @@ def savePopulations(populations, username, project_name):
 		for r in populations.rows:
 			index = index + 1
 			vals = (username, project_name, index, r.Name.data, r.Pr.data, r.GrowthRate.data, r.lat.data, r.lon.data)
-			cursor.execute('''INSERT INTO populations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+			cursor.execute('''INSERT INTO populations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+				ON CONFLICT (username, project_name, index) DO
+				UPDATE SET name=EXCLUDED.name, pr=EXCLUDED.pr, growthrate=EXCLUDED.growthrate, 
+				lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
 		
 	except(psycopg2.DatabaseError) as error:
 		print(error)
@@ -256,13 +303,6 @@ def savePopulations(populations, username, project_name):
 # Insert plants table, update if present
 # plants is a plantsform object
 def savePlants(plants, username, project_name):
-	# wipe existing data
-	try:
-		cursor = conn.cursor()
-		cursor.execute('''DELETE FROM plants WHERE username = %s AND project_name = %s''', [username, project_name])
-	except(psycopg2.DatabaseError) as error:
-		print(error)
-
 	# insert data
 	try:
 		cursor = conn.cursor()
@@ -270,9 +310,10 @@ def savePlants(plants, username, project_name):
 		index = 0
 		for r in plants.rows:
 			index = index + 1
-			vals = (username, project_name, index, r.LocationName.data, r.lat.data, r.lon.data, r.existing_location.data, r.existing_tech.data)
-			print(vals)
-			cursor.execute('''INSERT INTO plants VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+			vals = (username, project_name, index, r.LocationName.data, r.lat.data, r.lon.data)
+			cursor.execute('''INSERT INTO plants VALUES (%s, %s, %s, %s, %s, %s)
+				ON CONFLICT (username, project_name, index) DO
+				UPDATE SET locationname=EXCLUDED.locationname, lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
@@ -315,48 +356,20 @@ def getTechnologies(username, project_name):
 	cursor.close()
 	return vals
 
-def getSelectedTechnologies(username, project_name):
-	""" Get technologies that were selected by user after submitting tech form """
-	techs_db = getTechnologies(username, project_name)
-	output = [('1', 'N/A')] # initialize output set
-	for r in techs_db:
-		techs_found = [o[1] for o in output]
-		if r['technologyname'] not in techs_found:
-			# append this new tech to output
-			output.append((str(len(output)+1), r['technologyname']))
-	return(output)
-
 # Insert technologies table, update if present
 # Technologies is a technologiesform object
 def saveTechnologies(tech, username, project_name):
-	# wipe existing data
-	try:
-		cursor = conn.cursor()
-		cursor.execute('''DELETE FROM technologies WHERE username = %s AND project_name = %s''', [username, project_name])
-	except(psycopg2.DatabaseError) as error:
-		print(error)
-
 	# insert data
 	try:
 		cursor = conn.cursor()
 
 		index = 0
-		for r in tech.rows:
-			# insert small scale
-			index = index + 1
-			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Small',
-					r.Small.Capkt.data.data, r.Small.CCkt.data.data, r.Small.OCt.data.data, r.Small.SRWt.data.data, r.Small.GPt.data.data)
-			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
-			# insert medium scale
-			index = index + 1
-			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Medium',
-					r.Medium.Capkt.data.data, r.Medium.CCkt.data.data, r.Medium.OCt.data.data, r.Medium.SRWt.data.data, r.Medium.GPt.data.data)
-			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
-			# insert large scale
-			index = index + 1
-			vals = (username, project_name, index, r.default_tech.data, r.Technology.data.data, 'Large',
-					r.Large.Capkt.data.data, r.Large.CCkt.data.data, r.Large.OCt.data.data, r.Large.SRWt.data.data, r.Large.GPt.data.data)
-			cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+		# for r in tech.rows:
+			# index = index + 1
+			# vals = (username, project_name, index, r.type.data, r.TechnologyName.data, r.lon.data)
+			# cursor.execute('''INSERT INTO technologies VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+				# ON CONFLICT (username, project_name, index) DO
+				# UPDATE SET locationname=EXCLUDED.locationname, lat=EXCLUDED.lat, lon=EXCLUDED.lon''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
