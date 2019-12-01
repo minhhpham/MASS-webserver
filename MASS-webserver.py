@@ -66,22 +66,26 @@ def projects():
         if 'command' in request.form and request.form['command'] == 'Create project':
             project_name = request.form['project_name']
             p_desc = request.form['p_desc']
+
             # save project to DB
-            db.saveProject(auth.current_user.get_id(), project_name, p_desc)
+            pid = db.saveProject(project_name, p_desc)
+            db.addUserToProject(auth.current_user.get_id(), pid)
+
             # switch current project to this project
-            auth.current_user.set_project(project_name)
+            auth.current_user.set_project(pid)
+
             # redirect to input pages
             return(redirect(url_for('input_size')))
         elif 'select project' in request.form:
-            project_name = request.form['select project']
+            project_id = request.form['project_id']
+
             # switch to selected project
-            auth.current_user.set_project(project_name)
+            auth.current_user.set_project(project_id)
+
             # redirect to input pages
             return(redirect(url_for(next_page)))
         else:
             abort(400, 'Unknown request')
-
-
 
 #----------- web page to ask for input size ---------------------------------------------------------------------------------------------------
 class InputSize(FlaskForm):
@@ -105,7 +109,7 @@ def input_size():
     # process GET requests
     if request.method == 'GET':
         APP.logger.info('GET input_size for {}.{}'.format(username, current_project))
-        existing_data = db.getInputSize(username, current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
+        existing_data = db.getInputSize(current_project)    # give me all columns from Ns table , if data not exist, return None. E.g. {numpops:1, numplants:None, durations:2}
         # If data exist, fill in the form
         if existing_data['numpops'] is not None:
             inputSize.NPop.data = existing_data['numpops']
@@ -120,11 +124,7 @@ def input_size():
         APP.logger.info('POST input_size for {}.{}'.format(username, current_project))
         if inputSize.validate_on_submit():
             # if validate pass, save data to DB and redirect to next page
-            db.saveInputSize(inputSize, username, current_project)
-            # -- old codes --
-            # nPop = inputSize.NPop.data
-            # nPlant = inputSize.NPlant.data
-            # lifeSpan = inputSize.LifeSpan.data
+            db.saveInputSize(inputSize, current_project)
             APP.logger.info("validation succeed! Transfer to {}".format(url_for(next_page)))
             return(redirect(url_for(next_page)))
         else:
@@ -158,7 +158,7 @@ def population_input():
     # process GET requests
     if request.method == 'GET':
         # If numpops exist, create the form with numpops rows
-        existing_data = db.getInputSize(username, current_project)
+        existing_data = db.getInputSize(current_project)
         if existing_data['numpops'] is not None and existing_data['numpops'] > 0:
             numpops = existing_data['numpops']
             for i in range(numpops):
@@ -166,7 +166,7 @@ def population_input():
         else: # throw error
             abort(400, 'Number of populations not given')
         # Find existing data in the populations table
-        existing_data = db.getPopulations(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        existing_data = db.getPopulations(current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
         # fill in existing data to populations form
         if existing_data is not None:
             for i in range(min(len(existing_data), numpops)):
@@ -174,7 +174,7 @@ def population_input():
                 populations.rows[i].Pr.data = existing_data[i]['pr']
                 populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']
                 populations.rows[i].lat.data = existing_data[i]['lat']
-                populations.rows[i].lon.data = existing_data[i]['lon']
+                populations.rows[i].lon.data = existing_data[i]['long']
         return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
 
     # process POST requests
@@ -183,7 +183,7 @@ def population_input():
             # process saving data command
             if populations.validate():
                 # if validation pass, save data to DB and redirect to next page
-                db.savePopulations(populations, username, current_project)
+                db.savePopulations(populations, current_project)
                 APP.logger.info('populations validation passed! user %s, project %s', username, current_project)
                 return(redirect(url_for(next_page)))
             else:
@@ -192,7 +192,7 @@ def population_input():
                 return(render_template('population_input.html', populations = populations, prev_page = prev_page, Identity = username))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
-            numpops = db.getInputSize(username, current_project)['numpops']
+            numpops = db.getInputSize(current_project)['numpops']
             for i in range(numpops):
                 populations.rows.append_entry({'r': i+1})
             populations = Parse.fill_populations(request.form['ExcelData'], populations)
@@ -227,7 +227,7 @@ def plant_input():
     plants = PlantsForm()
 
     # find the technology choices for the form
-    tech_choices = db.getSelectedTechnologies(username, current_project)
+    tech_choices = db.getSelectedTechnologies(current_project)
     if len(tech_choices)==0:
         abort(400, 'No technology data was found to create plant form. Perhaps you did not submit the tech_input form.')
 
@@ -235,7 +235,7 @@ def plant_input():
     # process GET request
     if request.method == 'GET':
         # If numplants exist, create the form with numplants rows
-        existing_data = db.getInputSize(username, current_project)
+        existing_data = db.getInputSize(current_project)
         if existing_data['numplants'] is not None and existing_data['numplants'] > 0:
             numplants = existing_data['numplants']
             for i in range(numplants):
@@ -244,7 +244,7 @@ def plant_input():
         else: # throw error
             abort(400, 'Number of plants not given')
         # Find existing data in the plants table
-        existing_data = db.getPlants(username, current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
+        existing_data = db.getPlants(current_project) # give me all columns from populations table as list of tuples, remember to rename columns to match class OnePopulation. if data not exist, an empty list []}
         # fill in existing data to populations form
         if existing_data is not None:
             for i in range(min(len(existing_data), numplants)):
@@ -259,13 +259,13 @@ def plant_input():
     if request.method == 'POST':
         if request.form['command'] == 'Next':
             # set tech choices for data validation
-            numplants = db.getInputSize(username, current_project)['numplants']
+            numplants = db.getInputSize(current_project)['numplants']
             for i in range(numplants):
                 plants.rows[i].existing_tech.choices = tech_choices
             # process saving data command
             if plants.validate():
                 # if validation pass, save data to DB and redirect to next page
-                db.savePlants(plants, username, current_project)
+                db.savePlants(plants, current_project)
                 APP.logger.info('plants validation passed! user %s, project %s', username, current_project)
                 return(redirect(url_for(next_page)))
             else:
@@ -274,7 +274,7 @@ def plant_input():
                 return(render_template('plant_input.html', plants = plants, prev_page = prev_page, Identity = username))
         elif request.form['command'] == 'Parse':
             # process parsing data command (lazy method for inputing data)
-            numplants = db.getInputSize(username, current_project)['numplants']
+            numplants = db.getInputSize(current_project)['numplants']
             for i in range(numplants):
                 plants.rows.append_entry({'r': i+1})
                 plants.rows[i].existing_tech.choices = tech_choices
@@ -338,7 +338,7 @@ def tech_input():
                 'Large': default_techs[t]['Large']
             })
         # fill in data from database to the form object
-        existing_data = db.getTechnologies(username, current_project) # give me everything in the DB
+        existing_data = db.getTechnologies(current_project) # give me everything in the DB
         tech_form = misc.fill_dbdata_tech(tech_form, existing_data)
         return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, Identity = username))
 
@@ -357,7 +357,7 @@ def tech_input():
         elif tech_form.submit.data:
             # TODO: data validation
             techs = misc.tech_combine(tech_form)
-            db.saveTechnologies(techs, username, current_project) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
+            db.saveTechnologies(techs, current_project) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
             APP.logger.info("transfer to {}".format(url_for('parameter_input')))
             return(redirect(url_for(next_page)))
         else:
@@ -386,7 +386,7 @@ def parameter_input():
     default_params = config['params']
     params = ParamsForm()
 
-    existing_data = db.getParams(username, current_project) # give me everything in the DB
+    existing_data = db.getParams(current_project) # give me everything in the DB
     # TODO (M): pre-fill form data with data from database
 
     # process GET requests
@@ -398,7 +398,7 @@ def parameter_input():
     # process POST requests
     if request.method == 'POST':
         # TODO (M): data validation
-        db.saveParams(params, username, current_project)
+        db.saveParams(params, current_project)
         APP.logger.info("transfer to {}".format(url_for(next_page)))
         return(redirect(url_for(next_page)))
 
@@ -415,12 +415,12 @@ def review():
     if current_project is None:
         abort(400, 'No project selected')
     ### first pull data from db ###
-    input_size = db.getInputSize(username, current_project)
-    populations = db.getPopulations(username, current_project)
-    plants = db.getPlants(username, current_project)
-    tech_choices = db.getSelectedTechnologies(username, current_project)
-    techs = db.getTechnologies(username, current_project)
-    params = db.getParams(username, current_project)
+    input_size = db.getInputSize(current_project)
+    populations = db.getPopulations(current_project)
+    plants = db.getPlants(current_project)
+    tech_choices = db.getSelectedTechnologies(current_project)
+    techs = db.getTechnologies(current_project)
+    params = db.getParams(current_project)
 
     # global nPop, nPlant, lifeSpan, populations, plants, techs, params
 
@@ -449,8 +449,9 @@ def login():
 
     if request.method == 'POST':
         username = request.form['username']
-        password_hashed = hashlib.md5(request.form['password'].encode('utf8')).digest()
+        password_hashed = hashlib.sha256(request.form['password'].encode('utf8')).hexdigest()
         user = auth.User(username)
+        db.registerUser("", username, password_hashed, "") # If username taken, ignored. TODO: Add error for conflicting names
         user.authenticate(password_hashed)
 
         if user.is_authenticated():
@@ -458,7 +459,9 @@ def login():
             auth.login_user(user)
             if request.args.get("next") is not None:
                 # redirect to requested page
-                return(redirect(url_for(str(request.args.get('next'))[1:])))
+                #return(redirect(url_for(str(request.args.get('next'))[1:])))
+                # This will always result in an error since pid not set. Just go to projects always
+                return(redirect(url_for('projects')))
             else: # return to Projects page
                 return(redirect(url_for('projects')))
         else:

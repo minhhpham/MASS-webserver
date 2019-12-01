@@ -1,5 +1,6 @@
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from flask import session
+from server_scripts import database as db
 
 # User model
 class User():
@@ -25,7 +26,7 @@ class User():
 
 	def authenticate(self, password):
 		# TODO: create authentication process when database is ready
-		self.authenticated = True
+		self.authenticated = db.authenticateUser(self.username, password)
 
 	def set_project(self, project_name):
 		# set current project user is working on

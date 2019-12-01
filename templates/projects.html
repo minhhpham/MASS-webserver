@@ -38,9 +38,10 @@
 			{% for p in existing_projects %}
 			<tr> <!-- Table rows -->	
 					<td>
+						<input type="hidden" name="project_id" value="{{ p['project_id'] }}">
 						<input type="submit" name="select project" value="{{ p['project_name'] }}" style="background:none;border:none;color:#069;text-decoration:underline;cursor: pointer;">
 					</td>
-					<td>{{ p['p_desc'] }}</td>
+					<td>{{ p['project_desc'] }}</td>
 			</tr>
 			{% endfor %}
 		</table>
