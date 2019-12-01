@@ -17,6 +17,7 @@ def init_db():
 	""" initialize tables if not found in the database """
 	cursor = conn.cursor()
 	table_names = ['users', 'projects', 'users_has_projects', 'ns', 'populations', 'plants', 'technologies', 'params']
+	
 	for table_name in table_names:
 		cursor.execute("""
 			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
@@ -34,6 +35,7 @@ def init_table(table_name):
 	try:
 		if table_name == 'users':
 			cursor.execute("""
+<<<<<<< HEAD
 				CREATE TABLE IF NOT EXISTS users (
 				username VARCHAR(255) NOT NULL,
 				password_hashed VARCHAR(255) NULL,
@@ -153,6 +155,139 @@ def init_table(table_name):
 					REFERENCES projects (project_id)
 					ON DELETE NO ACTION
 					ON UPDATE NO ACTION)
+=======
+				CREATE TABLE users(
+					username		varchar(255),
+					password_hashed	varchar(1024),	-- big space in case we need cryptography later
+					full_name		varchar(255),
+					email			varchar(255),
+					PRIMARY KEY(username)
+				)
+			""")
+		elif table_name == 'projects':
+			cursor.execute("""
+						CREATE TABLE Projects(
+							project_id VARCHAR(25) NOT NULL,
+  							project_name VARCHAR(255) NULL,
+  							project_desc VARCHAR(255) NULL,		
+						)
+			""")
+		elif table_name == 'users_has_projects':
+			cursor.execute("""
+						CREATE TABLE Projects(
+						username VARCHAR(255) NOT NULL,
+  						project_id VARCHAR(25) NOT NULL,
+  						PRIMARY KEY (username, project_id),
+  						-- constraint statement allows developer to rename the auto generated foreign key for communication purpose
+  						-- However, more importantly, using constraint statement also allows to refer to the PK including two columns 
+						  CONSTRAINT fk_tab_users
+						    FOREIGN KEY (username)
+						    REFERENCES users (username)
+						    ON DELETE NO ACTION
+						    ON UPDATE NO ACTION,
+						  CONSTRAINT fk_tab_projects
+						    FOREIGN KEY (project_id)
+						    REFERENCES projects(project_id)
+						    ON DELETE NO ACTION
+						    ON UPDATE NO ACTION);	
+						)
+			""")
+		elif table_name == 'ns':
+			cursor.execute("""
+						CREATE TABLE Ns(
+							nsid SERIAL NOT NULL,
+							NPop INT NULL,
+							NPlant INT NULL,
+							LifeSpan INT NULL,
+							username VARCHAR(255) NOT NULL,
+							project_id VARCHAR(25) NOT NULL,
+							PRIMARY KEY (nsid, username, project_id),
+							 -- INDEX fk_ns_users_has_projects1_idx (username, project_id) ,
+							CONSTRAINT fk_ns_users_has_projects1
+							    FOREIGN KEY (username , project_id)
+							    REFERENCES users_has_projects (username , project_id)
+							    ON DELETE NO ACTION
+							    ON UPDATE NO ACTION)
+			""")
+		elif table_name == 'populations':
+			cursor.execute("""
+								CREATE TABLE Populations(
+									popid SERIAL NOT NULL,
+									mindex INT NULL,
+									mname VARCHAR(255) NULL,
+									Pr INT NULL,
+									GrowthRate FLOAT NULL,
+									lat FLOAT NULL,
+									lon FLOAT NULL,
+									username VARCHAR(255) NOT NULL,
+									project_id VARCHAR(25) NOT NULL,
+									PRIMARY KEY (popid, username, project_id),
+									--  INDEX fk_populations_users_has_projects1_idx (username, project_id) ,
+									CONSTRAINT fk_populations_users_has_projects1
+									    FOREIGN KEY (username , project_id)
+									    REFERENCES users_has_projects (username , project_id)
+									    ON DELETE NO ACTION
+									    ON UPDATE NO ACTION)
+			""")
+		elif table_name == 'plants':
+			cursor.execute("""
+								CREATE TABLE Plants(
+									planid SERIAL NOT NULL,
+  									mindex INT NULL,
+  									LocationName VARCHAR(255) NULL,
+  									lat FLOAT NULL,
+  									lon FLOAT NULL,
+  									username VARCHAR(255) NOT NULL,
+  									project_id VARCHAR(25) NOT NULL,
+  									PRIMARY KEY (planid, username, project_id),
+									--  INDEX fk_plants_users_has_projects1_idx (username, project_id) ,
+									CONSTRAINT fk_plants_users_has_projects1
+									    FOREIGN KEY (username , project_id)
+									    REFERENCES users_has_projects (username , project_id)
+									    ON DELETE NO ACTION
+									    ON UPDATE NO ACTION)
+					""")
+		elif table_name == 'technologies':
+			cursor.execute("""
+								CREATE TABLE Technologies(
+									techid SERIAL NOT NULL,
+								  mindex INT NULL,
+								  mtype VARCHAR(255) NULL,
+								  TechnologyName VARCHAR(255) NULL,
+								  Scale VARCHAR(255) NULL,
+								  Capkt FLOAT NULL,
+								  Cckt FLOAT NULL,
+								  mOct FLOAT NULL,
+								  SRWt FLOAT NULL,
+								  Gpt FLOAT NULL,
+								  username VARCHAR(255) NOT NULL,
+								  project_id VARCHAR(25) NOT NULL,
+								  PRIMARY KEY (techid, username, project_id),
+								--  INDEX fk_technologies_users_has_projects1_idx (username, project_id) ,
+								  CONSTRAINT fk_technologies_users_has_projects1
+								    FOREIGN KEY (username , project_id)
+								    REFERENCES users_has_projects (username , project_id)
+								    ON DELETE NO ACTION
+								    ON UPDATE NO ACTION)
+							""")
+		elif table_name == 'params':
+			cursor.execute("""
+								CREATE TABLE Params(
+									paramid SERIAL NOT NULL,
+									mIndex INT NULL,
+									Label VARCHAR(255) NULL,
+									Unit VARCHAR(255) NULL,
+									mValue FLOAT NULL,
+									username VARCHAR(255) NOT NULL,
+									project_id VARCHAR(25) NOT NULL,
+									PRIMARY KEY (paramid, username, project_id),
+									 -- INDEX fk_Params_users_has_projects1_idx (username, project_id) ,
+									CONSTRAINT fk_Params_users_has_projects1
+									FOREIGN KEY (username , project_id)
+									REFERENCES users_has_projects (username , project_id)
+									    ON DELETE NO ACTION
+									    ON UPDATE NO ACTION)
+>>>>>>> f163430c318f44b8b7a091ccd5ad42cc6e899218
 			""")
 		else:
 			pass
