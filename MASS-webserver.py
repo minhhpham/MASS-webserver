@@ -32,16 +32,10 @@ with open("server_config.yaml", 'r') as stream:
 # login manager
 auth.login_manager.init_app(APP)
 
-# ----- old codes ----------------
-# declare global variables for holding data (temporarily)
-# global nPop, nPlant, lifeSpan
-# global populations, plants, tech_form, techs, params     
-    # techs has class TechnologiesForm and has the input data
-    # tech_form is the form to be rendered to web interface
-
 @APP.route('/', methods = ['GET'])
 def index():
     username = auth.current_user.get_id()
+    print(username)
     return(render_template('index.html', Identity = username))
 
 #----------- web page to handle project requests ------------------------------------------------------
@@ -451,7 +445,6 @@ def login():
         username = request.form['username']
         password_hashed = hashlib.sha256(request.form['password'].encode('utf8')).hexdigest()
         user = auth.User(username)
-        db.registerUser("", username, password_hashed, "") # If username taken, ignored. TODO: Add error for conflicting names
         user.authenticate(password_hashed)
 
         if user.is_authenticated():
@@ -485,14 +478,18 @@ def register():
         return(render_template('register.html', login_failed = False))
 
     if request.method == 'POST':
-        if request.form['register'] == 'submit':
+        if request.form['register'] == 'Register':
             fullname = request.form['fullname']
             username = request.form['username']
             password = request.form['password']
+            if password != request.form['confirm_password']:
+                return(render_template('register.html', register_failed = True, reason="Passwords do not match"))
+            password_hashed = hashlib.sha256(request.form['password'].encode('utf8')).hexdigest()
             email = request.form['email']
-            success = db.registerUser(fullname, username, password, email)
+            (success, reason) = db.registerUser(fullname, username, password_hashed, email)
             if not success:
-                pass # Handle error 
+                return(render_template('register.html', register_failed = True, reason=reason))
+            return(redirect(url_for('login')))
         else:
             abort(400, 'Unknown request')
 

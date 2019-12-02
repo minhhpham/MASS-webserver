@@ -19,13 +19,12 @@
     <!-- NAVIGATION BAR ENDS -->
 	<br>
     <h2 align="center"> Please log in </h2>
-    <font color="red"><p align="center">This is Demo, no need to register. Just put any username and leave password blank</p></font>
     <form action="" method="POST" align="center">
     	<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
         <p align="center">Username: <input type=text name="username"></p>
         <p align="center">Password: <input type=password name="password"></p>
         {% if login_failed %}
-        	<p><font color="red">Wrong Username or Password</font></p>
+        	<p align="center"><font color="red">Wrong Username or Password</font></p>
         {% endif %}
         <p align="center"><input type=submit value=Login></p>
         <p align="center"><a href="{{ url_for('register') }}">Create an account</a></p>

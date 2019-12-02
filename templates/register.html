@@ -33,9 +33,16 @@
                 <td>Password</td>              <td><input type=password name="password"></td>
             </tr>
             <tr>
+                <td>Confirm Password</td>              <td><input type=password name="confirm_password"></td>
+            </tr>
+            <tr>
                 <td>Email</td>                 <td><input type=text name="email"></td>
             </tr>
         </table>
+        {% if register_failed %}
+            <p align="center"><font color="red">{{ reason }}</font></p>
+        {% endif %}
+        <p align="center"><input type=submit name="register" value=Register></p>
     </form>
 </body>
 </html>

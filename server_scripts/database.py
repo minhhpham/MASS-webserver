@@ -457,20 +457,26 @@ def registerUser(fullname, username, password, email):
 		cursor = conn.cursor()
 
 		vals = (username, password, fullname, email)
-		cursor.execute('''INSERT INTO users VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING''', vals)
-		
+		cursor.execute('''INSERT INTO users VALUES (%s, %s, %s, %s)''', vals)
+	except(psycopg2.IntegrityError) as error:
+		print(error)
+		# close communication with the PostgreSQL database server
+		cursor.close()
+		# commit the changes
+		conn.commit()
+		return (False, "Please choose another username.")
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 		# close communication with the PostgreSQL database server
 		cursor.close()
 		# commit the changes
 		conn.commit()
-		return False
+		return (False, "Registration failed for unkown reason.")
 	# close communication with the PostgreSQL database server
 	cursor.close()
 	# commit the changes
 	conn.commit()
-	return True
+	return (True, "Registration successful")
 
 #TODO:
 def authenticateUser(username, password):
