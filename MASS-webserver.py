@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, Flask, url_for, abort, sen
 from flask_wtf import FlaskForm, csrf
 from wtforms import StringField, FieldList, FormField, SubmitField, IntegerField, FloatField, validators, BooleanField, SelectField
 import yaml, sys, binascii, os, hashlib
-from server_scripts import Parse, misc, auth, mapmaker
+from server_scripts import Parse, misc, auth, mapmaker, output_scripts
 from server_scripts import database as db
 
 # --------------------- CONFIGURATIONS -------------------------------------------------------------------------------------------------------
@@ -443,6 +443,22 @@ def run_optimizer():
         return(send_from_directory(APP.config['UPLOAD_FOLDER'], 'Data.xls', as_attachment=True))
     else:
         abort(400, 'Unknown command')
+
+# ----------- output page -------------------------------------------------------------------------------------------------------------------------------------------------------
+@APP.route('/output', methods = ['GET'])
+@auth.login_required
+def output():
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
+    if current_project is None:
+        abort(400, 'No project selected')
+
+    # first pull output data
+    values = output_scripts.output_values(username, current_project)
+    return(render_template('output.html', valuesData = values,
+        Identity = username, project_name = current_project))
+
+
 
 # ------------ login and out webpage -------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/login', methods = ['GET', 'POST'])

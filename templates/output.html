@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+    <script src='https://www.chartjs.org/dist/2.9.3/Chart.min.js'></script>
+    <script src='https://www.chartjs.org/samples/latest/utils.js'></script>
+</head>
+<body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li><a href="{{ url_for('login') }}">Login</a></li>
+	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+	<br>
+
+	<h2 align="center">Optimal Solutions</h2>
+	<div style="width:50%;">
+		<canvas id="values-chart"></canvas>
+	</div>
+	
+	<script>
+		var color = Chart.helpers.color;
+
+		var scatterChartData = {
+			labels: [
+					{% for item in valuesData %}
+						'{{ item[0] }}',
+					{% endfor %}
+			],
+			datasets: [{
+				pointRadius: 5,
+				tension: 0,
+         		showLine: true,
+         		fill:false,
+				borderColor: window.chartColors.blue,
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				data: [
+					{% for item in valuesData%}
+						{
+							x: {{ item[1] }},
+							y: {{ item[2] }},
+						},
+					{% endfor %}
+				]
+			}]
+		};
+
+		var ctx = document.getElementById('values-chart').getContext('2d');
+		ctx.width = 300;
+		ctx.height= 150;
+		window.myScatter = Chart.Scatter(ctx, {
+			data: scatterChartData,
+			options: {
+			    legend: {
+			        display: false
+			    },
+			    tooltips: {
+			        callbacks: {
+			           label: function(tooltipItem, data) {
+			                var label = data.labels[tooltipItem.index];
+               				return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+			           }
+			        }
+			    }
+			}
+		});
+
+
+	</script>
+
+	<!-- BACK TO PROJECTS -->
+	<p align="center">
+		<button onclick="location.href='{{ url_for('projects') }}'" type="button">Back to Projects</button>
+	</p>
+
+</body>
+</html>

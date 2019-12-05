@@ -34,6 +34,8 @@
 			<tr> <!-- Table headers  -->
 				<th>Project Name</th> 
 				<th>Project Description</th> 
+				<th>Status</th>
+				<th>Results</th>
 			</tr>
 			{% for p in existing_projects %}
 			<tr> <!-- Table rows -->	
@@ -41,6 +43,8 @@
 						<input type="submit" name="select project" value="{{ p['project_name'] }}" style="background:none;border:none;color:#069;text-decoration:underline;cursor: pointer;">
 					</td>
 					<td>{{ p['p_desc'] }}</td>
+					<td> Finished </td>
+					<td> <a href="{{url_for('output')}}">Check</a> </td>
 			</tr>
 			{% endfor %}
 		</table>
