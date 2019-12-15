@@ -44,7 +44,7 @@
 					</td>
 					<td>{{ p['p_desc'] }}</td>
 					<td> Finished </td>
-					<td> <a href="{{url_for('output')}}">Check</a> </td>
+					<td> <a href="{{url_for('output')}}?project_name={{p['project_name']}}">Check</a> </td>
 			</tr>
 			{% endfor %}
 		</table>

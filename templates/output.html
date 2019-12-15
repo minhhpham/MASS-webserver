@@ -25,14 +25,30 @@
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
 
-	<h2 align="center">Optimal Solutions</h2>
-	<div style="width:50%;">
-		<canvas id="values-chart"></canvas>
+	<!-- show the chart -->
+	<h1 align="center">Project {{ project_name }}</h1>
+	<div style="width:50%;text-align:center;margin:auto;">
+		<canvas id="values-chart" style="display:inline;"></canvas>
 	</div>
+
+	<!-- show details for each selected solution from the chart -->
+	<h2 align="center">Selected Solution</h2>
+	<p align="center">View details of each solution by clicking on the points on the graph above.</p>
+	<h3 align="center" id="selected_solution"></h3>
+	<table align="center" id="solution_details" class=blueTable></table>
+	<p align="center">Map: TBD</p>
 	
 	<script>
 		var color = Chart.helpers.color;
 
+		/* Construct solution details for all solutions, to be used by printSolutionDetails */
+		var solution_details_all = [
+			{% for item in solutionDetails %}
+				[{{ item[0] }}, {{ item[1] }}, '{{ item[2] }}', '{{ item[3] }}', '{{ item[4] }}', '{{ item[5] }}', {{ item[6] }}, {{ item[7] }}, {{ item[8] }}, {{ item[9] }}],
+			{% endfor %}
+		];
+
+		/* Construct data for chart from Jinja's data */
 		var scatterChartData = {
 			labels: [
 					{% for item in valuesData %}
@@ -40,14 +56,14 @@
 					{% endfor %}
 			],
 			datasets: [{
-				pointRadius: 5,
+				pointRadius: 7,
 				tension: 0,
          		showLine: true,
          		fill:false,
 				borderColor: window.chartColors.blue,
 				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
 				data: [
-					{% for item in valuesData%}
+					{% for item in valuesData %}
 						{
 							x: {{ item[1] }},
 							y: {{ item[2] }},
@@ -57,6 +73,7 @@
 			}]
 		};
 
+		/* define chart */
 		var ctx = document.getElementById('values-chart').getContext('2d');
 		ctx.width = 300;
 		ctx.height= 150;
@@ -66,6 +83,26 @@
 			    legend: {
 			        display: false
 			    },
+			    title: {
+			    	display: true,
+			    	text: 'Optimal Solutions'
+			    },
+			    scales: {
+			    	xAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'ZC (M$/year)',
+							fontStyle: 'bold'
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'ZE (ton CO2-eq/year)',
+							fontStyle: 'bold'
+						}
+					}]
+				},
 			    tooltips: {
 			        callbacks: {
 			           label: function(tooltipItem, data) {
@@ -73,14 +110,74 @@
                				return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
 			           }
 			        }
-			    }
+			    },
+			    events: ['mousemove', 'click'],
+			    onHover: (event, chartElement) => {
+   					event.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+				},
+			    onClick: function(c,i) {
+				    e = i[0];
+				    if (typeof e !== 'undefined'){
+					    var index = e._index;
+				    } else {
+				    	var index = -1;
+				    }
+				    console.log(index);
+				    printSolutionDetails(index);
+				}
 			}
 		});
+
+		/* event handling function to print out details for selected point on graph */
+		var solution_details_selected;
+		function printSolutionDetails(index){
+			if (index !== -1){
+				// get details of the selected solution
+				solution_details_selected = new Array();
+				for (var i=0; i<solution_details_all.length; i++){
+					if (solution_details_all[i][0] === index+1){
+						solution_details_selected.push(solution_details_all[i]);
+					}
+				}
+				
+				// generate html text for the table
+				var html_text = '';
+				html_text += '<tr>';
+				html_text += '<th>Location ID</th>';
+				html_text += '<th>Location Name</th>';
+				html_text += '<th>Technology</th>';
+				html_text += '<th>Scale</th>';
+				html_text += '<th>Servicing Clusters</th>';
+				html_text += '<th>Receiving Capacity (m3/year)</th>';
+				html_text += '<th>Sending Capacity (m3/year)</th>';
+				html_text += '<th>Receiving Capacity (MGD)</th>';
+				html_text += '<th>Sending Capacity (MGD)</th>';
+
+				for (i=0; i<solution_details_selected.length; i++){
+					html_text += '<tr>';
+						html_text += '<td>'.concat(solution_details_selected[i][1], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][2], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][3], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][4], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][5], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][6], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][7], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][8], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][9], '</td>');
+					html_text += '</tr>';
+				}
+
+				// render to html
+				document.getElementById("selected_solution").innerHTML = "Solution ".concat(index+1);
+				document.getElementById("solution_details").innerHTML = html_text;
+			}
+		}
 
 
 	</script>
 
 	<!-- BACK TO PROJECTS -->
+	<br>
 	<p align="center">
 		<button onclick="location.href='{{ url_for('projects') }}'" type="button">Back to Projects</button>
 	</p>

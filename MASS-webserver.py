@@ -449,13 +449,12 @@ def run_optimizer():
 @auth.login_required
 def output():
     username = auth.current_user.get_id()
-    current_project = auth.current_user.get_project()
-    if current_project is None:
-        abort(400, 'No project selected')
+    current_project = request.args.get('project_name')
 
     # first pull output data
-    values = output_scripts.output_values(username, current_project)
-    return(render_template('output.html', valuesData = values,
+    values = output_scripts.output_values(username, project_name = None)
+    solution_details = output_scripts.output_solutions(username, project_name = None)
+    return(render_template('output.html', valuesData = values, solutionDetails = solution_details,
         Identity = username, project_name = current_project))
 
 
