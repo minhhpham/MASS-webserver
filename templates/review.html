@@ -33,6 +33,7 @@
 	<div id="this is for alignment" align="center">
         <div id="map"></div>
         <script>
+        	var test = {{plant_markers|safe}};
             L.mapbox.accessToken = '{{MAPBOX_KEY}}';
             var map = L.mapbox.map('map', 'mapbox.streets');
             var population_layer = L.mapbox.featureLayer()

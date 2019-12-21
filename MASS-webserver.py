@@ -436,11 +436,18 @@ def review():
 @APP.route('/run_optimizer', methods = ['POST'])
 @auth.login_required
 def run_optimizer():
-    return('TBA')
+    username = auth.current_user.get_id()
+    current_project = auth.current_user.get_project()
+    
     global nPop, nPlant, lifeSpan, populations, plants, techs, params
     if request.form['command'] == 'Run optimizer':
-        misc.write_excel(populations, plants, techs, params, APP.config['UPLOAD_FOLDER'], filename = 'Data.xls')
-        return(send_from_directory(APP.config['UPLOAD_FOLDER'], 'Data.xls', as_attachment=True))
+        # write data to disk and call optimizer
+        # misc.write_excel(populations, plants, techs, params, APP.config['UPLOAD_FOLDER'], filename = 'Data.xls')
+        
+        # update last_executed time for this project in the db
+        db.updateProjectExecution(username, current_project)
+        # return to projects page
+        return(redirect(url_for('projects')))
     else:
         abort(400, 'Unknown command')
 
@@ -454,7 +461,21 @@ def output():
     # first pull output data
     values = output_scripts.output_values(username, project_name = None)
     solution_details = output_scripts.output_solutions(username, project_name = None)
-    return(render_template('output.html', valuesData = values, solutionDetails = solution_details,
+
+    # map data of population clusters for all solutions
+    populations = db.getPopulations(username, current_project)
+    population_markers = mapmaker.createPopulationsGeoJson(populations)  # population markers for MapBox
+
+    # map data of locations for all solutions (markers)
+    plants = db.getPlants(username, current_project)
+    location_markers_allSols = mapmaker.createLocationsSolutionsGeoJson(plants, solution_details)
+
+    # map data of LineString connecting locations and population clusters for all solutions
+    plants_pop_linestring = mapmaker.createLocationClusterLinestringGeoJson(plants, populations, solution_details)
+
+    return(render_template('output.html', valuesData = values, solutionDetails = solution_details, 
+        population_markers = population_markers, location_markers_allSols = location_markers_allSols,
+        plants_pop_linestring = plants_pop_linestring, MAPBOX_KEY = config['MAPBOX_KEY'],
         Identity = username, project_name = current_project))
 
 

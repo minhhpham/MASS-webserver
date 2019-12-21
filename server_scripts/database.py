@@ -1,6 +1,6 @@
 import psycopg2
 import psycopg2.extras
-import yaml
+import yaml, time
 
 global config    # initialized in MASS-webserver.py
 with open("server_config.yaml", 'r') as stream:
@@ -48,6 +48,7 @@ def init_table(table_name):
 							username	varchar(255),
 							project_name varchar(255),	
 							p_desc		varchar(255),
+							last_executed varchar(255),
 							PRIMARY KEY(username, project_name)		
 						)
 			""")
@@ -137,13 +138,14 @@ def getProjects(username):
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 		# Select projects
-		cursor.execute("SELECT project_name, p_desc FROM Projects WHERE username = %s", (username,))
+		cursor.execute("SELECT project_name, p_desc, last_executed FROM Projects WHERE username = %s", (username,))
 		vals = cursor.fetchall() # Get the result
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
 	cursor.close()
+	vals = getProjectStatus(vals)
 	return vals
 
 # Creates a new project
@@ -151,8 +153,8 @@ def saveProject(username, project_name, p_desc):
 	try:
 		cursor = conn.cursor()
 
-		vals = (username, project_name, p_desc)
-		cursor.execute('''INSERT INTO Projects VALUES (%s, %s, %s)
+		vals = (username, project_name, p_desc, 'never')
+		cursor.execute('''INSERT INTO Projects VALUES (%s, %s, %s, %s)
 			ON CONFLICT (username, project_name) DO
 			UPDATE SET p_desc=EXCLUDED.p_desc''', vals)
 
@@ -162,6 +164,33 @@ def saveProject(username, project_name, p_desc):
 	cursor.close()
 	# commit the changes
 	conn.commit()
+
+def updateProjectExecution(username, project_name):
+	""" update last_executed in the database with current time """
+	try:
+		cursor = conn.cursor()
+		now = time.strftime('%X %x %Z')
+		cursor.execute('''
+			UPDATE projects SET last_executed=%s
+			WHERE username=%s AND project_name=%s
+			''', (now, username, project_name))
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+		# close communication with the PostgreSQL database server
+	cursor.close()
+		# commit the changes
+	conn.commit()
+
+def getProjectStatus(projects):
+	""" determined if projects are running on optimizer
+	to be updated in the future
+	"""
+	for r in projects:
+		if r['last_executed'] == 'never':
+			r['status'] = 'not executed yet'
+		else:
+			r['status'] = 'finished'
+	return projects
 
 # Inserts an Inputsize for a given user and projectID, update records if data exists
 def saveInputSize(inputSize, username, project_name):
