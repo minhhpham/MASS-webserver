@@ -138,14 +138,20 @@ def getProjects(username):
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 		# Select projects
-		cursor.execute("SELECT project_name, p_desc, last_executed FROM Projects WHERE username = %s", (username,))
+		cursor.execute("SELECT project_name, p_desc, last_executed FROM Projects WHERE username = %s", (username))
 		vals = cursor.fetchall() # Get the result
 
 	except(psycopg2.DatabaseError) as error:
-		print(error)
+		raise Exception(str(error))
 	# close communication with the PostgreSQL database server
 	cursor.close()
-	vals = getProjectStatus(vals)
+
+	# determin optimizer status for this project
+	for r in vals:
+		if r['last_executed'] == 'never':
+			r['status'] = 'not executed yet'
+		else:
+			r['status'] = 'finished'
 	return vals
 
 # Creates a new project
@@ -180,17 +186,6 @@ def updateProjectExecution(username, project_name):
 	cursor.close()
 		# commit the changes
 	conn.commit()
-
-def getProjectStatus(projects):
-	""" determined if projects are running on optimizer
-	to be updated in the future
-	"""
-	for r in projects:
-		if r['last_executed'] == 'never':
-			r['status'] = 'not executed yet'
-		else:
-			r['status'] = 'finished'
-	return projects
 
 # Inserts an Inputsize for a given user and projectID, update records if data exists
 def saveInputSize(inputSize, username, project_name):
