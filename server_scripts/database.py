@@ -138,7 +138,7 @@ def getProjects(username):
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 		# Select projects
-		cursor.execute("SELECT project_name, p_desc, last_executed FROM Projects WHERE username = %s", (username))
+		cursor.execute("SELECT project_name, p_desc, last_executed FROM Projects WHERE username = %s", (username,))
 		vals = cursor.fetchall() # Get the result
 
 	except(psycopg2.DatabaseError) as error:
