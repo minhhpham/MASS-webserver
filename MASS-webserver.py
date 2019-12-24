@@ -16,10 +16,6 @@ CSRF = csrf.CSRFProtect()
 CSRF.init_app(APP)
 APP.config['SECRET_KEY'] = os.urandom(32)
 
-
-# data folder
-APP.config['UPLOAD_FOLDER'] = 'data'
-
 # load config from server_config.yaml
 global config
 with open("server_config.yaml", 'r') as stream:
@@ -441,9 +437,8 @@ def run_optimizer():
     
     global nPop, nPlant, lifeSpan, populations, plants, techs, params
     if request.form['command'] == 'Run optimizer':
-        # write data to disk and call optimizer
-        # misc.write_excel(populations, plants, techs, params, APP.config['UPLOAD_FOLDER'], filename = 'Data.xls')
-        
+        # write data to disk
+        misc.write_input_to_tsv(username, current_project, config['optimizer_data_dir'], filename = 'data.txt')
         # update last_executed time for this project in the db
         db.updateProjectExecution(username, current_project)
         # return to projects page
