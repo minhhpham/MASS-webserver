@@ -451,6 +451,8 @@ def run_optimizer():
 @auth.login_required
 def output():
     username = auth.current_user.get_id()
+    if request.args.get('project_name') is None:
+        abort(400, 'project name not provided')
     current_project = request.args.get('project_name')
 
     # first pull output data
@@ -526,6 +528,12 @@ def register():
                 pass # Handle error 
         else:
             abort(400, 'Unknown request')
+
+# ------------- Demo page -------------------------------------------------------------------
+
+@APP.route('/demo', methods = ['GET'])
+def demo():
+    return(render_template('demo.html'))
 
 # ------------- Contact page (static) --------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/contact', methods = ['GET'])

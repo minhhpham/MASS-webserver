@@ -137,7 +137,6 @@
 				    } else {
 				    	var index = -1;
 				    }
-				    console.log(index);
 				    printSolutionDetails(index);
 				    drawSolutionMap(index);
 				}
@@ -192,10 +191,11 @@
 		// global variables for population markers, location markers, and connecting LineString
 		var population_markers = {{population_markers|safe}};
 		var location_markers_allSols = {{location_markers_allSols|safe}};
-		var location_markers;
+		var location_markers;		// selected location markers
 		var plants_pop_linestring_allSols = {{plants_pop_linestring|safe}};
-		var connecting_linestrings;
+		var connecting_linestrings;	// selected connection linestrings
 		var map = null;
+		var animated_markers; 		// animated markers on connection linestrings
 		function drawSolutionMap(index){
 			if (index !== -1){
 				// clear the map
@@ -220,7 +220,61 @@
 	            							   .addTo(map);
 	            map.fitBounds(population_layer.getBounds().extend(plant_layer.getBounds()));
 	            map.scrollWheelZoom.disable();
-			}
+
+	            // prepare data to animate movement on connection_layer
+	            var i, j, origin, destin, x, y;	// intermediary variables to animate connection 
+	            var steps = 500;				// control how fast the animation moves, higher = faster
+	            animated_markers = [];
+	            // create steps number of positions for each linestring
+	            for (var i=0; i<=steps; i++){
+	            	var position_list = []; 	// array of positions in this step
+	            	// loop through connection linestrings
+	            	for (j=0; j<connecting_linestrings.length; j++){
+	            		origin = connecting_linestrings[j].geometry.coordinates[1];
+	            		destin = connecting_linestrings[j].geometry.coordinates[0];
+	            		x = origin[0] + (destin[0] - origin[0])/steps*i;	// coordinates of animation marker on this linestring
+						y = origin[1] + (destin[1] - origin[1])/steps*i;
+	            		position_list.push({
+					        'type': 'FeatureCollection',
+					        'features': [
+					            {
+				                'type': 'Feature',
+				                'properties': {},
+				                'geometry': {'type': 'Point', 'coordinates': [x,y]}
+					            }
+				        	]
+					    });
+	            	}
+	            	// push this position list out
+	            	animated_markers.push(position_list);
+	            }
+
+	            // animate movement on connection_layer
+	            var animate_layer = L.mapbox.featureLayer(animated_markers[0],{
+	    			pointToLayer: function(feature, latlon){
+	    				return L.marker(latlon, {
+							icon: L.icon({
+								iconUrl: '{{ url_for('static',filename='water_marker.png') }}',
+								iconSize: [25, 25]
+							})
+						});
+	    			}
+	   			});
+	   			animate_layer.addTo(map);
+
+	            var counter = 0;
+				function animate(){
+					if (counter === steps){
+						counter = 0;
+					} else{
+						counter = counter + 1;
+					}
+					animate_layer.setGeoJSON(animated_markers[counter]);
+					requestAnimationFrame(animate);
+
+				}
+				animate()
+	        }
 		}
 
 

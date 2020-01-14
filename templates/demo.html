@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="/static/NavBarStyle.css">
+	<link rel="stylesheet" type="text/css" href="/static/TableStyle.css">
+    <script src='https://www.chartjs.org/dist/2.9.3/Chart.min.js'></script>
+    <script src='https://www.chartjs.org/samples/latest/utils.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <style> #map { width: 50%; height: 500px} </style>
+</head>
+<body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href="/">Home</a></li>
+	   <li><a href="/projects">Projects</a></li>
+	   <li><a href="/login">Login</a></li>
+	   <li><a href="/logout">Logout</a></li>
+	   <li><a href="/contact">Contact</a></li>
+	   
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+
+
+	<!-- show the chart for selecting solutions -->
+	<h1 align="center">Project test 3</h1>
+	<div style="width:50%;text-align:center;margin:auto;">
+		<canvas id="values-chart" style="display:inline;"></canvas>
+	</div>
+
+	<!-- show details for each selected solution from the chart -->
+	<h2 align="center">Selected Solution</h2>
+	<p align="center">View details of each solution by clicking on the points on the graph above.</p>
+	<h3 align="center" id="selected_solution"></h3>
+	<table align="center" id="solution_details" class=blueTable></table>
+
+	<!-- shows map of selected solution -->
+	<br>
+	<div id="this is for alignment" align="center">
+        <div id="map"></div>
+    </div>
+    
+	<!-- JS -->
+	<script>
+		var color = Chart.helpers.color;
+
+		/* Construct solution details for all solutions, to be used by printSolutionDetails */
+		var solution_details_all = [
+			
+				[1, 1, 'Falkenburg', 'GAC + MF', 'Large', '6, 9, 10, 17', 14818735, 13336863, 10.72519354, 9.652675272],
+			
+				[1, 2, 'Valrico', 'GAC + MF', 'Large', '3, 4, 5, 11, 15, 18', 41446398, 37301759, 29.99720557, 26.99748559],
+			
+				[1, 3, 'South County', 'Not Installed', 'Large', '14,16', 13761340, 12385206, 9.959894342, 8.963904908],
+			
+				[1, 4, 'Southeast County Landfill', 'Not Installed', 'Large', '7', 15063983, 13557585, 10.902694, 9.812424817],
+			
+				[1, 5, 'Mosaic (Hillsborough)', 'Not Installed', 'Large', '12', 6660663, 5994597, 4.820715114, 4.33864382],
+			
+				[1, 6, 'South County Solid Waste Facility', 'GAC + MF', 'Large', '1, 8', 16273296, 14645967, 11.77794523, 10.60015114],
+			
+				[1, 7, '14519 BALM RIVERVIEW RD, RIVERVIEW', 'GAC + MF', 'Large', '2, 13', 74616516, 67154865, 54.00437861, 48.60394118],
+			
+				[1, 8, '15110 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Not Installed', '', 0, 0, 0, 0],
+			
+				[1, 9, '16410 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Large', '19', 13578518, 12220666, 9.827575265, 8.844817594],
+			
+				[2, 1, 'Falkenburg', 'Not Installed', 'Large', '6, 9, 10, 17', 14818735, 13336863, 10.72519354, 9.652675272],
+			
+				[2, 2, 'Valrico', 'Not Installed', 'Large', '3, 4, 5, 11, 15, 18', 41446398, 37301759, 29.99720557, 26.99748559],
+			
+				[2, 3, 'South County', 'Not Installed', 'Large', '1,14,16', 13761340, 12385206, 9.959894342, 8.963904908],
+			
+				[2, 4, 'Southeast County Landfill', 'Not Installed', 'Large', '7', 15063983, 13557585, 10.902694, 9.812424817],
+			
+				[2, 5, 'Mosaic (Hillsborough)', 'Not Installed', 'Large', '12', 6660663, 5994597, 4.820715114, 4.33864382],
+			
+				[2, 6, 'South County Solid Waste Facility', 'GAC + MF', 'Large', '8', 16273296, 14645967, 11.77794523, 10.60015114],
+			
+				[2, 7, '14519 BALM RIVERVIEW RD, RIVERVIEW', 'GAC + MF', 'Large', '2, 13', 74616516, 67154865, 54.00437861, 48.60394118],
+			
+				[2, 8, '15110 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Not Installed', '', 0, 0, 0, 0],
+			
+				[2, 9, '16410 BALM WIMAUMA RD, WIMAUMA', 'GAC + MF', 'Large', '19', 13578518, 12220666, 9.827575265, 8.844817594],
+			
+				[3, 1, 'Falkenburg', 'GAC + MF', 'Large', '6, 9, 10, 17', 14818735, 13336863, 10.72519354, 9.652675272],
+			
+				[3, 2, 'Valrico', 'Not Installed', 'Large', '3, 4, 5, 11, 15, 18', 41446398, 37301759, 29.99720557, 26.99748559],
+			
+				[3, 3, 'South County', 'Not Installed', 'Large', '1,14', 13761340, 12385206, 9.959894342, 8.963904908],
+			
+				[3, 4, 'Southeast County Landfill', 'Not Installed', 'Large', '7', 15063983, 13557585, 10.902694, 9.812424817],
+			
+				[3, 5, 'Mosaic (Hillsborough)', 'Not Installed', 'Large', '12', 6660663, 5994597, 4.820715114, 4.33864382],
+			
+				[3, 6, 'South County Solid Waste Facility', 'Not Installed', 'Large', '8', 16273296, 14645967, 11.77794523, 10.60015114],
+			
+				[3, 7, '14519 BALM RIVERVIEW RD, RIVERVIEW', 'Not Installed', 'Large', '2, 13', 74616516, 67154865, 54.00437861, 48.60394118],
+			
+				[3, 8, '15110 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Not Installed', '', 0, 0, 0, 0],
+			
+				[3, 9, '16410 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Large', '16, 19', 13578518, 12220666, 9.827575265, 8.844817594],
+			
+				[4, 1, 'Falkenburg', 'GAC + MF', 'Large', '6, 9, 10, 17', 14818735, 13336863, 10.72519354, 9.652675272],
+			
+				[4, 2, 'Valrico', 'GAC + MF', 'Large', '3, 4, 5, 11, 15, 18', 41446398, 37301759, 29.99720557, 26.99748559],
+			
+				[4, 3, 'South County', 'MBR', 'Large', '14', 13761340, 12385206, 9.959894342, 8.963904908],
+			
+				[4, 4, 'Southeast County Landfill', 'GAC + MF', 'Large', '7', 15063983, 13557585, 10.902694, 9.812424817],
+			
+				[4, 5, 'Mosaic (Hillsborough)', 'GAC + MF', 'Large', '12', 6660663, 5994597, 4.820715114, 4.33864382],
+			
+				[4, 6, 'South County Solid Waste Facility', 'Not Installed', 'Large', '1, 8', 16273296, 14645967, 11.77794523, 10.60015114],
+			
+				[4, 7, '14519 BALM RIVERVIEW RD, RIVERVIEW', 'Not Installed', 'Large', '2, 13', 74616516, 67154865, 54.00437861, 48.60394118],
+			
+				[4, 8, '15110 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Not Installed', '', 0, 0, 0, 0],
+			
+				[4, 9, '16410 BALM WIMAUMA RD, WIMAUMA', 'MBR', 'Large', '16, 19', 13578518, 12220666, 9.827575265, 8.844817594],
+			
+				[5, 1, 'Falkenburg', 'Not Installed', 'Large', '6, 9, 17', 14818735, 13336863, 10.72519354, 9.652675272],
+			
+				[5, 2, 'Valrico', 'Not Installed', 'Large', '3, 4, 5, 11, 15, 18', 41446398, 37301759, 29.99720557, 26.99748559],
+			
+				[5, 3, 'South County', 'Not Installed', 'Large', '14', 13761340, 12385206, 9.959894342, 8.963904908],
+			
+				[5, 4, 'Southeast County Landfill', 'Not Installed', 'Large', '7', 15063983, 13557585, 10.902694, 9.812424817],
+			
+				[5, 5, 'Mosaic (Hillsborough)', 'Not Installed', 'Large', '10,12', 6660663, 5994597, 4.820715114, 4.33864382],
+			
+				[5, 6, 'South County Solid Waste Facility', 'Not Installed', 'Large', '1, 8', 16273296, 14645967, 11.77794523, 10.60015114],
+			
+				[5, 7, '14519 BALM RIVERVIEW RD, RIVERVIEW', 'GAC + MF', 'Large', '2, 13', 74616516, 67154865, 54.00437861, 48.60394118],
+			
+				[5, 8, '15110 BALM WIMAUMA RD, WIMAUMA', 'Not Installed', 'Not Installed', '', 0, 0, 0, 0],
+			
+				[5, 9, '16410 BALM WIMAUMA RD, WIMAUMA', 'GAC + MF', 'Large', '16, 19', 13578518, 12220666, 9.827575265, 8.844817594],
+			
+		];
+
+		/* Construct data for solution chart from Jinja's data */
+		var scatterChartData = {
+			labels: [
+					
+						'Solution 1',
+					
+						'Solution 2',
+					
+						'Solution 3',
+					
+						'Solution 4',
+					
+						'Solution 5',
+					
+			],
+			datasets: [{
+				pointRadius: 7,
+				tension: 0,
+         		showLine: true,
+         		fill:false,
+				borderColor: window.chartColors.blue,
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				data: [
+					
+						{
+							x: 3730.3,
+							y: 6648.57,
+						},
+					
+						{
+							x: 3730.75,
+							y: 6432.48,
+						},
+					
+						{
+							x: 3731.21,
+							y: 5908.45,
+						},
+					
+						{
+							x: 3731.39,
+							y: 5766.27,
+						},
+					
+						{
+							x: 3732.21,
+							y: 5096.07,
+						},
+					
+				]
+			}]
+		};
+
+		/* define chart */
+		var ctx = document.getElementById('values-chart').getContext('2d');
+		ctx.width = 300;
+		ctx.height= 150;
+		window.myScatter = Chart.Scatter(ctx, {
+			data: scatterChartData,
+			options: {
+			    legend: {
+			        display: false
+			    },
+			    title: {
+			    	display: true,
+			    	text: 'Optimal Solutions'
+			    },
+			    scales: {
+			    	xAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'ZC (M$/year)',
+							fontStyle: 'bold'
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'ZE (ton CO2-eq/year)',
+							fontStyle: 'bold'
+						}
+					}]
+				},
+			    tooltips: {
+			        callbacks: {
+			           label: function(tooltipItem, data) {
+			                var label = data.labels[tooltipItem.index];
+               				return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+			           }
+			        }
+			    },
+			    events: ['mousemove', 'click'],
+			    onHover: (event, chartElement) => {
+   					event.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+				},
+			    onClick: function(c,i) {
+				    e = i[0];
+				    if (typeof e !== 'undefined'){
+					    var index = e._index;
+				    } else {
+				    	var index = -1;
+				    }
+				    printSolutionDetails(index);
+				    drawSolutionMap(index);
+				}
+			}
+		});
+
+		/* event handling function to print out details for selected point on graph */
+		function printSolutionDetails(index){
+			if (index !== -1){
+				// get details of the selected solution
+				var solution_details_selected = new Array();
+				for (var i=0; i<solution_details_all.length; i++){
+					if (solution_details_all[i][0] === index+1){
+						solution_details_selected.push(solution_details_all[i]);
+					}
+				}
+				
+				// generate html text for the table
+				var html_text = '';
+				html_text += '<tr>';
+				html_text += '<th>Location ID</th>';
+				html_text += '<th>Location Name</th>';
+				html_text += '<th>Technology</th>';
+				html_text += '<th>Scale</th>';
+				html_text += '<th>Servicing Clusters</th>';
+				html_text += '<th>Receiving Capacity (m3/year)</th>';
+				html_text += '<th>Sending Capacity (m3/year)</th>';
+				html_text += '<th>Receiving Capacity (MGD)</th>';
+				html_text += '<th>Sending Capacity (MGD)</th>';
+
+				for (i=0; i<solution_details_selected.length; i++){
+					html_text += '<tr>';
+						html_text += '<td>'.concat(solution_details_selected[i][1], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][2], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][3], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][4], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][5], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][6], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][7], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][8], '</td>');
+						html_text += '<td>'.concat(solution_details_selected[i][9], '</td>');
+					html_text += '</tr>';
+				}
+
+				// render to html
+				document.getElementById("selected_solution").innerHTML = "Solution ".concat(index+1);
+				document.getElementById("solution_details").innerHTML = html_text;
+			}
+		}
+
+		/*event handling function to refresh the map according to selected solution*/
+		// global variables for population markers, location markers, and connecting LineString
+		var population_markers = [{"geometry": {"coordinates": [-82.4033, 27.763], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Apollo Beach: 20149"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2895, 27.753], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Balm: 3968"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2614, 27.8767], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Bloomingdale: 24100"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2993, 27.936], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Brandon: 113677"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2311, 27.9868], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Dover: 4149"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3647, 28.0044], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "East Lake-Orient Park CDP: 25565"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2178, 27.8479], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Fish Hawk: 20930"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3791, 27.8285], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Gibsonton: 16587"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3083, 27.9901], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Mango: 12142"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3794, 27.9245], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Palm River-Clair Mel CDP: 23848"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.1203, 28.0144], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Plant City: 39087"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3643, 27.8856], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Progress Village: 8220"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3046, 27.8252], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Riverview: 89017"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.4227, 27.7077], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Ruskin: 24266"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2741, 28.0016], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Seffner: 8297"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3558, 27.7144], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Sun City Center: 24900"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2962, 28.0423], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Thonotosassa: 13964"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.2313, 27.9191], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Valrico: 38711"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.3132, 27.6749], "type": "Point"}, "properties": {"marker-color": "#ff2200", "marker-size": "large", "marker-symbol": "city", "title": "Wimauma: 8615"}, "type": "Feature"}];
+		var location_markers_allSols = [[{"geometry": {"coordinates": [-82.340869, 27.952972], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Falkenburg: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.229382, 27.957529], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Valrico: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.383904, 27.722524], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.198667, 27.762715], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Southeast County Landfill: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.38656, 27.863415], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Mosaic (Hillsborough): new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.382078, 27.801543], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County Solid Waste Facility: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.279631, 27.773225], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "14519 BALM RIVERVIEW RD, RIVERVIEW: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.261762, 27.723188], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "16410 BALM WIMAUMA RD, WIMAUMA: new location"}, "type": "Feature"}], [{"geometry": {"coordinates": [-82.340869, 27.952972], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Falkenburg: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.229382, 27.957529], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Valrico: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.383904, 27.722524], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.198667, 27.762715], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Southeast County Landfill: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.38656, 27.863415], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Mosaic (Hillsborough): new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.382078, 27.801543], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County Solid Waste Facility: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.279631, 27.773225], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "14519 BALM RIVERVIEW RD, RIVERVIEW: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.261762, 27.723188], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "16410 BALM WIMAUMA RD, WIMAUMA: new location"}, "type": "Feature"}], [{"geometry": {"coordinates": [-82.340869, 27.952972], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Falkenburg: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.229382, 27.957529], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Valrico: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.383904, 27.722524], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.198667, 27.762715], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Southeast County Landfill: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.38656, 27.863415], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Mosaic (Hillsborough): new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.382078, 27.801543], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County Solid Waste Facility: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.279631, 27.773225], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "14519 BALM RIVERVIEW RD, RIVERVIEW: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.261762, 27.723188], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "16410 BALM WIMAUMA RD, WIMAUMA: new location"}, "type": "Feature"}], [{"geometry": {"coordinates": [-82.340869, 27.952972], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Falkenburg: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.229382, 27.957529], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Valrico: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.383904, 27.722524], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.198667, 27.762715], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Southeast County Landfill: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.38656, 27.863415], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Mosaic (Hillsborough): new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.382078, 27.801543], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County Solid Waste Facility: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.279631, 27.773225], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "14519 BALM RIVERVIEW RD, RIVERVIEW: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.261762, 27.723188], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "16410 BALM WIMAUMA RD, WIMAUMA: new location"}, "type": "Feature"}], [{"geometry": {"coordinates": [-82.340869, 27.952972], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Falkenburg: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.229382, 27.957529], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Valrico: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.383904, 27.722524], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.198667, 27.762715], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Southeast County Landfill: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.38656, 27.863415], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "Mosaic (Hillsborough): new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.382078, 27.801543], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "South County Solid Waste Facility: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.279631, 27.773225], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "14519 BALM RIVERVIEW RD, RIVERVIEW: new location"}, "type": "Feature"}, {"geometry": {"coordinates": [-82.261762, 27.723188], "type": "Point"}, "properties": {"marker-color": "#3bb2d0", "marker-size": "large", "marker-symbol": "water", "title": "16410 BALM WIMAUMA RD, WIMAUMA: new location"}, "type": "Feature"}]];
+		var location_markers;		// selected location markers
+		var plants_pop_linestring_allSols = [[{"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3647, 28.0044]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3083, 27.9901]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3794, 27.9245]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.2962, 28.0423]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2614, 27.8767]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2993, 27.936]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2311, 27.9868]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.1203, 28.0144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2741, 28.0016]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2313, 27.9191]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4227, 27.7077]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.3558, 27.7144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.198667, 27.762715], [-82.2178, 27.8479]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.38656, 27.863415], [-82.3643, 27.8856]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.4033, 27.763]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.3791, 27.8285]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.2895, 27.753]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.3046, 27.8252]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3132, 27.6749]], "type": "LineString"}, "properties": {}, "type": "Feature"}], [{"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3647, 28.0044]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3083, 27.9901]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3794, 27.9245]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.2962, 28.0423]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2614, 27.8767]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2993, 27.936]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2311, 27.9868]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.1203, 28.0144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2741, 28.0016]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2313, 27.9191]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4033, 27.763]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4227, 27.7077]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.3558, 27.7144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.198667, 27.762715], [-82.2178, 27.8479]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.38656, 27.863415], [-82.3643, 27.8856]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.3791, 27.8285]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.2895, 27.753]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.3046, 27.8252]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3132, 27.6749]], "type": "LineString"}, "properties": {}, "type": "Feature"}], [{"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3647, 28.0044]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3083, 27.9901]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3794, 27.9245]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.2962, 28.0423]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2614, 27.8767]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2993, 27.936]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2311, 27.9868]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.1203, 28.0144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2741, 28.0016]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2313, 27.9191]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4033, 27.763]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4227, 27.7077]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.198667, 27.762715], [-82.2178, 27.8479]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.38656, 27.863415], [-82.3643, 27.8856]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.3791, 27.8285]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.2895, 27.753]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.3046, 27.8252]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3558, 27.7144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3132, 27.6749]], "type": "LineString"}, "properties": {}, "type": "Feature"}], [{"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3647, 28.0044]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3083, 27.9901]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3794, 27.9245]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.2962, 28.0423]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2614, 27.8767]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2993, 27.936]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2311, 27.9868]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.1203, 28.0144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2741, 28.0016]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2313, 27.9191]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4227, 27.7077]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.198667, 27.762715], [-82.2178, 27.8479]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.38656, 27.863415], [-82.3643, 27.8856]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.4033, 27.763]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.3791, 27.8285]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.2895, 27.753]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.3046, 27.8252]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3558, 27.7144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3132, 27.6749]], "type": "LineString"}, "properties": {}, "type": "Feature"}], [{"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3647, 28.0044]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.3083, 27.9901]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.340869, 27.952972], [-82.2962, 28.0423]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2614, 27.8767]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2993, 27.936]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2311, 27.9868]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.1203, 28.0144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2741, 28.0016]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.229382, 27.957529], [-82.2313, 27.9191]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.383904, 27.722524], [-82.4227, 27.7077]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.198667, 27.762715], [-82.2178, 27.8479]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.38656, 27.863415], [-82.3794, 27.9245]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.38656, 27.863415], [-82.3643, 27.8856]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.4033, 27.763]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.382078, 27.801543], [-82.3791, 27.8285]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.2895, 27.753]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.279631, 27.773225], [-82.3046, 27.8252]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3558, 27.7144]], "type": "LineString"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [[-82.261762, 27.723188], [-82.3132, 27.6749]], "type": "LineString"}, "properties": {}, "type": "Feature"}]];
+		var connecting_linestrings;	// selected connection linestrings
+		var map = null;
+		var animated_markers; 		// animated markers on connection linestrings
+		function drawSolutionMap(index){
+			if (index !== -1){
+				// clear the map
+				if (map !== undefined && map !== null) {
+					map.remove(); // should remove the map from UI and clean the inner children of DOM element
+				}
+
+
+				// draw map
+				location_markers = location_markers_allSols[index];
+				connecting_linestrings = plants_pop_linestring_allSols[index];
+				L.mapbox.accessToken = 'pk.eyJ1IjoibWluaGhwaGFtIiwiYSI6ImNrMzljZGZ4eDAxeHIzbnJyZ2IzczR0NTkifQ.4z38nBjZddXTCtyuTEafPQ';
+	            map = L.mapbox.map('map', 'mapbox.streets');
+	            var population_layer = L.mapbox.featureLayer()
+					                           .setGeoJSON(population_markers)
+	                 					       .addTo(map);
+		        var plant_layer = L.mapbox.featureLayer()
+					                           .setGeoJSON(location_markers)
+	                 					       .addTo(map);
+	            var connection_layer = L.mapbox.featureLayer()
+	            							   .setGeoJSON(connecting_linestrings)
+	            							   .addTo(map);
+	            map.fitBounds(population_layer.getBounds().extend(plant_layer.getBounds()));
+	            map.scrollWheelZoom.disable();
+
+	            // prepare data to animate movement on connection_layer
+	            var i, j, origin, destin, x, y;	// intermediary variables to animate connection 
+	            var steps = 500;				// control how fast the animation moves, higher = faster
+	            animated_markers = [];
+	            // create steps number of positions for each linestring
+	            for (var i=0; i<=steps; i++){
+	            	var position_list = []; 	// array of positions in this step
+	            	// loop through connection linestrings
+	            	for (j=0; j<connecting_linestrings.length; j++){
+	            		origin = connecting_linestrings[j].geometry.coordinates[1];
+	            		destin = connecting_linestrings[j].geometry.coordinates[0];
+	            		x = origin[0] + (destin[0] - origin[0])/steps*i;	// coordinates of animation marker on this linestring
+						y = origin[1] + (destin[1] - origin[1])/steps*i;
+	            		position_list.push({
+					        'type': 'FeatureCollection',
+					        'features': [
+					            {
+				                'type': 'Feature',
+				                'properties': {},
+				                'geometry': {'type': 'Point', 'coordinates': [x,y]}
+					            }
+				        	]
+					    });
+	            	}
+	            	// push this position list out
+	            	animated_markers.push(position_list);
+	            }
+
+	            // animate movement on connection_layer
+	            var animate_layer = L.mapbox.featureLayer(animated_markers[0],{
+	    			pointToLayer: function(feature, latlon){
+	    				return L.marker(latlon, {
+							icon: L.icon({
+								iconUrl: '/static/water_marker.png',
+								iconSize: [25, 25]
+							})
+						});
+	    			}
+	   			});
+	   			animate_layer.addTo(map);
+
+	            var counter = 0;
+				function animate(){
+					if (counter === steps){
+						counter = 0;
+					} else{
+						counter = counter + 1;
+					}
+					animate_layer.setGeoJSON(animated_markers[counter]);
+					requestAnimationFrame(animate);
+
+				}
+				animate()
+	        }
+		}
+
+
+
+	</script>
+
+</body>
+</html>
