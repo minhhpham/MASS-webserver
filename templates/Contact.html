@@ -3,6 +3,7 @@
 <head>
 	<title>Water Reclamation System Planning</title>
 	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='markdown.css') }}">
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -12,6 +13,8 @@
 	   <li>					<a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
 	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
+   	   <li>					<a href="{{ url_for('demo') }}">Demo</a></li>
+	   <li>					<a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li class="active">	<a href="{{ url_for('Contact') }}">Contact</a></li>
    	   <div class="identity">Hello 
 	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
@@ -20,9 +23,22 @@
 	</div>
 
 	<!-- NAVIGATION BAR ENDS -->
-	TBD
-	<br>
-	<a href="https://github.com/minhhpham/MASS-webserver">Source code</a>
+	<article class="markdown-body">
+		Questions about the mathematical model:
+		<ul>
+			<li>Dr. Nader Rezaei: naderrezaei@mail.usf.edu</li>
+		</ul>
+		Technical questions:
+		<ul>
+			<li>Minh Pham: minhpham@mail.usf.edu</li>
+		</ul>
+		General questions:
+		<ul>
+			<li><a href="http://cee.eng.usf.edu/faculty/qiongzhang/" target="_blank">Dr. Qiong Zhang</a></li>
+			<li>Dr. Nancy Diaz-Elsayed: nancyd1@usf.edu  </li>
+		</ul>
+
+	</article>
 
 
 </body>

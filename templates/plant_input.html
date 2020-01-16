@@ -14,6 +14,8 @@
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('login') }}">Login</a></li>
 	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
+	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
 	   <div class="identity">Hello 
 	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!

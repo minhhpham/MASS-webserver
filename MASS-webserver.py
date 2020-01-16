@@ -529,16 +529,23 @@ def register():
         else:
             abort(400, 'Unknown request')
 
-# ------------- Demo page -------------------------------------------------------------------
+# ------------- Demo and documentation pages -------------------------------------------------------------------
 
 @APP.route('/demo', methods = ['GET'])
 def demo():
-    return(render_template('demo.html'))
+    username = auth.current_user.get_id()
+    return(render_template('demo.html', Identity = username))
+
+@APP.route('/documentation', methods = ['GET'])
+def documentation():
+    username = auth.current_user.get_id()
+    return(render_template('documentation.html', Identity = username))
 
 # ------------- Contact page (static) --------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/contact', methods = ['GET'])
 def Contact():
-    return(render_template('Contact.html'))
+    username = auth.current_user.get_id()
+    return(render_template('Contact.html', Identity = username))
 
 # --------------------- RUN SERVER ---------------------------------------------------------------------------------------------------------------------------------------#
 if __name__ == '__main__':

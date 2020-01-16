@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Water Reclamation System Planning</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='markdown.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='HelpTips.css') }}">
+</head>
+<body>
+	<!-- NAVIGATION BAR -->
+	<div id='cssmenu'>
+	<ul>
+	   <li>					<a href="{{ url_for('index') }}">Home</a></li>
+	   <li>					<a href="{{ url_for('projects') }}">Projects</a></li>
+	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
+	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li>					<a href="{{ url_for('demo') }}">Demo</a></li>
+	   <li class="active">	<a href="{{ url_for('documentation') }}">Documentation</a></li>
+	   <li>					<a href="{{ url_for('Contact') }}">Contact</a></li>
+	   <div class="identity">Hello 
+	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   </div>
+	</ul>
+	</div>
+
+	<!-- NAVIGATION BAR ENDS -->
+	<article class="markdown-body">
+		<h2 id="table-of-content">Table of Content<a class="headerlink" href="#table-of-content" title="Permanent link"></a></h2>
+		<ul>
+			<li><a href="#project-management">Project Management</a></li>
+			<li><a href="#input-data">How to input data</a></li>
+			<ul>
+				<li><a href="#project-dimensions">Project Dimensions</a></li>
+				<li><a href="#population-clusters">Population Clusters</a></li>
+				<li><a href="#water-treatment-technologies">Water-treatment technologies</a></li>
+				<li><a href="#potential-locations">Potential Water-treatment Locations</a></li>
+				<li><a href="#model-parameters">Model Parameters</a></li>
+			</ul>
+			<li><a href="#output">How to interpret results</a></li>
+			
+		</ul>
+
+
+		<h2 id="project-management">Project Management<a class="headerlink" href="#project-management" title="Permanent link"></a></h2>
+
+		<h2 id="input-data">How to input data<a class="headerlink" href="#input-data" title="Permanent link"></a></h2>
+
+			<h4 id="project-dimensions">Project Dimensions<a class="headerlink" href="#project-dimensions" title="Permanent link"></a></h4>
+
+			<h4 id="population-clusters">Population Clusters<a class="headerlink" href="#population-clusters" title="Permanent link"></a></h4>
+
+			<h4 id="water-treatment-technologies">Water-treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
+
+			<h4 id="potential-locations">Potential Water-treatment Locations<a class="headerlink" href="#potential-locations" title="Permanent link"></a></h4>
+
+			<h4 id="model-parameters">Model Parameters<a class="headerlink" href="#model-parameters" title="Permanent link"></a></h4>
+
+		<h2 id="output">How to interpret results<a class="headerlink" href="#output" title="Permanent link"></a></h2>
+
+
+
+
+	</article>
+
+
+</body>
+</html>

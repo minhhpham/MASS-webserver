@@ -4,6 +4,7 @@
 	<title>Water Reclamation System Planning</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='markdown.css') }}">
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -13,6 +14,8 @@
 	   <li>					<a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
 	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
+	   <li>					<a href="{{ url_for('demo') }}">Demo</a></li>
+	   <li>					<a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li>					<a href="{{ url_for('Contact') }}">Contact</a></li>
 	   <div class="identity">Hello 
 	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
@@ -21,15 +24,15 @@
 	</div>
 
 	<!-- NAVIGATION BAR ENDS -->
-	<br>
-	<h1 align="center">WELCOME!</h1>
-	<br>
-	<p align="center">Project descriptions will go here</p>
-	<br>
-	<form action="{{ url_for('projects') }}" method="get" align="center">
-	    <p align="center"><input type="submit" value="Start"> </p>
-	</form>
-
+	<article class="markdown-body">
+		<h1 align="center">WELCOME!</h1>
+		
+		<p align="center">Project descriptions will go here</p>
+		<br>
+		<form action="{{ url_for('projects') }}" method="get" align="center">
+		    <p align="center"><input type="submit" value="Start"> </p>
+		</form>
+	</article>
 
 </body>
 </html>
