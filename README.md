@@ -11,7 +11,7 @@
  * Clone/Download this repository: `git clone https://github.com/minhhpham/MASS-webserver`
  * `cd MASS-webserver`
  * `pip3 install -r requirements.txt`
- * Run server in development mode: `sudo python3 MASS-webserver.py`
+ * Run server in development mode: `python3 MASS-webserver.py`
  * If seeing a bug that says <span style="color:red"> Peer authentication failed for user "optimizer" </span>, do the following:
     * Navigate to file Postgres' config file named `pg_hba.conf`, usually located at `/etc/postgresql/10/main/pg_hba.conf`
     * Open file with root privilege: `sudo nano /etc/postgresql/10/main/pg_hba.conf`
