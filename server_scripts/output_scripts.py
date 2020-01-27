@@ -1,7 +1,7 @@
 ############### functions to render output data from optimizer to web pages ####################
 import csv
 
-def output_values(username, project_name):
+def output_values(projectID):
     """ read output values (ZE,CE) from optimizer's output """
     values = [] # output array
     # this is for demonstration on sample output
@@ -13,7 +13,7 @@ def output_values(username, project_name):
             values.append((row[0], row[1], row[2]))
     return(values)
             
-def output_solutions(username, project_name):
+def output_solutions(projectID):
     """ read and transform binary output """
     # only reading transformed output for now
     solution_details = []

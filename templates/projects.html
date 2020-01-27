@@ -5,6 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='HelpTips.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='markdown.css') }}">
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -12,62 +13,79 @@
 	<ul>
 	   <li>					<a href="{{ url_for('index') }}">Home</a></li>
 	   <li class="active">	<a href="{{ url_for('projects') }}">Projects</a></li>
-	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
-	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
 	   <li>					<a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li>					<a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li>					<a href="{{ url_for('Contact') }}">Contact</a></li>
-	   <div class="identity">Hello 
-	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
-	   </div>
 	</ul>
 	</div>
 
 	<!-- NAVIGATION BAR ENDS -->
-	<br>
-	<h2 align="center"> Select from existing Projects: </h2>
-	<table align="center">
-		<tr><td><div class="help-tip" align="center"><p> We save data for each of your projects. You can come back later to review a project's data. You can submit computing requests for multiple projects, we have a computing queue for the optimizer and will notify you once calculation for a project is done. </p></div></td></tr>
-	</table>
-	<br>
-	<form align="center" method="POST" action="{{ url_for('projects') }}">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-		<table class=blueTable align="center">
-			<tr> <!-- Table headers  -->
-				<th>Project Name</th> 
-				<th>Project Description</th> 
-				<th>Status</th>
-				<th>Last time running the optimizer</th>
-				<th>Results</th>
-			</tr>
-			{% for p in existing_projects %}
-			<tr> <!-- Table rows -->	
-					<td>
-						<input type="submit" name="select project" value="{{ p['project_name'] }}" style="background:none;border:none;color:#069;text-decoration:underline;cursor: pointer;">
-					</td>
-					<td>{{ p['p_desc'] }}</td>
-					<td>{{ p['Status'] }}</td>
-					<td>{{ p['last_executed'] }}</td>
-					<td> <a href="{{url_for('output')}}?project_name={{p['project_name']}}">Check</a> </td>
-			</tr>
-			{% endfor %}
-		</table>
-	</form>
-	<br>
-	<h2 align="center">Or create a new project:</h2>
-	<form align="center" method="POST" action="{{ url_for('projects') }}">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-		<table align="center">
-			<tr align="left">
-				<td>Project Name</td><td><input required type="text" name="project_name"></td>
-			</tr>
-			<tr align="left">
-				<td>Project Description</td><td><textarea name="p_desc" rows="2" cols="50"></textarea></td>
-			</tr>
-		</table>
+
+	<article class="markdown-body">
+		<h2>Create a New Project</h2>
+		<form method="POST" action="{{ url_for('projects') }}">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<table>
+				<tr align="left">
+					<td>Project Description</td><td><textarea name="p_desc" rows="2" cols="50" placeholder="Describe this project in any way you want">{{ proj_description }}</textarea></td>
+			</table>
+			<br>
+
+			{% if project_just_created %}
+				<p>A new project has been created with Project ID <b>{{  projectID }}</b></p>
+				<p>Please save this Project ID to retrieve the project later. If you lose it, you will have to start over again.</p>
+				<p><input type="submit" value="Start this project" name="command"></p>
+				<input type="hidden" name="projectID" value="{{ projectID }}">
+			{% else %}
+				<p><input type="submit" value="Create Project" name="command"></p>
+			{% endif %}
+		</form>
+
 		<br>
-		<p align="center"><input type="submit" value="Create project" name="command"></p>
-	</form>
+		<h2>Retrieve a Project and check its status</h2>
+		<form method="POST" action="{{ url_for('projects') }}">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+			<table>
+				<tr align="left">
+					<td>Project ID</td>
+					<td><input required type="text" name="projectID" size="50" placeholder="the Project ID given when creating the project"></td>
+					<td><input type="submit" value="Check project status" name="command"></td>
+				</tr>
+			</table>
+		</form>
+		<br>
+		<!-- IF THE "check project status" button above was clicked, print the following -->
+		{% if check_proj_status %}
+			{% if project_status is none %}
+				<p><font color="red">Project not found</font></p>
+			{% else %}
+				<table class=blueTable align="left">
+					<tr>
+						<th>Project ID</th><th>Project Description</th><th>Project status</th><th>Last time optimized</th><th>Choose An Action</th>
+					</tr>
+					<tr>
+						<td>{{ project_status['projectid'] }}</td>
+						<td>{{ project_status['p_desc'] }}</td>
+						<td>{{ project_status['status'] }}</td>
+						<td>{{ project_status['last_optimized'] }}</td>
+						<td align="left">
+							<ul>
+								<li><a href="{{ url_for('input_size', projectID = projectID) }}">Edit input data</a></li>
+								{% if project_status['status'] != 'input uncompleted, not yet optimized' %}
+									<li><a href="{{ url_for('review', projectID = projectID) }}">Review input data</a></li>
+									<li><a href="{{ url_for('run_optimizer', projectID = projectID) }}">Run optimizer</a></li>
+								{% endif %}
+								{% if project_status['status'] == 'input completed, optimized' %}
+									<li><a href="{{ url_for('output', projectID = projectID) }}">View output</a></li>
+								{% endif %}
+							</ul>
+						</td>
+					</tr>
+				</table>
+			{% endif %}
+		{% endif %}
+
+	<article></article>
 
 </body>
 </html>

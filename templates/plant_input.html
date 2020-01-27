@@ -12,13 +12,11 @@
 	<ul>
 	   <li><a href="{{ url_for('index') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
-	   <li><a href="{{ url_for('login') }}">Login</a></li>
-	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
-	   <div class="identity">Hello 
-	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   <div class="identity"> 
+	   		projectID: {{ projectID }}
 	   </div>
 	</ul>
 	</div>
@@ -36,7 +34,7 @@
 	{% endif %}
 	<br>
 	<h1 align="center">Input your potential/existing water plant locations</h1>
-	<form method="POST" action="{{ url_for('plant_input') }}" align="center">
+	<form method="POST" action="{{ url_for('plant_input', projectID = projectID) }}" align="center">
 		{{ plants.csrf_token }}
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
@@ -66,7 +64,7 @@
 		</table>
 		<br>
 		<p align="center">
-			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
 			<input type="submit" name="command" value="Next">
 		</p>
 	</form>
@@ -78,7 +76,7 @@
 		<br>
 		<strong> (Excel table should have the same size as the table above minus the last two columns and exclude the headers) </strong>
 	</p>
-	<form action="{{ url_for('plant_input') }}" method="POST" align = "center">
+	<form action="{{ url_for('plant_input', projectID = projectID) }}" method="POST" align = "center">
 		{{ plants.csrf_token }}
     	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
     	<p align="center"><input type="submit" name="command" value="Insert Data"></p>

@@ -143,7 +143,7 @@ def distance_pop_plant(pops, plants):
 			out[i][j] = distance(lat1, lon1, lat2, lon2)
 	return(out)
 
-def write_input_to_tsv(username, project_name, directory, filename):
+def write_input_to_tsv(projectID, directory, filename):
 	""" write input data to tab-separated file. this file will be read by the optimizer.
 		data are previously saved under a username and project_name
 	"""
@@ -155,11 +155,11 @@ def write_input_to_tsv(username, project_name, directory, filename):
 	if os.path.exists(filename):
 		os.remove(filename)
 	# pull data from db
-	populations = db.getPopulations(username, project_name)
-	plants = db.getPlants(username, project_name)
-	techs = db.getTechnologies(username, project_name)
-	params = db.getParams(username, project_name)
-	duration = db.getInputSize(username, project_name)['durations']
+	populations = db.getPopulations(projectID)
+	plants = db.getPlants(projectID)
+	techs = db.getTechnologies(projectID)
+	params = db.getParams(projectID)
+	duration = db.getInputSize(projectID)['durations']
 
 	# create file and start writing
 	with open(filename, 'w') as file:

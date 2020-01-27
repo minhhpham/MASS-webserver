@@ -11,13 +11,11 @@
 	<ul>
 	   <li><a href="{{ url_for('index') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
-	   <li><a href="{{ url_for('login') }}">Login</a></li>
-	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
-	   <div class="identity">Hello 
-	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   <div class="identity"> 
+	   		projectID: {{ projectID }}
 	   </div>
 	</ul>
 	</div>
@@ -36,7 +34,7 @@
 	<br>
 	<h1 align="center">Select the treatment technologies for implementation in the candidate sites</h1>
 	<br>
-	<form method="POST" action="{{ url_for('tech_input') }}" align="center">
+	<form method="POST" action="{{ url_for('tech_input', projectID = projectID) }}" align="center">
 		{{ techs.csrf_token }}
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
@@ -132,7 +130,7 @@
 			{% endif %}
 		</table>
 	<p align="center">
-		<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+		<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
 		{{ techs.submit }}
 	</p>
 	</form>

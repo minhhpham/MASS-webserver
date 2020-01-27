@@ -6,3 +6,4 @@ xlwt
 flask-login
 psycopg2
 geojson
+coolname

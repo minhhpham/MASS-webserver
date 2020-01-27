@@ -11,13 +11,11 @@
 	<ul>
 	   <li><a href="{{ url_for('index') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
-	   <li><a href="{{ url_for('login') }}">Login</a></li>
-	   <li><a href="{{ url_for('logout') }}">Logout</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
-	   <div class="identity">Hello 
-	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
+	   <div class="identity"> 
+	   		projectID: {{ projectID }}
 	   </div>
 	</ul>
 	</div>
@@ -25,7 +23,7 @@
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	<h1 align="center">Input your parameters</h1>
-	<form method="POST" action="{{ url_for('parameter_input') }}" align="center">
+	<form method="POST" action="{{ url_for('plant_input', projectID = projectID) }}" align="center">
 		{{ params.csrf_token }}
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
@@ -46,7 +44,7 @@
 		
 		<br>
 		<p align="center">
-			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
+			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
 			{{ params.submit }} 
 		</p>
 	</form>

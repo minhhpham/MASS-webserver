@@ -12,14 +12,9 @@
 	<ul>
 	   <li class="active">	<a href="{{ url_for('index') }}">Home</a></li>
 	   <li>					<a href="{{ url_for('projects') }}">Projects</a></li>
-	   <li>					<a href="{{ url_for('login') }}">Login</a></li>
-	   <li>					<a href="{{ url_for('logout') }}">Logout</a></li>
 	   <li>					<a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li>					<a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li>					<a href="{{ url_for('Contact') }}">Contact</a></li>
-	   <div class="identity">Hello 
-	   		{% if Identity is none %} Anonymous {% else %} {{ Identity }} {% endif %}!
-	   </div>
 	</ul>
 	</div>
 
@@ -35,7 +30,7 @@
 		
 		<p>If you have any question, please check the <a href="{{ url_for('Contact') }}">Contact</a> page.</p>
 
-		<p>To start using the tool, please <a href="{{ url_for('login') }}">log in</a>.</p>
+		<p>To start using the tool, please go to <a href="{{ url_for('projects') }}">Projects page</a> and create a new project.</p>
 
 		<p>This tool is free and open-source. It was supported by the NSF #1454559.</p>
 
