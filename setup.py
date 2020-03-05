@@ -1,4 +1,8 @@
 import os, sys, getpass, shutil
+from server_scripts import database as db
+
+# initiate database tables
+db.init_db()
 
 CWD = os.getcwd()
 PythonPath = sys.executable

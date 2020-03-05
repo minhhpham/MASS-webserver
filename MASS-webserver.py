@@ -25,8 +25,9 @@ with open("server_config.yaml", 'r') as stream:
         print(exc)
         sys.exit()
 
-# initialize database if necessary
-db.init_db()
+# check if db is ready
+if not db.db_is_ready():
+    sys.exit("Database is not initialized correclty")
 
 # start routing
 @APP.route('/', methods = ['GET'])
@@ -429,10 +430,6 @@ def run_optimizer():
         abort(400, 'projectID not provided')
     projectID = request.args.get('projectID')
     
-    # write data to disk
-    misc.write_input_to_tsv(projectID, config['optimizer_data_dir'], filename = 'data.txt')
-    # update last_executed time for this project in the db
-    db.updateProjectExecution(projectID)
     # return to projects page
     return(redirect(url_for('projects')))
 

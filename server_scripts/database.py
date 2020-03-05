@@ -13,10 +13,11 @@ with open("server_config.yaml", 'r') as stream:
 conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
 						password = config["db"]["password"], port = config["db"]["port"])
 
+table_names = ['projects', 'ns', 'populations', 'plants', 'technologies', 'params', 'request_queue', 'optimizer_output']
+
 def init_db():
 	""" initialize tables if not found in the database """
 	cursor = conn.cursor()
-	table_names = ['projects', 'ns', 'populations', 'plants', 'technologies', 'params']
 	for table_name in table_names:
 		cursor.execute("""
 			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
@@ -105,11 +106,36 @@ def init_table(table_name):
 									PRIMARY KEY(projectID, index)
 								)
 			""")
+		elif table_name == 'request_queue':
+			cursor.execute("""
+								CREATE TABLE request_queue(
+									projectID 	varchar(255),
+									queue_order	int
+								)
+			""")
+		elif table_name == 'optimizer_output':
+			cursor.execute("""
+								CREATE TABLE optimizer_output(
+									projectID 	varchar(255),
+									queue_order	int
+								)
+			""")
+
 		else:
 			pass
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 		conn.commit()
+
+def db_is_ready():
+	""" check if database has the correct tables """
+	for table_name in table_names:
+		cursor.execute("""
+			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
+		""", [table_name])
+		if cursor.fetchone()[0] == 0:
+			return False
+	return True
 
 # Returns a list of projects
 def getProject(projectID):
@@ -392,3 +418,63 @@ def getParams(projectID):
 	for r in vals:
 		vals1.append({'Label': r['label'], 'Unit': r['unit'], 'Value': r['value']})
 	return vals
+
+# --------------- FUNCTIONS FOR optimizer_scheduler -----------------------------
+def isQueueNotEmpty():
+	""" return True if queue is not empty in db """
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute("SELECT * FROM request_queue")
+		vals = cursor.fetchall() # Get the result
+
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# close communication with the PostgreSQL database server
+	cursor.close()
+
+	if len(vals) == 0:
+		return False
+	else:
+		return True
+
+def popQueue():
+	""" pop the first request in the queue """
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+		# first get the record with the lowest queue_order
+		cursor.execute(''' SELECT * FROM request_queue WHERE queue_order IN
+				(SELECT min(queue_order) FROM request_queue)
+			'''
+		)
+		vals = cursor.fetchone() # Get the result
+
+		# then pop the record and decrease all queue_order by 1
+		cursor.execute(''' 
+			DELETE FROM request_queue WHERE projectID = %s;
+			UPDATE request_queue SET request_order = request_order - 1;
+			''', [vals['projectid']]
+		)
+
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	return vals
+
+def enQueue(projectID):
+	""" add a processing request to queue """
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+		# first get the record with the lowest queue_order
+		cursor.execute('''INSERT INTO request_queue
+			SELECT %s, max(queue_order)+1 FROM request_queue
+			''', [projectID])
+
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()

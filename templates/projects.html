@@ -75,7 +75,7 @@
 									<li><a href="{{ url_for('review', projectID = projectID) }}">Review input data</a></li>
 									<li><a href="{{ url_for('run_optimizer', projectID = projectID) }}">Run optimizer</a></li>
 								{% endif %}
-								{% if project_status['status'] == 'input completed, optimized' %}
+								{% if project_status['status'] == 'input completed, optimized solutions is ready' %}
 									<li><a href="{{ url_for('output', projectID = projectID) }}">View output</a></li>
 								{% endif %}
 							</ul>
