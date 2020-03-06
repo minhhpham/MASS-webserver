@@ -6,7 +6,7 @@
      * `su - postgres`
      * `psql`
      * `create user optimizer with password '123456';`
-     * `create database optimizerdb;`
+     * `create database optimizerdb owner optimizer;`
      * `\q` then `exit` twice
  * Clone/Download this repository: `git clone https://github.com/minhhpham/MASS-webserver`
  * `cd MASS-webserver`

@@ -13,7 +13,7 @@ with open("server_config.yaml", 'r') as stream:
 conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
 						password = config["db"]["password"], port = config["db"]["port"])
 
-table_names = ['projects', 'ns', 'populations', 'plants', 'technologies', 'params', 'request_queue', 'optimizer_output']
+table_names = ['projects', 'ns', 'populations', 'plants', 'technologies', 'params', 'request_queue', 'optimizer_output1', 'optimizer_output2', 'optimizer_outputlog']
 
 def init_db():
 	""" initialize tables if not found in the database """
@@ -113,11 +113,31 @@ def init_table(table_name):
 									queue_order	int
 								)
 			""")
-		elif table_name == 'optimizer_output':
+		elif table_name == 'optimizer_output1':
 			cursor.execute("""
-								CREATE TABLE optimizer_output(
+								CREATE TABLE optimizer_output1(
 									projectID 	varchar(255),
-									queue_order	int
+									var_name	varchar(255),
+									var			varchar(255),
+									r			varchar(255),
+									k			varchar(255),
+									t			varchar(255)
+								)
+			""")
+		elif table_name == 'optimizer_output2':
+			cursor.execute("""
+								CREATE TABLE optimizer_output2(
+									projectID 	varchar(255),
+									solution_name varchar(255),
+									zc 			float,
+									ze 			float 
+								)
+			""")
+		elif table_name == 'optimizer_outputlog':
+			cursor.execute("""
+								CREATE TABLE optimizer_outputlog(
+									projectID 	varchar(255),
+									log 		varchar 
 								)
 			""")
 
@@ -129,11 +149,12 @@ def init_table(table_name):
 
 def db_is_ready():
 	""" check if database has the correct tables """
+	cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 	for table_name in table_names:
 		cursor.execute("""
 			SELECT COUNT(*) FROM information_schema.tables WHERE table_name=%s
 		""", [table_name])
-		if cursor.fetchone()[0] == 0:
+		if cursor.fetchone()['count'] == 0:
 			return False
 	return True
 

@@ -27,7 +27,10 @@ with open("server_config.yaml", 'r') as stream:
 
 # check if db is ready
 if not db.db_is_ready():
-    sys.exit("Database is not initialized correclty")
+    try:
+        db.init_db()
+    except:
+        sys.exit("Database is not initialized correclty")
 
 # start routing
 @APP.route('/', methods = ['GET'])

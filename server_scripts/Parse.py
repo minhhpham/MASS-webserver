@@ -1,4 +1,4 @@
-import re, warnings
+import re, warnings, csv
 
 def parse_input(text):
 	""" parse a textarea input from html into a list, delimters are \n and \r """
@@ -49,3 +49,25 @@ def fill_plants(text, plants):
 		except IndexError:
 			warnings.warn('Index Error when parsing plant input, row {}'.format(r+1), Warning)		
 	return(plants)
+
+def parse_optimizer_output(path_to_file1, path_to_file2):
+	# parse file 1
+	output1 = []
+	with open(path_to_file1, 'r') as file1:
+		next(file1) 		# skip first line
+		for line in csv.reader(file1, delimiter = '\t'):
+			output1.append(line)
+
+	# return output1, output2
+	output2 = []
+	with open(path_to_file2, 'r') as file2:
+		next(file2) 		# skip first line
+		for line in csv.reader(file2, delimiter = ' '):
+			output2.append(line)
+	print(output1); print(output2)
+	return output1, output2
+
+def read_optimizer_log(path_to_log):
+	with open(path_to_log) as file:
+		log = file.read()
+	return log
