@@ -1,6 +1,6 @@
 import psycopg2
 import psycopg2.extras
-import yaml, time
+import yaml, time, sys
 
 global config    # initialized in MASS-webserver.py
 with open("server_config.yaml", 'r') as stream:
@@ -119,16 +119,18 @@ def init_table(table_name):
 									projectID 	varchar(255),
 									var_name	varchar(255),
 									var			varchar(255),
-									r			varchar(255),
-									k			varchar(255),
-									t			varchar(255)
+									r			SMALLINT,
+									k			SMALLINT,
+									t			SMALLINT,
+									solution_label varchar(255),
+									value 		SMALLINT
 								)
 			""")
 		elif table_name == 'optimizer_output2':
 			cursor.execute("""
 								CREATE TABLE optimizer_output2(
 									projectID 	varchar(255),
-									solution_name varchar(255),
+									solution_label varchar(255),
 									zc 			float,
 									ze 			float 
 								)
@@ -458,6 +460,25 @@ def isQueueNotEmpty():
 	else:
 		return True
 
+def updateQueueOrder(projectID):
+	""" update the projectID's queue order in the projects table """
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+		# get current queue order
+		cursor.execute('''SELECT max(queue_order) as order FROM request_queue WHERE projectid = %s''', [projectID])
+		queue_order =  cursor.fetchone()['order']
+
+		# update projects table
+		status = "input completed, on queue for optimizing at queue position " + str(queue_order)
+		cursor.execute('''UPDATE projects SET status = %s WHERE projectid = %s ''', [status, projectID])
+
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	cursor.close()
+	conn.commit()
+
 def popQueue():
 	""" pop the first request in the queue """
 	try:
@@ -468,34 +489,155 @@ def popQueue():
 				(SELECT min(queue_order) FROM request_queue)
 			'''
 		)
-		vals = cursor.fetchone() # Get the result
+		projectID = cursor.fetchone()['projectid']
 
 		# then pop the record and decrease all queue_order by 1
 		cursor.execute(''' 
 			DELETE FROM request_queue WHERE projectID = %s;
-			UPDATE request_queue SET request_order = request_order - 1;
-			''', [vals['projectid']]
+			UPDATE request_queue SET queue_order = queue_order - 1;
+			''', [projectID]
 		)
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
+
+	# then update the status of this projectID
+	updateProjectStatus(projectID, "input completed, optimizing")
+
+	# then update the status of other projectID
+	cursor.execute('''SELECT DISTINCT projectid FROM request_queue''')
+	projects_on_queue = cursor.fetchall()
+	for project in projects_on_queue:
+		projectID = project['projectid']
+		updateQueueOrder(projectID)
+
 	# close communication with the PostgreSQL database server
 	cursor.close()
-	return vals
+	conn.commit()
+	return projectID
 
 def enQueue(projectID):
 	""" add a processing request to queue """
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-		# first get the record with the lowest queue_order
+		# insert with the highest queue order
 		cursor.execute('''INSERT INTO request_queue
-			SELECT %s, max(queue_order)+1 FROM request_queue
+			SELECT %s, count(queue_order)+1 FROM request_queue
 			''', [projectID])
+		# get the queue order
+		cursor.execute('''SELECT max(queue_order) as order FROM request_queue WHERE projectid = %s;''', [projectID])
+		queue_order = cursor.fetchone()['order']
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
+
 	# close communication with the PostgreSQL database server
 	cursor.close()
 	# commit the changes
 	conn.commit()
+
+	# update the queue order in project status
+	status = "input completed, on queue for optimizing at queue position " + str(queue_order)
+	updateProjectStatus(projectID, status)
+
+
+# ------------------- functions to save and retrieve optimizer output ---------------
+def save_optimizer_output(projectID, output1, output2):
+	"""
+	output1: an array of arrays. Each sub-array has 7 elements:  var_name, var, r, k, t, solution_label, value
+	output2: an array of arrays. Each sub array has 3 elements: Solution label, ZC, ZE
+	"""
+	# delete records if exist
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute('''DELETE FROM optimizer_output1 WHERE projectid = %s''', [projectID])
+		cursor.execute('''DELETE FROM optimizer_output2 WHERE projectid = %s''', [projectID])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# insert output1
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		for r in output1:
+			vals = [projectID, r[0], r[1], r[2], r[3], r[4], r[5], r[6]]
+			cursor.execute('''INSERT INTO optimizer_output1 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# insert output2
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		for r in output2:
+			vals = [projectID, r[0], r[1], r[2]]
+			cursor.execute('''INSERT INTO optimizer_output2 VALUES (%s, %s, %s, %s)''', vals)
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
+
+def get_optimizer_output(projectID):
+	"""
+	return: output1, output2
+	output1: array of dict with keys project_id, var_name, var, r, k, t
+	output2: array of dict with keys project_id, ze, zc
+	"""
+	# get output1
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute('''DELETE * optimizer_output1 WHERE projectid = %s''', [projectID])
+		output1 = cursor.fetchall()
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# get output2
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute('''DELETE * optimizer_output2 WHERE projectid = %s''', [projectID])
+		output2 = cursor.fetchall()
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# close communication with the PostgreSQL database server
+	cursor.close()
+
+	return output1, output2
+
+def save_optimizer_log(projectID, log):
+	"""
+	log: a very long string
+	"""
+	# delete record if exists
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute('''DELETE FROM optimizer_outputlog WHERE projectid = %s''', [projectID])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# insert
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute('''INSERT INTO optimizer_outputlog VALUES (%s, %s)''', [projectID, log])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
+
+def get_optimizer_log(projectID):
+	try:
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute('''SELECT FROM optimizer_outputlog WHERE projectid = %s''', [projectID])
+		vals = cursor.fetchone()
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
+	return vals

@@ -51,21 +51,48 @@ def fill_plants(text, plants):
 	return(plants)
 
 def parse_optimizer_output(path_to_file1, path_to_file2):
+	""" parse data from optimizer_output_file1 and 2 into database format """
 	# parse file 1
 	output1 = []
 	with open(path_to_file1, 'r') as file1:
-		next(file1) 		# skip first line
-		for line in csv.reader(file1, delimiter = '\t'):
-			output1.append(line)
+		# headers
+		headers = file1.readline().strip()
+		headers = re.split(' | \t', headers)
+		for line in file1:
+			line = line.strip()
+			data = re.split(' | \t', line)
+			output1.append(data)
 
-	# return output1, output2
+	# cross-tab transform output1
+	output1_crosstab = []
+	for col_index in range(5, len(headers)):
+		solution_label = headers[col_index]
+		for row in output1:
+			value = round(float(row[col_index]))
+			# check if value is binary
+			if value not in [0,1]:
+				print('VALUE NOT ROUNDED TO 0 OR 1: ' + str(row[col_index]))
+				return -1, -1
+			# convert index to integers
+			row[2] = 0 if row[2]=='-' else int(row[2])
+			row[3] = 0 if row[3]=='-' else int(row[3])
+			row[4] = 0 if row[4]=='-' else int(row[4])
+			# add new row to crosstab
+			output1_crosstab.append([
+				row[0], row[1], row[2], row[3], row[4],
+				solution_label, value
+			])
+
+	# parse file 2
 	output2 = []
 	with open(path_to_file2, 'r') as file2:
 		next(file2) 		# skip first line
-		for line in csv.reader(file2, delimiter = ' '):
-			output2.append(line)
-	print(output1); print(output2)
-	return output1, output2
+		for line in file2:
+			data = re.split(' | \t', line.strip('\n'))
+			# remove solutions with 0 ZC and ZE
+			if float(data[1])!=0 or float(data[2])!=0:
+				output2.append(data)
+	return output1_crosstab, output2
 
 def read_optimizer_log(path_to_log):
 	with open(path_to_log) as file:

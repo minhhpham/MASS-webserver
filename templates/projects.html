@@ -70,10 +70,17 @@
 						<td>{{ project_status['last_optimized'] }}</td>
 						<td align="left">
 							<ul>
+								<li><a href="{{ url_for('projects', projectID = projectID) }}">Refresh this page</a></li>
 								<li><a href="{{ url_for('input_size', projectID = projectID) }}">Edit input data</a></li>
 								{% if project_status['status'] != 'input uncompleted, not yet optimized' %}
 									<li><a href="{{ url_for('review', projectID = projectID) }}">Review input data</a></li>
-									<li><a href="{{ url_for('run_optimizer', projectID = projectID) }}">Run optimizer</a></li>
+									<li>
+										<form method="POST" action="{{ url_for('run_optimizer') }}" align="left">
+											<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+											<input id="projectID"  name="projectID"  type="hidden" value="{{ projectID }}">
+											<input name="command" type="submit" value="Run optimizer" class="submitLink">
+										</form>
+									</li>
 								{% endif %}
 								{% if project_status['status'] == 'input completed, optimized solutions is ready' %}
 									<li><a href="{{ url_for('output', projectID = projectID) }}">View output</a></li>

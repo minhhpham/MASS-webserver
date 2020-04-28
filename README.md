@@ -18,6 +18,34 @@
     * Navigate to end of file, there will be a table. Change the entire last column to <span style="color:red"> 'md5'</span>
     * Save file and restart Postgres service with `sudo systemctl restart postgresql`
 
+# Setup the Optimizer
+ * Clone [this repository](https://github.com/ZulqarnainHaider/MASS-Optimizer) in the parent directory of `MASS-webserver` and follow the instruction in the `README.md` file. For examlpe, you can run:
+    * `cd ..`
+    * `git clone https://github.com/ZulqarnainHaider/MASS-Optimizer`
+    * `cd MASS-Optimizer` and follow the instructions in README.
+ * Add `julia` to PATH:
+    * `sudo nano ~/.bashrc`
+    * Add this line to the file: `export PATH=<path_to_julia>${PATH:+:${PATH}}`
+ * After setting up `MASS-Optimizer`, the directory tree should look like this:
+ ```
+ MASS-webserver
+├── MASS-webserver.py
+├── nginx-MASS-flask.conf
+├── optimizer_scheduler.py
+├── optimizer.sh
+├── output
+├── README.md
+├── requirements.txt
+├── server_config.yaml
+├── server_scripts
+├── setup.py
+├── static
+└── templates
+MASS-Optimizer/
+├── optimizer
+└── README.md
+ ```
+
 # Deploy:
  * First install Nginx:
      * `sudo apt-get install nginx`

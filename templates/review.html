@@ -182,11 +182,10 @@
 	<h2 align="center">Ready to run optimizer?</h2>
 	<form method="POST" action="{{ url_for('run_optimizer') }}" align="center">
 		<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
-		<p>
-			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
-			<input name="command" type="submit" value="Run optimizer">
-		</p>	
+		<input id="projectID"  name="projectID"  type="hidden" value="{{ projectID }}">
+		<input name="command" type="submit" value="Run optimizer">
 	</form>
+	<p align="center"><button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button></p>
 	<br>
 
 </body>

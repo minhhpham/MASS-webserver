@@ -48,7 +48,12 @@ def projects():
 
     # process GET requests
     if request.method == 'GET':
-        return(render_template('projects.html', project_just_created = False, proj_description = "", check_proj_status = False, project_status = None))
+        if 'projectID' in request.args:
+            projectID = request.args.get('projectID')
+            project_status = db.getProject(projectID)
+            return(render_template('projects.html', project_just_created = False, proj_description = "", projectID = projectID, check_proj_status = True, project_status = project_status))
+        else:
+            return(render_template('projects.html', project_just_created = False, proj_description = "", check_proj_status = False, project_status = None))
 
     # process POST requests
     if request.method == 'POST':
@@ -73,9 +78,7 @@ def projects():
 
         elif 'command' in request.form and request.form['command'] == 'Check project status':
             projectID = request.form['projectID']
-            # find project status from db
-            project_status = db.getProject(projectID)
-            return(render_template('projects.html', project_just_created = False, proj_description = "", check_proj_status = True, project_status = project_status))
+            return(redirect(url_for('projects', projectID = projectID)))
 
         else:
             abort(400, 'Unknown request')
@@ -427,14 +430,19 @@ def review():
             prev_page = prev_page, projectID = projectID))
 
 # ------------ run optimizer -------------------------------------------------------------------------------------------------------------------------------------------
-@APP.route('/run_optimizer', methods = ['GET'])
+@APP.route('/run_optimizer', methods = ['POST'])
 def run_optimizer():
-    if 'projectID' not in request.args:
+    if 'projectID' not in request.form:
         abort(400, 'projectID not provided')
-    projectID = request.args.get('projectID')
-    
-    # return to projects page
-    return(redirect(url_for('projects')))
+    projectID = request.form['projectID']
+
+    # enque the given projectID
+    db.enQueue(projectID)
+    # the optimizer_scheduler service will take care of the rest
+
+    # return to projects page showing the status of this projectID
+    project_status = db.getProject(projectID)
+    return(redirect(url_for('projects', projectID = projectID)))
 
 # ----------- output page -------------------------------------------------------------------------------------------------------------------------------------------------------
 @APP.route('/output', methods = ['GET'])

@@ -3,36 +3,66 @@
 # and execute the optimizer per request.
 # Then save results and status in the database.
 
-OPTIMIZER_DIR = '../MASS-Optimizer/optimizer'
 
 from server_scripts import database as db
-from server_scripts import Parse
-import time
+from server_scripts import Parse, misc
+import time, yaml, os, sys
+
+global config
+with open("server_config.yaml", 'r') as stream:
+    try:
+        config = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+        sys.exit()
 
 while True:
     # check the request queue in DB
     # if the queue is not empty, process the requests
     if db.isQueueNotEmpty():
         # pop the queue and get the first projectID to process
-        projecID = db.popQueue()['projectid']
+        projectID = db.popQueue()
+        print('----------- processing projectID {} ---------'.format (projectID))
         # gather data from db and write to tsv file on disk
-        misc.write_input_to_tsv(projectID, config['optimizer_data_dir'], filename = 'data.txt')
+        misc.write_input_to_tsv(projectID, config['optimizer_data_dir'], filename = 'Input_File.txt')
+        print('wrote input to tsv')
         # update project status in the db
-        db.updateProjectStatus(projectID, 'input uncompleted, optimizer is processing')
+        db.updateProjectStatus(projectID, 'input completed, optimizer is processing')
+        print('updated project status')
+
         # run optimizer and export log 
-        os.system('sh ./optimizer.sh > {0}/log 2>&1'.format(OPTIMIZER_DIR))
+        print('running optimizer ...')
+        optimizer_status = os.system('sh ./run_optimizer.sh > {0}/log 2>&1'.format(config['optimizer_data_dir']))
 
-        # save output data and log to db
-        ## parse output data
-        output1, output2 = Parse.parse_optimizer_output('{0}/optimizer_output_file1.txt'.format(OPTIMIZER_DIR), '{0}/optimizer_output_file2.txt'.format(OPTIMIZER_DIR))
-        log = Parse.read_optimizer_log('{0}/log'.format(OPTIMIZER_DIR))
-        ## save to db
+        if optimizer_status == 0: # success
+            print('success!')
+            # save output data and log to db
+            ## parse output data
+            output1, output2 = Parse.parse_optimizer_output('{0}/optimizer_output_file1.txt'.format(config['optimizer_data_dir']), '{0}/optimizer_output_file2.txt'.format(config['optimizer_data_dir']))
+            if output1 != -1: # check that no weird output value
+                print (output1)
+                print (output2)
+                log = Parse.read_optimizer_log('{0}/log'.format(config['optimizer_data_dir']))
+                print(log)
+            ## save to db
+                db.save_optimizer_output(projectID, output1, output2)
+                db.save_optimizer_log(projectID, log)
 
-        # update project status in the db
-        db.updateProjectStatus(projectID, 'input completed, optimized solutions is ready ')
+                # update project status in the db
+                db.updateProjectStatus(projectID, 'input completed, optimized solutions is ready')
+            else:
+                print ('OUTPUT HAS NON-BINARY VALUES !!!')
+                db.save_optimizer_log(projectID, log)
+                db.updateProjectStatus(projectID, 'input completed, optimizer failed')
+                continue
 
-    
-
+        else:
+            print('failed!')
+            log = Parse.read_optimizer_log('{0}/log'.format(config['optimizer_data_dir']))
+            print(log)
+            db.save_optimizer_log(projectID, 'optimizer failed')
+            db.updateProjectStatus(projectID, 'input completed, optimizer failed')
 
     else: # if the queue is empty, check again in 1 minute
+        print('---- sleeping ... -------')
         time.sleep(60)

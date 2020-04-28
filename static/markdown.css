@@ -261,3 +261,20 @@ body .markdown-body
 .markdown-body li>p {
   margin-top: 16px;
 }
+
+/*submit button that looks like a link*/
+.submitLink {
+  color: #4183c4;
+  background-color: transparent;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  margin-left: 0px;
+  padding: 0px;
+}
+
+.submitLink:hover,
+.submitLink:focus,
+.submitLink:active {
+  text-decoration: underline;
+}

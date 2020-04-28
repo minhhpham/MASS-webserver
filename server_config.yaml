@@ -6,7 +6,7 @@ db:
   port: 5432
 
 # sub-directory to write input data for optimizer
-optimizer_data_dir: 'optimizer input data'
+optimizer_data_dir: '../MASS-Optimizer/optimizer'
 
 # Available Technologies:
 techs:

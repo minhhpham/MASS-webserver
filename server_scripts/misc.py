@@ -147,9 +147,6 @@ def write_input_to_tsv(projectID, directory, filename):
 	""" write input data to tab-separated file. this file will be read by the optimizer.
 		data are previously saved under a username and project_name
 	"""
-	# make directory
-	if not os.path.exists(directory):
-		os.makedirs(directory)
 	# delete file if exists
 	filename = directory+'/'+filename
 	if os.path.exists(filename):
@@ -161,52 +158,69 @@ def write_input_to_tsv(projectID, directory, filename):
 	params = db.getParams(projectID)
 	duration = db.getInputSize(projectID)['durations']
 
+	# determine the max number of column (later we will pad all rows with \t to reach this number of columns)
+	n_col_tsv = max(3, 					# number of cols in first row
+					7,					# second row
+					len(populations),
+					len(techs), 		# row 4-8
+					len(plants)			# row 9 and after
+	)
+
 	# create file and start writing
 	with open(filename, 'w') as file:
 		# first line:
 		file.write(
 			str(len(populations)) + '\t' + 	# no. of pop clusters
 			str(len(plants)) + '\t' + 		# no. of locations
-			str(len(techs))					# no. of techs
+			str(len(techs))	+				# no. of techs
+			(n_col_tsv-3)*'\t' 				# padding with tabs
 		)
 		file.write('\n')
 		# second line: parameters and duration
 		value_array = [str(r['value']) for r in params]
+		value_array.append(str(duration))
 		file.write('\t'.join(value_array))
-		file.write('\t'+str(duration))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 		# third line: population number for all clusters, projected at the end of duration
 		value_array = [str(r['pr']*(1+r['growthrate'])**duration) for r in populations]
 		file.write('\t'.join(value_array))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 		# -- line 4-8: tech table--
 		# line 4: Capkt of all techs
 		value_array = [str(r['capkt']) for r in techs]
 		file.write('\t'.join(value_array))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 		# line 5: CCkt of all techs
 		value_array = [str(r['cckt']) for r in techs]
 		file.write('\t'.join(value_array))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 		# line 6: OCt of all techs
 		value_array = [str(r['oct']) for r in techs]
 		file.write('\t'.join(value_array))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 		# line 7: SRwt of all techs
 		value_array = [str(r['srwt']) for r in techs]
 		file.write('\t'.join(value_array))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 		# line 8: GPt of all techs
 		value_array = [str(r['gpt']) for r in techs]
 		file.write('\t'.join(value_array))
+		file.write((n_col_tsv-len(value_array))*'\t')
 		file.write('\n')
 
 		# line 9 and on: distance table
 		distance_matrix = distance_pop_plant(populations, plants)
 		value_array_each_row = []
 		for row in distance_matrix:
-			value_array_each_row.append('\t'.join([str(value) for value in row]))
-		value_array = '\n'.join(value_array_each_row)
-		file.write(value_array)
+			value_array = [str(value) for value in row]
+			value_array_each_row.append('\t'.join(value_array) + (n_col_tsv-len(value_array))*'\t')
+		value_array_all = '\n'.join(value_array_each_row)
+		file.write(value_array_all)
 
 	# done

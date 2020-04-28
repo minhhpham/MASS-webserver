@@ -1,8 +1,9 @@
-############### functions to render output data from optimizer to web pages ####################
+############### functions to render output data from optimizer (saved in db) to web pages ####################
 import csv
+from server_scripts import database as db
 
 def output_values(projectID):
-    """ read output values (ZE,CE) from optimizer's output """
+    """ read output values (ZE,ZC) from optimizer's output in the db"""
     values = [] # output array
     # this is for demonstration on sample output
     # read from csv files
