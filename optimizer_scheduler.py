@@ -16,6 +16,8 @@ with open("server_config.yaml", 'r') as stream:
         print(exc)
         sys.exit()
 
+been_sleeping = False
+
 while True:
     # check the request queue in DB
     # if the queue is not empty, process the requests
@@ -63,6 +65,10 @@ while True:
             db.save_optimizer_log(projectID, 'optimizer failed')
             db.updateProjectStatus(projectID, 'input completed, optimizer failed')
 
+        been_sleeping = False
+
     else: # if the queue is empty, check again in 1 minute
-        print('---- sleeping ... -------')
+        if not been_sleeping:
+            print('---- sleeping ... -------')
+            been_sleeping = True
         time.sleep(60)
