@@ -560,8 +560,10 @@ def save_optimizer_output(projectID, output1, output2):
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		for r in output1:
-			vals = [projectID, r[0], r[1], r[2], r[3], r[4], r[5], r[6]]
-			cursor.execute('''INSERT INTO optimizer_output1 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
+			# only save if r[6] (value) = 1
+			if r[6] ==1:
+				vals = [projectID, r[0], r[1], r[2], r[3], r[4], r[5], r[6]]
+				cursor.execute('''INSERT INTO optimizer_output1 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 
@@ -588,7 +590,7 @@ def get_optimizer_output(projectID):
 	# get output1
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-		cursor.execute('''DELETE * optimizer_output1 WHERE projectid = %s''', [projectID])
+		cursor.execute('''SELECT * FROM optimizer_output1 WHERE projectid = %s''', [projectID])
 		output1 = cursor.fetchall()
 	except(psycopg2.DatabaseError) as error:
 		print(error)
@@ -596,7 +598,7 @@ def get_optimizer_output(projectID):
 	# get output2
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-		cursor.execute('''DELETE * optimizer_output2 WHERE projectid = %s''', [projectID])
+		cursor.execute('''SELECT * FROM optimizer_output2 WHERE projectid = %s''', [projectID])
 		output2 = cursor.fetchall()
 	except(psycopg2.DatabaseError) as error:
 		print(error)

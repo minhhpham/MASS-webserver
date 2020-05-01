@@ -66,7 +66,7 @@ def parse_optimizer_output(path_to_file1, path_to_file2):
 	# cross-tab transform output1
 	output1_crosstab = []
 	for col_index in range(5, len(headers)):
-		solution_label = headers[col_index]
+		solution_label = headers[col_index].strip('Sol_')
 		for row in output1:
 			value = round(float(row[col_index]))
 			# check if value is binary
@@ -89,6 +89,7 @@ def parse_optimizer_output(path_to_file1, path_to_file2):
 		next(file2) 		# skip first line
 		for line in file2:
 			data = re.split(' | \t', line.strip('\n'))
+			data[0] = data[0].strip('Sol_')
 			# remove solutions with 0 ZC and ZE
 			if float(data[1])!=0 or float(data[2])!=0:
 				output2.append(data)

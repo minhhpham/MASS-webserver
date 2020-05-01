@@ -452,8 +452,7 @@ def output():
     projectID = request.args.get('projectID')
 
     # first pull output data
-    values = output_scripts.output_values(projectID)
-    solution_details = output_scripts.output_solutions(projectID)
+    solution_values, solution_details  = output_scripts.get_output(projectID)
 
     # map data of population clusters for all solutions
     populations = db.getPopulations(projectID)
@@ -466,7 +465,7 @@ def output():
     # map data of LineString connecting locations and population clusters for all solutions
     plants_pop_linestring = mapmaker.createLocationClusterLinestringGeoJson(plants, populations, solution_details)
 
-    return(render_template('output.html', valuesData = values, solutionDetails = solution_details, 
+    return(render_template('output.html', valuesData = solution_values, solutionDetails = solution_details, 
         population_markers = population_markers, location_markers_allSols = location_markers_allSols,
         plants_pop_linestring = plants_pop_linestring, MAPBOX_KEY = config['MAPBOX_KEY'],
         projectID = projectID))

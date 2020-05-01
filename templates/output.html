@@ -27,12 +27,6 @@
 	</div>
 
 	<!-- NAVIGATION BAR ENDS -->
-	<!-- BACK TO PROJECTS -->
-	<br>
-	<p align="center">
-		<button onclick="location.href='{{ url_for('projects') }}'" type="button">Back to Projects</button>
-	</p>
-	<br>
 
 	<!-- show the chart for selecting solutions -->
 	<h1 align="center">Project {{ project_name }}</h1>
@@ -51,6 +45,15 @@
 	<div id="this is for alignment" align="center">
         <div id="map"></div>
     </div>
+
+    <br>
+
+    <!-- BACK TO PROJECTS Page-->
+	<br>
+	<p align="center">
+		<button onclick="location.href='{{ url_for('projects') }}'" type="button">Back to Projects Page</button>
+	</p>
+	<br>
     
 	<!-- JS -->
 	<script>
