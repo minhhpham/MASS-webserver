@@ -15,10 +15,17 @@ def get_output(projectID):
     for row in output1_raw:
         if row['solution_label'] not in solution_list:
             solution_list.append(row['solution_label'])
-    # get list of locations
+    # get list of locations from db
     location_list = db.getPlants(projectID)
-    # get list of techs
+    # get list of techs from db
     tech_list = db.getTechnologies(projectID)
+    # get population clusters and parameters from db
+    populations = db.getPopulations(projectID)
+    params = db.getParams(projectID)
+    # we need to calculate populations at the end of project (for capacity calculation)
+    lifespan = db.getInputSize(projectID)['durations']
+    for p in populations:
+        p['end_pr'] = p['pr'] * (1+p['growthrate'])**lifespan
 
     # format output2
     output2_return = []
@@ -41,7 +48,22 @@ def get_output(projectID):
             else:
                 cluster_str = ''
 
+            # calculate capacities
+            if len(clus_index) == 0:
+                receiving_cap_m3y = 0
+                receiving_cap_mgd = 0
+                sending_cap_m3y = 0
+                sending_cap_mgd = 0
+            else:
+                total_population = sum([p['end_pr'] for p in populations if str(p['index']) in clus_index])
+                mu = [p['value'] for p in params if p['label']=='mu'][0]
+                alpha = [p['value'] for p in params if p['label']=='alpha'][0]
+                receiving_cap_m3y = round(total_population*mu, 2)
+                receiving_cap_mgd = round(receiving_cap_m3y/365/3785.41178, 2)
+                sending_cap_m3y   = round(alpha*receiving_cap_m3y, 2)
+                sending_cap_mgd   = round(alpha*receiving_cap_mgd, 2)
+
             # append to output2_return
-            output2_return.append([str(SolutionID), str(location['index']), location['locationname'], tech_name, tech_scale, cluster_str])
+            output2_return.append([str(SolutionID), str(location['index']), location['locationname'], tech_name, tech_scale, cluster_str, receiving_cap_m3y, sending_cap_m3y, receiving_cap_mgd, sending_cap_mgd])
 
     return(output1_return, output2_return)

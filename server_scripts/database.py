@@ -435,11 +435,6 @@ def getParams(projectID):
 		print(error)
 	# close communication with the PostgreSQL database server
 	cursor.close()
-
-	# convert labels of vals to uppercase
-	vals1 = []
-	for r in vals:
-		vals1.append({'Label': r['label'], 'Unit': r['unit'], 'Value': r['value']})
 	return vals
 
 # --------------- FUNCTIONS FOR optimizer_scheduler -----------------------------

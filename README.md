@@ -49,7 +49,7 @@ MASS-Optimizer/
 # Deploy:
  * First install Nginx:
      * `sudo apt-get install nginx`
-     * `sudo cp nginx-MASS-flask.conf /etc/nginx/conf.d/`
+     * `sudo cp nginx-MASS-flask.conf /etc/nginx/sites-available/default`
      * `sudo systemctl restart nginx`
 
  * Run server:
