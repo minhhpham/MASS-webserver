@@ -6,7 +6,8 @@
 
 from server_scripts import database as db
 from server_scripts import Parse, misc
-import time, yaml, os, sys
+import time, yaml, os, sys, pytz
+from datetime import datetime
 
 global config
 with open("server_config.yaml", 'r') as stream:
@@ -52,6 +53,9 @@ while True:
 
                 # update project status in the db
                 db.updateProjectStatus(projectID, 'input completed, optimized solutions is ready')
+                # update last time optimized
+                now = datetime.now(pytz.timezone('EST')).strftime("%Y-%m-%d %H:%M:%S %z")
+                db.updateProjectLastOptimized(projectID, now)
             else:
                 print ('OUTPUT HAS NON-BINARY VALUES !!!')
                 db.save_optimizer_log(projectID, log)
@@ -71,4 +75,4 @@ while True:
         if not been_sleeping:
             print('---- sleeping ... -------')
             been_sleeping = True
-        time.sleep(60)
+        time.sleep(30)

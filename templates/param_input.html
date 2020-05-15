@@ -29,15 +29,18 @@
 			<tr> <!-- Table headers  -->
 				<th>{{ params.rows[0].Label.label }}</th> 
 				<th>{{ params.rows[0].Unit.label }}</th> 
-				<th>{{ params.rows[0].Value.label }}</th> 				
+				<th>{{ params.rows[0].Value.label }}</th> 		
+				<th>{{ params.rows[0].Description.label}}</th>		
 			</tr>
 			{% for r in params.rows %}
 			<tr> <!-- Table rows -->
 				{{ r.Label(type="hidden") }}
 				{{ r.Unit(type="hidden") }}
+				{{ r.Description(type="hidden") }}
 				<td>{{ r.Label.data }}</td>
 				<td>{{ r.Unit.data }}</td>
 				<td>{{ r.Value }}</td> 
+				<td>{{ r.Description.data }}</td>
 			</tr>
 			{% endfor %}
 		</table>

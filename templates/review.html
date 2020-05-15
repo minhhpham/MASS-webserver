@@ -167,12 +167,14 @@
 			<th> label </th> 
 			<th> Unit </th> 
 			<th> Value </th> 				
+			<th> Description </th> 				
 		</tr>
 		{% for r in params %}
 		<tr> <!-- Table rows -->
 			<td>{{ r['label'] }}</td>
 			<td>{{ r['unit'] }}</td>
 			<td>{{ r['value'] }}</td> 
+			<td>{{ r['description'] }}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -185,7 +187,7 @@
 		<input id="projectID"  name="projectID"  type="hidden" value="{{ projectID }}">
 		<input name="command" type="submit" value="Run optimizer">
 	</form>
-	<p align="center"><button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button></p>
+	<p align="center"><button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button></p>
 	<br>
 
 </body>

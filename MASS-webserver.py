@@ -166,7 +166,7 @@ def population_input():
             for i in range(min(len(existing_data), numpops)):
                 populations.rows[i].Name.data = existing_data[i]['name']
                 populations.rows[i].Pr.data = existing_data[i]['pr']
-                populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']
+                populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']*100
                 populations.rows[i].lat.data = existing_data[i]['lat']
                 populations.rows[i].lon.data = existing_data[i]['lon']
         return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID))
@@ -177,6 +177,9 @@ def population_input():
             # process saving data command
             if populations.validate():
                 # if validation pass, save data to DB and redirect to next page
+                # first scale down growthrate by 100
+                for i in range(populations.rows.__len__()):
+                    populations.rows[i].GrowthRate.data = populations.rows[i].GrowthRate.data/100
                 db.savePopulations(populations, projectID)
                 APP.logger.info('populations validation passed! project %s', projectID)
                 return(redirect(url_for(next_page, projectID = projectID)))
@@ -195,7 +198,7 @@ def population_input():
         else:
             abort(400, 'Unknown request')
 
-    # TODO: calculate projected population
+
 
 # ------------- webpage to ask for plants --------------------------------------------------------------------------------------------------------------------
 class OnePlant(FlaskForm):
@@ -357,6 +360,7 @@ class OneParam(FlaskForm):
     Label = StringField('Parameter')
     Unit = StringField('Unit')
     Value = FloatField('Value')
+    Description = StringField('Description')
 class ParamsForm(FlaskForm):
     rows = FieldList(FormField(OneParam), min_entries = 0)
     submit = SubmitField('Next')
@@ -379,7 +383,7 @@ def parameter_input():
         # if there is existing data, use it, otherwise use default parameters
         if len(existing_data) > 0:
             for r in existing_data:
-                params.rows.append_entry(r)
+                params.rows.append_entry({'Label': r['label'], 'Unit': r['unit'], 'Value': r['value'], 'Description': r['description']})
         else:
             for p in default_params:
                 params.rows.append_entry(p)

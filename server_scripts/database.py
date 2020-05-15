@@ -103,6 +103,7 @@ def init_table(table_name):
 									Label		varchar(255), 
 									Unit		varchar(255), 
 									Value		float, 
+									Description varchar(255),
 									PRIMARY KEY(projectID, index)
 								)
 			""")
@@ -208,6 +209,16 @@ def updateProjectStatus(projectID, new_status):
 	# commit the changes
 	conn.commit()
 
+def updateProjectLastOptimized(projectID, last_optimized):
+	try:
+		cursor = conn.cursor()
+		cursor.execute("UPDATE Projects SET last_optimized=%s WHERE projectID=%s", [last_optimized, projectID])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
 
 # Inserts an Inputsize for a given user and projectID, update records if data exists
 def saveInputSize(inputSize, projectID):
@@ -411,10 +422,10 @@ def saveParams(params, projectID):
 		index = 0
 		for r in params.rows:
 			index = index + 1
-			vals = (projectID, index, r.Label.data, r.Unit.data, r.Value.data)
-			cursor.execute('''INSERT INTO params VALUES (%s, %s, %s, %s, %s)
+			vals = (projectID, index, r.Label.data, r.Unit.data, r.Value.data, r.Description.data)
+			cursor.execute('''INSERT INTO params VALUES (%s, %s, %s, %s, %s, %s)
 				ON CONFLICT (projectID, index) DO
-				UPDATE SET label=EXCLUDED.label, unit=EXCLUDED.unit, value=EXCLUDED.value''', vals)
+				UPDATE SET label=EXCLUDED.label, unit=EXCLUDED.unit, value=EXCLUDED.value, Description=EXCLUDED.description''', vals)
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
@@ -428,7 +439,7 @@ def getParams(projectID):
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-		cursor.execute("SELECT label, unit, value FROM params WHERE projectID = %s", [projectID])
+		cursor.execute("SELECT label, unit, value, description FROM params WHERE projectID = %s", [projectID])
 		vals = cursor.fetchall() # Get the result
 
 	except(psycopg2.DatabaseError) as error:

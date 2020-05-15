@@ -41,7 +41,7 @@
 				<th> Index </th> 
 				<th>{{ populations.rows[0].Name.label }}</th> 
 				<th>{{ populations.rows[0].Pr.label }}</th>
-				<th>{{ populations.rows[0].GrowthRate.label }}</th>
+				<th>   Population Growth Rate (%/year) </th>
 				<th>{{ populations.rows[0].lat.label }}</th> 
 				<th>{{ populations.rows[0].lon.label }}</th> 
 			</tr>
@@ -50,7 +50,7 @@
 				<td>{{ loop.index }}</td>
 				<td>{{ r.Name }}</td>
 				<td>{{ r.Pr }}</td>
-				<td>{{ r.GrowthRate }}</td>
+				<td>{{ r.GrowthRate }} %/year</td>
 				<td>{{ r.lat }}</td> 
 				<td>{{ r.lon }}</td>
 			</tr>
