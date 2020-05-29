@@ -415,6 +415,12 @@ def saveTechnologies(tech, projectID):
 # Insert params table, update if present
 # params is a paramsform object
 def saveParams(params, projectID):
+	# process data before saving
+	for r in params.rows:
+		if r.Label.data == 'mu':
+			r.Value.data = int(round(r.Value.data))
+		else:
+			r.Value.data = float(round(r.Value.data, 2))
 	# insert data
 	try:
 		cursor = conn.cursor()
@@ -441,6 +447,13 @@ def getParams(projectID):
 
 		cursor.execute("SELECT label, unit, value, description FROM params WHERE projectID = %s", [projectID])
 		vals = cursor.fetchall() # Get the result
+
+		# process data
+		# mu is integer
+		vals[0]['value'] = int(round(vals[0]['value']))
+		# the rest have 2 decimal places
+		for i in range(1, len(vals)):
+			vals[i]['value'] = round(vals[i]['value'], 2)
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
