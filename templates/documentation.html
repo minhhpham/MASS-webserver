@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static',filename='markdown.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static',filename='HelpTips.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='TOC.css') }}">
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -20,7 +21,7 @@
 	</div>
 
 	<!-- NAVIGATION BAR ENDS -->
-	<article class="markdown-body">
+	<div class="TOC">
 		<h2 id="table-of-content">Table of Content<a class="headerlink" href="#table-of-content" title="Permanent link"></a></h2>
 		<ul>
 			<li><a href="#project-management">Project Management</a></li>
@@ -33,9 +34,11 @@
 				<li><a href="#model-parameters">Model Parameters</a></li>
 			</ul>
 			<li><a href="#run-optimization">How to run optimizer</a></li>
-			<li><a href="#output">How to interpret results</a></li>
-			
+			<li><a href="#output">How to interpret results</a></li>		
 		</ul>
+	</div>
+
+	<article class="markdown-body">
 
 
 		<h2 id="project-management">Project Management<a class="headerlink" href="#project-management" title="Permanent link"></a></h2>
@@ -118,11 +121,25 @@
 			<p align="center"><img src="{{ url_for('static', filename = 'Documentation8.png') }}"></p>
 		
 		<h2 id="run-optimization">How to run optimization<a class="headerlink" href="#output" title="Permanent link"></a></h2>
-		Once all input data is received, you can place a request to run the optimizer on your project. . We implement a first-come-first-serve queue 
+		Once all input data is received, you can place a request to run the optimizer on your project. There are two ways to place a request:
+		<ul>
+			<li>After clicking <b>Next</b> on the <a href="#model-parameters">Model Parameters</a> page, you will land on a Review webpage where you can place the request by clicking the <b>Run optimizer</b> button at the end of the page.</li>
+			<li>You can go to the <a href="#project-management">Project Management</a> page, retrieve the project, and click <b>Run optimizer</b>.</li>
+		</ul>
+		We implement a first-come-first-serve queue to process requests to avoid the situation where multiple concurrent requests crash the server. Requests are processed one-by-one and are given all computational resources on the server. You can check your request's position on the queue by looking at the <b>Project status</b> column after retrieving your project on the <a href="#project-management">Project Management</a> page.
 
 		<h2 id="output">How to interpret results<a class="headerlink" href="#output" title="Permanent link"></a></h2>
-
-
+		
+		Our model minimizes Z<sub>E</sub>, the financial costs associated with the entire reclamation system, and Z<sub>C</sub>, the greenhouse gas emission of the reclamation system. The mathematical formulae for Z<sub>E</sub> and Z<sub>C</sub> can be found in <a href="https://www.sciencedirect.com/science/article/pii/S0959652619330975" target="_blank">Rezaei et al.</a>. There may be multiple optimal solutions, and they will all be displayed on a 2-dimensional graph such as the one below.
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation9.png') }}"></p>
+		<br>
+		The graph is interactive, you can click on the points to reveal more details about the solutions. For example, by clicking on the first point on the left, details about the first solution is presented in the following table:
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation10.png') }}"></p>
+		<br>
+		The details are ordered by water-treatment locations. The third and fourth columns show the optimal technology and scale for each location. The fifth columns show the population clusters which each location should be servicing. The last four columns show the receiving and sending water capacity.
+		<br>
+		In addition, we also provide an interactive map for better visualization.
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation11.png') }}"></p>
 
 
 	</article>

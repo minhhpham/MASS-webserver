@@ -1,0 +1,31 @@
+.TOC {
+	overflow: hidden;
+	position: fixed;
+	left: 25px;
+	top: 100px;
+	max-width: 15%;
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #333333;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.TOC a:active,
+.TOC a:hover {
+  outline: 0;
+}
+
+.TOC a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.TOC a:hover,
+.TOC a:focus,
+.TOC a:active {
+  text-decoration: underline;
+}
