@@ -277,7 +277,7 @@ def getPopulations(projectID):
 	cursor.close()
 
 	# round up growth rate
-	for i in range(vals):
+	for i in range(len(vals)):
 		vals['growthrate'] = round(vals['growthrate'], 4)
 	return vals
 
