@@ -32,6 +32,7 @@
 				<li><a href="#potential-locations">Potential Water-treatment Locations</a></li>
 				<li><a href="#model-parameters">Model Parameters</a></li>
 			</ul>
+			<li><a href="#run-optimization">How to run optimizer</a></li>
 			<li><a href="#output">How to interpret results</a></li>
 			
 		</ul>
@@ -39,17 +40,82 @@
 
 		<h2 id="project-management">Project Management<a class="headerlink" href="#project-management" title="Permanent link"></a></h2>
 
+		A <b>project</b> consists of user-input data and optimized results. An example of user-input data can be found <a target="_blank" href="{{ url_for('demo') }}#sample-input-data">here</a> and an example of optimized results can be found <a target="_blank" href="{{ url_for('demo') }}#sample-output">here</a>.
+		<br>
+		Projects can be managed through the <i>Projects</i> tab on the Navigation Bar:<br><br>
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation1.png') }}"></p>
+		<br><br>
+		A project is identified by its unique <b>Project ID</b>. A unique <b>Project ID</b> is randomly generated when you create a project. Please save this <b>Project ID</b> to come back to your project in the future and to check its status on the optimizer. <br><br>
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation2.png') }}"></p>
+		<br><br>
+		You can come back to an existing project at any time by using the <b>"Retrieve a Project and check its status"</b> option. <br><br>
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation3.png') }}"></p>
+		After retrieving a project, you have a few options:
+		<ul>
+			<li><b>Refresh this page:</b> Refresh the project status page. This can be used to keep checking the project's status when it is being optimized.</li>
+			<li><b>Edit input data:</b> Go through the input data pages and make modification. </li>
+			<li><b>Review input data:</b> Review all the input data within one web page, also display an interactive map for visualization. This option is only available when all input data has been provided.</li>
+			<li><b>Run optimizer:</b> Place this project on the <a href="#run-optimization">Optimization Queue</a>. This option is only available when all input data has been provided.</li>
+			<li><b>View output:</b> Check the optimizer output. This option is only available when the optimization process is finished</li>
+		</ul>
+		<br><br>
+
 		<h2 id="input-data">How to input data<a class="headerlink" href="#input-data" title="Permanent link"></a></h2>
+		You can start this process by clicking <b>Start this project</b> after creating a project, or by clicking <b>Edit input data</b> after retrieving a project. <br><br>
+		<p align="center"><img src="{{ url_for('static', filename = 'Documentation4.png') }}"></p>
 
 			<h4 id="project-dimensions">Project Dimensions<a class="headerlink" href="#project-dimensions" title="Permanent link"></a></h4>
+			This page would ask for three integer input:
+			<ul>
+				<li>Total number of population clusters being considered for servicing in this project.</li>
+				<li>Total number of candidate locations for implementing water-treatment facility.</li>
+				<li>Lifespan of the project: how long do you expect the water-treatment facilities to last?</li>
+			</ul>
+			<br>
+			<p align="center"><img src="{{ url_for('static', filename = 'Documentation5.png') }}"></p>
+			<br><br>
 
-			<h4 id="population-clusters">Population Clusters<a class="headerlink" href="#population-clusters" title="Permanent link"></a></h4>
+			<h4 id="population-clusters">Population Clusters<a class="headerlink" href="#population-clusters" title="Permanent link"></a></h4>
+			This page has a form that asks for information about the population clusters. The form is a table with the number of rows equal to the number of population clusters that you entered in <a href="#project-dimensions">Project Dimensions</a>. For example, if you entered 19 population clusters in <a href="#project-dimensions">Project Dimensions</a>, the table in this page would have 19 rows:
+			<br><br>
+			<p align="center"><img src="{{ url_for('static', filename = 'Documentation6.png') }}"></p>
+			<br>
+			The form asks for the following information about each population cluster:
+			<ul>
+				<li>Cluster Name: can be any string.</li>
+				<li>Current Population: has to be an integer. Please do not include the comma ",". For example, "100,000" would cause a bug but "100000" would be acceptable.</li>
+				<li>Population growth rate: the annual rate the population is growing. For example, input "1" for 1%/year growth rate.</li>
+				<li>Latitude and Longitude of the population cluster.</li>
+			</ul>
+
 
 			<h4 id="water-treatment-technologies">Water-treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
+			In this page, we ask for specifications of the potential water-treatment technologies on Small, Medium, and Large scales. These specifications are:
+			<ul>
+				<li>Capkt: Capacity (m<sup>3</sup>/year)</li>
+				<li>CCkt:  Total fixed cost of construction per plant's capacity ($/(m<sup>3</sup>/year))</li>
+				<li>OCt:   Annual operation and maintenance cost ($/m<sup>3</sup>)</li>
+				<li>SRWt:  Selling price of reclaimed water ($/m<sup>3</sup>)</li>
+				<li>GPt:   Amount of greenhouse gas emission from process of each m<sup>3</sup> of wastewater (gr CO<sub>2</sub>-eq/m<sup>3</sup>)</li>
+			</ul>
+			
+			By default, we provide specifications for five technologies. Users are welcomed to 
 
 			<h4 id="potential-locations">Potential Water-treatment Locations<a class="headerlink" href="#potential-locations" title="Permanent link"></a></h4>
-
+			This page has a form that asks for information about potential water-treatment locations. The form is a table with the number of rows equal to the number of potential locations that you entered in <a href="#project-dimensions">Project Dimensions</a>. For example, if you entered 9 locations in <a href="#project-dimensions">Project Dimensions</a>, the table in this page would have 9 rows:
+			<br>
+			<p align="center"><img src="{{ url_for('static', filename = 'Documentation7.png') }}"></p>
+			The form asks for the following information about each potential location:
+			<ul>
+				<li>Cluster Name: can be any string.</li>
+				<li>Latitude, Longitude</li>
+				<li>Existing Location: Check this box if the location is an operating water-treatment facility.</li>
+				<li>Technology at existing location: please select N/A if not an existing location or if you are willing to change the technology for the existing location. Otherwise, please select the technology currently used in the existing location. If the technology is not found in the drop-down list, please go back to <a href="#water-treatment-technologies">Water-treatment technologies</a> to add.</li>
+			</ul>
+			<br>
 			<h4 id="model-parameters">Model Parameters<a class="headerlink" href="#model-parameters" title="Permanent link"></a></h4>
+		
+		<h2 id="run-optimization">How to run optimization<a class="headerlink" href="#output" title="Permanent link"></a></h2>
 
 		<h2 id="output">How to interpret results<a class="headerlink" href="#output" title="Permanent link"></a></h2>
 

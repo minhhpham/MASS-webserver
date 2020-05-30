@@ -35,7 +35,7 @@ while True:
 
         # run optimizer and export log 
         print('running optimizer ...')
-        optimizer_status = os.system('sh ./run_optimizer.sh > {0}/log 2>&1'.format(config['optimizer_data_dir']))
+        optimizer_status = os.system('sh ./run_optimizer.sh | tee {0}/log'.format(config['optimizer_data_dir']))
 
         if optimizer_status == 0: # success
             print('success!')

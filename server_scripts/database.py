@@ -275,6 +275,10 @@ def getPopulations(projectID):
 		print(error)
 	# close communication with the PostgreSQL database server
 	cursor.close()
+
+	# round up growth rate
+	for i in range(vals):
+		vals['growthrate'] = round(vals['growthrate'], 4)
 	return vals
 
 # Inserts populations table for a given user and projectID
@@ -449,11 +453,13 @@ def getParams(projectID):
 		vals = cursor.fetchall() # Get the result
 
 		# process data
-		# mu is integer
-		vals[0]['value'] = int(round(vals[0]['value']))
-		# the rest have 2 decimal places
-		for i in range(1, len(vals)):
-			vals[i]['value'] = round(vals[i]['value'], 2)
+		for i in range(len(vals)):
+			# mu is integer
+			if i == 0 :
+				vals[0]['value'] = int(round(vals[0]['value']))
+			else:
+				# the rest have 2 decimal places
+				vals[i]['value'] = round(vals[i]['value'], 2)
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
