@@ -5,6 +5,18 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='HelpTips.css') }}">
+	<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js"></script>
+	<link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+	<style> #map { width: 50%; height: 500px} </style>
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -81,6 +93,75 @@
     	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
     	<p align="center"><input type="submit" name="command" value="Insert Data"></p>
 	</form>
+	<br>
+	
+
+	<!-- SEARCH MAP -->
+	<div align="center"><span id="json-response" style="color:red; font-weight:bold; font-size:12pt;">
+		Search for a place by address. Coordinates will be displayed here!
+	</span></div>
+	<br>
+	<div id="this is for alignment" align="center">
+		<div id="map" class="flex-child flex-child--grow bg-darken10 viewport-twothirds viewport-full-mm"></div>
+	</div>
+
+	<script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p0MG01MXRqMW45cjQzb2R6b2ptc3J4MSJ9.zA2W0IkI0c6KaAhJfk9bWg';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-77.0091, 38.8899],
+        zoom: 13
+      });
+
+      var geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder, 'top-left');
+      map.scrollZoom.disable();
+
+      map.on('load', function() {
+        // Listen for the `geocoder.input` event that is triggered when a user
+        // makes a selection
+        geocoder.on('result', function(ev) {
+          var styleSpec = ev.result;
+          var styleSpecBox = document.getElementById('json-response');
+          var styleSpecText = JSON.stringify(styleSpec, null, 2);
+          var longitude = styleSpec.geometry.coordinates[0];
+          var latitude  = styleSpec.geometry.coordinates[1];
+          var CoordinatesHTML = "".concat("longitude: ", longitude, "<br> latitude: ", latitude);
+          styleSpecBox.innerHTML = CoordinatesHTML;
+        });
+      });
+
+      function syntaxHighlight(json) {
+        json = json
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function(match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'key';
+              } else {
+                cls = 'string';
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+            } else if (/null/.test(match)) {
+              cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+          }
+        );
+      }
+    </script>
+
 
 </body>
 </html>
