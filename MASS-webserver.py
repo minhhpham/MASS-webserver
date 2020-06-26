@@ -169,7 +169,7 @@ def population_input():
                 populations.rows[i].GrowthRate.data = existing_data[i]['growthrate']*100
                 populations.rows[i].lat.data = existing_data[i]['lat']
                 populations.rows[i].lon.data = existing_data[i]['lon']
-        return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID))
+        return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID, MAPBOX_KEY = config['MAPBOX_KEY']))
 
     # process POST requests
     if request.method == 'POST':
@@ -186,7 +186,7 @@ def population_input():
             else:
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for population_input failed! project %s. Errors: %s', projectID, str(populations.errors))
-                return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID))
+                return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID, MAPBOX_KEY = config['MAPBOX_KEY']))
         elif request.form['command'] == 'Insert Data':
             # process parsing data command (lazy method for inputing data)
             numpops = db.getInputSize(projectID)['numpops']
@@ -194,7 +194,7 @@ def population_input():
                 populations.rows.append_entry({'r': i+1})
             populations = Parse.fill_populations(request.form['ExcelData'], populations)
             APP.logger.info('Lazy data parsed in populations form! project %s', projectID)
-            return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID))
+            return(render_template('population_input.html', populations = populations, prev_page = prev_page, projectID = projectID, MAPBOX_KEY = config['MAPBOX_KEY']))
         else:
             abort(400, 'Unknown request')
 
