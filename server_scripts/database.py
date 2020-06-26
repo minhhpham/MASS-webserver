@@ -278,7 +278,7 @@ def getPopulations(projectID):
 
 	# round up growth rate
 	for i in range(len(vals)):
-		vals['growthrate'] = round(vals['growthrate'], 4)
+		vals[i]['growthrate'] = round(vals[i]['growthrate'], 4)
 	return vals
 
 # Inserts populations table for a given user and projectID
