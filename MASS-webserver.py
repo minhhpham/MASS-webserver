@@ -247,7 +247,7 @@ def plant_input():
                 plants.rows[i].lon.data = existing_data[i]['lon']
                 plants.rows[i].existing_location.data = existing_data[i]['existing_location']
                 plants.rows[i].existing_tech.data = existing_data[i]['existing_tech']
-        return(render_template('plant_input.html', plants = plants, prev_page = prev_page, projectID = projectID))
+        return(render_template('plant_input.html', plants = plants, prev_page = prev_page, projectID = projectID, MAPBOX_KEY = config['MAPBOX_KEY']))
 
     # process POST request
     if request.method == 'POST':
@@ -265,7 +265,7 @@ def plant_input():
             else:
                 # if validation fails, print out errors to web page
                 APP.logger.info('validation for plants_input failed! project %s. Errors: %s', projectID, str(plants.errors))
-                return(render_template('plant_input.html', plants = plants, prev_page = prev_page, projectID = projectID))
+                return(render_template('plant_input.html', plants = plants, prev_page = prev_page, projectID = projectID, MAPBOX_KEY = config['MAPBOX_KEY']))
         elif request.form['command'] == 'Insert Data':
             # process parsing data command (lazy method for inputing data)
             numplants = db.getInputSize(projectID)['numplants']
@@ -274,7 +274,7 @@ def plant_input():
                 plants.rows[i].existing_tech.choices = tech_choices
             numplants = Parse.fill_plants(request.form['ExcelData'], plants)
             APP.logger.info('Lazy data parsed in plants form! project %s', projectID)
-            return(render_template('plant_input.html', plants = plants, prev_page = prev_page, projectID = projectID))
+            return(render_template('plant_input.html', plants = plants, prev_page = prev_page, projectID = projectID, MAPBOX_KEY = config['MAPBOX_KEY']))
         else:
             abort(400, 'Unknown request')
 

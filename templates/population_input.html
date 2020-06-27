@@ -5,16 +5,16 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
 	<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
-    <link
-      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css"
-      rel="stylesheet"
-    />
+	<link
+	  href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css"
+	  rel="stylesheet"
+	/>
 	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js"></script>
 	<link
-      rel="stylesheet"
-      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css"
-      type="text/css"
-    />
+	  rel="stylesheet"
+	  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css"
+	  type="text/css"
+	/>
 	<style> #map { width: 50%; height: 500px} </style>
 </head>
 <body>
@@ -27,7 +27,7 @@
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
 	   <li><a href="{{ url_for('Contact') }}">Contact</a></li>
 	   <div class="identity"> 
-	   		projectID: {{ projectID }}
+			projectID: {{ projectID }}
 	   </div>
 	</ul>
 	</div>
@@ -35,13 +35,13 @@
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
 	{% if populations.errors %}
-    <ul class="errors">
-        {% for field_name, field_errors in populations.errors|dictsort if field_errors %}
-            {% for error in field_errors %}
-                <li><font color="red">{{ populations[field_name].label }}: {{ error }}</font></li>
-            {% endfor %}
-        {% endfor %}
-    </ul>
+	<ul class="errors">
+		{% for field_name, field_errors in populations.errors|dictsort if field_errors %}
+			{% for error in field_errors %}
+				<li><font color="red">{{ populations[field_name].label }}: {{ error }}</font></li>
+			{% endfor %}
+		{% endfor %}
+	</ul>
 	{% endif %}
 	<br>
 	<h1 align="center">Input your populations</h1>
@@ -85,8 +85,8 @@
 	</p>
 	<form action="{{ url_for('population_input') }}?projectID={{ projectID }}" method="POST" align = "center">
 		{{ populations.csrf_token }}
-    	<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
-    	<p align="center"><input type="submit" name="command" value="Insert Data"></p>
+		<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
+		<p align="center"><input type="submit" name="command" value="Insert Data"></p>
 	</form>
 	<br>
 
@@ -94,67 +94,73 @@
 	<div align="center"><span id="json-response" style="color:red; font-weight:bold; font-size:12pt;">
 		Search for a place by address. Coordinates will be displayed here!
 	</span></div>
+
+	<div id="Button Holder" align="center"></div>
 	<br>
+
 	<div id="this is for alignment" align="center">
 		<div id="map" class="flex-child flex-child--grow bg-darken10 viewport-twothirds viewport-full-mm"></div>
 	</div>
 
 	<script>
-      mapboxgl.accessToken = '{{ MAPBOX_KEY }}';
-      var map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [-77.0091, 38.8899],
-        zoom: 13
-      });
+		mapboxgl.accessToken = '{{ MAPBOX_KEY }}';
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/mapbox/streets-v11',
+			center: [-77.0091, 38.8899],
+			zoom: 13
+		});
 
-      var geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl
-      });
+		var geocoder = new MapboxGeocoder({
+			accessToken: mapboxgl.accessToken,
+			mapboxgl: mapboxgl
+		});
 
-      map.addControl(geocoder, 'top-left');
-      map.scrollZoom.disable();
+		map.addControl(geocoder, 'top-left');
+		map.scrollZoom.disable();
 
-      map.on('load', function() {
-        // Listen for the `geocoder.input` event that is triggered when a user
-        // makes a selection
-        geocoder.on('result', function(ev) {
-          var styleSpec = ev.result;
-          var styleSpecBox = document.getElementById('json-response');
-          var styleSpecText = JSON.stringify(styleSpec, null, 2);
-          var longitude = styleSpec.geometry.coordinates[0];
-          var latitude  = styleSpec.geometry.coordinates[1];
-          var CoordinatesHTML = "".concat("longitude: ", longitude, "<br> latitude: ", latitude);
-          styleSpecBox.innerHTML = CoordinatesHTML;
-        });
-      });
+		// global variable for storing long and lat
+		var longitude = -1;
+		var latitude = -1;
 
-      function syntaxHighlight(json) {
-        json = json
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-        return json.replace(
-          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-          function(match) {
-            var cls = 'number';
-            if (/^"/.test(match)) {
-              if (/:$/.test(match)) {
-                cls = 'key';
-              } else {
-                cls = 'string';
-              }
-            } else if (/true|false/.test(match)) {
-              cls = 'boolean';
-            } else if (/null/.test(match)) {
-              cls = 'null';
-            }
-            return '<span class="' + cls + '">' + match + '</span>';
-          }
-        );
-      }
-    </script>
+		map.on('load', function() {
+			// Listen for the `geocoder.input` event that is triggered when a user
+			// makes a selection
+			geocoder.on('result', function(ev) {
+				// display lon and lat
+				var styleSpec = ev.result;
+				var styleSpecBox = document.getElementById('json-response');
+				var styleSpecText = JSON.stringify(styleSpec, null, 2);
+				longitude = styleSpec.geometry.coordinates[0];
+				latitude  = styleSpec.geometry.coordinates[1];
+				var CoordinatesHTML = "".concat("longitude: ", longitude, "<br> latitude: ", latitude);
+				styleSpecBox.innerHTML = CoordinatesHTML;
+				// display the Add button
+				var buttonHolder = document.getElementById('Button Holder');
+				buttonHolder.innerHTML = "Add these coordinates to row <input id='Row Input' type='text' size=2> <button type='button' onclick='add_coordinates()'>Add</button>"
+			});
+		});
+
+		function add_coordinates(){
+			if (longitude!==-1 & latitude!==-1){
+				// get row value
+				var row = document.getElementById('Row Input').value-1;
+				// find the Latitude box
+				var LatitudeBox = document.getElementById("rows-".concat(row, "-lat"));
+				// register value if not None
+				if (LatitudeBox !== null){
+					LatitudeBox.value = latitude;
+				}
+				// find the Longitude box
+				var LongitudeBox = document.getElementById("rows-".concat(row, "-lon"));
+				// register value if not None
+				if (LongitudeBox !== null){
+					LongitudeBox.value = longitude;
+				}
+			}
+		}
+
+	</script>
 
 
 </body>

@@ -106,62 +106,64 @@
 	</div>
 
 	<script>
-      mapboxgl.accessToken = '{{ MAPBOX_KEY }}';
-      var map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [-77.0091, 38.8899],
-        zoom: 13
-      });
+		mapboxgl.accessToken = '{{ MAPBOX_KEY }}';
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/mapbox/streets-v11',
+			center: [-77.0091, 38.8899],
+			zoom: 13
+		});
 
-      var geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl
-      });
+		var geocoder = new MapboxGeocoder({
+			accessToken: mapboxgl.accessToken,
+			mapboxgl: mapboxgl
+		});
 
-      map.addControl(geocoder, 'top-left');
-      map.scrollZoom.disable();
+		map.addControl(geocoder, 'top-left');
+		map.scrollZoom.disable();
 
-      map.on('load', function() {
-        // Listen for the `geocoder.input` event that is triggered when a user
-        // makes a selection
-        geocoder.on('result', function(ev) {
-          var styleSpec = ev.result;
-          var styleSpecBox = document.getElementById('json-response');
-          var styleSpecText = JSON.stringify(styleSpec, null, 2);
-          var longitude = styleSpec.geometry.coordinates[0];
-          var latitude  = styleSpec.geometry.coordinates[1];
-          var CoordinatesHTML = "".concat("longitude: ", longitude, "<br> latitude: ", latitude);
-          styleSpecBox.innerHTML = CoordinatesHTML;
-        });
-      });
+		// global variable for storing long and lat
+		var longitude = -1;
+		var latitude = -1;
 
-      function syntaxHighlight(json) {
-        json = json
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-        return json.replace(
-          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-          function(match) {
-            var cls = 'number';
-            if (/^"/.test(match)) {
-              if (/:$/.test(match)) {
-                cls = 'key';
-              } else {
-                cls = 'string';
-              }
-            } else if (/true|false/.test(match)) {
-              cls = 'boolean';
-            } else if (/null/.test(match)) {
-              cls = 'null';
-            }
-            return '<span class="' + cls + '">' + match + '</span>';
-          }
-        );
-      }
-    </script>
+		map.on('load', function() {
+			// Listen for the `geocoder.input` event that is triggered when a user
+			// makes a selection
+			geocoder.on('result', function(ev) {
+				// display lon and lat
+				var styleSpec = ev.result;
+				var styleSpecBox = document.getElementById('json-response');
+				var styleSpecText = JSON.stringify(styleSpec, null, 2);
+				longitude = styleSpec.geometry.coordinates[0];
+				latitude  = styleSpec.geometry.coordinates[1];
+				var CoordinatesHTML = "".concat("longitude: ", longitude, "<br> latitude: ", latitude);
+				styleSpecBox.innerHTML = CoordinatesHTML;
+				// display the Add button
+				var buttonHolder = document.getElementById('Button Holder');
+				buttonHolder.innerHTML = "Add these coordinates to row <input id='Row Input' type='text' size=2> <button type='button' onclick='add_coordinates()'>Add</button>"
+			});
+		});
 
+		function add_coordinates(){
+			if (longitude!==-1 & latitude!==-1){
+				// get row value
+				var row = document.getElementById('Row Input').value-1;
+				// find the Latitude box
+				var LatitudeBox = document.getElementById("rows-".concat(row, "-lat"));
+				// register value if not None
+				if (LatitudeBox !== null){
+					LatitudeBox.value = latitude;
+				}
+				// find the Longitude box
+				var LongitudeBox = document.getElementById("rows-".concat(row, "-lon"));
+				// register value if not None
+				if (LongitudeBox !== null){
+					LongitudeBox.value = longitude;
+				}
+			}
+		}
+
+	</script>
 
 </body>
 </html>
