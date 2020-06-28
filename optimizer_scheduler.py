@@ -40,13 +40,13 @@ while True:
         if optimizer_status == 0: # success
             print('success!')
             # save output data and log to db
+            log = Parse.read_optimizer_log('{0}/log'.format(config['optimizer_data_dir']))
+            print(log)
             ## parse output data
             output1, output2 = Parse.parse_optimizer_output('{0}/optimizer_output_file1.txt'.format(config['optimizer_data_dir']), '{0}/optimizer_output_file2.txt'.format(config['optimizer_data_dir']))
             if output1 != -1: # check that no weird output value
                 print (output1)
                 print (output2)
-                log = Parse.read_optimizer_log('{0}/log'.format(config['optimizer_data_dir']))
-                print(log)
             ## save to db
                 db.save_optimizer_output(projectID, output1, output2)
                 db.save_optimizer_log(projectID, log)

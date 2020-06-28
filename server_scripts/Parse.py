@@ -68,6 +68,9 @@ def parse_optimizer_output(path_to_file1, path_to_file2):
 	for col_index in range(5, len(headers)):
 		solution_label = headers[col_index].strip('Sol_')
 		for row in output1:
+			# only read w and q variables
+			if row[1]!='w' and row[1]!='q':
+				continue
 			value = round(float(row[col_index]))
 			# check if value is binary
 			if value not in [0,1]:
