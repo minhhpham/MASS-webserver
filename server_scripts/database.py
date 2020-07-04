@@ -214,7 +214,7 @@ def updateProjectLastOptimized(projectID, last_optimized, process_time):
 	""" process time is in minutes """
 	try:
 		cursor = conn.cursor()
-		cursor.execute("UPDATE Projects SET last_optimized=%s process_time=%s WHERE projectID=%s", [last_optimized, str(round(process_time,2))+' minutes', projectID])
+		cursor.execute("UPDATE Projects SET last_optimized=%s, process_time=%s WHERE projectID=%s", [last_optimized, str(round(process_time,2))+' minutes', projectID])
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server
