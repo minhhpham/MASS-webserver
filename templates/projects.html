@@ -61,13 +61,14 @@
 			{% else %}
 				<table class=blueTable align="left">
 					<tr>
-						<th>Project ID</th><th>Project Description</th><th>Project status</th><th>Last time optimized</th><th>Choose An Action</th>
+						<th>Project ID</th><th>Project Description</th><th>Project status</th><th>Last time optimized</th><th>Process Time</th><th>Choose An Action</th>
 					</tr>
 					<tr>
 						<td>{{ project_status['projectid'] }}</td>
 						<td>{{ project_status['p_desc'] }}</td>
 						<td>{{ project_status['status'] }}</td>
 						<td>{{ project_status['last_optimized'] }}</td>
+						<td>{{ project_status['process_time'] }}</td>
 						<td align="left">
 							<ul>
 								<li><a href="{{ url_for('projects', projectID = projectID) }}">Refresh this page</a></li>

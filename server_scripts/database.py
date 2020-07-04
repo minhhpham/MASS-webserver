@@ -40,6 +40,7 @@ def init_table(table_name):
 							p_desc		varchar(4096),
 							status 		varchar(255),
 							last_optimized varchar(255),
+							process_time varchar(255),
 							PRIMARY KEY(projectID)		
 						)
 			""")
@@ -167,7 +168,7 @@ def getProject(projectID):
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 		# Select projects
-		cursor.execute("SELECT projectID, p_desc, status, last_optimized FROM Projects WHERE projectID = %s", (projectID,))
+		cursor.execute("SELECT projectID, p_desc, status, last_optimized, process_time FROM Projects WHERE projectID = %s", (projectID,))
 		vals = cursor.fetchone() # Get the result
 
 	except(psycopg2.DatabaseError) as error:
@@ -209,10 +210,11 @@ def updateProjectStatus(projectID, new_status):
 	# commit the changes
 	conn.commit()
 
-def updateProjectLastOptimized(projectID, last_optimized):
+def updateProjectLastOptimized(projectID, last_optimized, process_time):
+	""" process time is in minutes """
 	try:
 		cursor = conn.cursor()
-		cursor.execute("UPDATE Projects SET last_optimized=%s WHERE projectID=%s", [last_optimized, projectID])
+		cursor.execute("UPDATE Projects SET last_optimized=%s process_time=%s WHERE projectID=%s", [last_optimized, str(round(process_time,2))+' minutes', projectID])
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	# close communication with the PostgreSQL database server

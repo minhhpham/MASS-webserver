@@ -34,8 +34,10 @@ while True:
         print('updated project status')
 
         # run optimizer and export log 
+        start_time = time.process_time() # measure elapsed time
         print('running optimizer ...')
         optimizer_status = os.system('sh ./run_optimizer.sh | tee {0}/log'.format(config['optimizer_data_dir']))
+        elapsed_time_minutes = (time.process_time() - start_time)/60
 
         if optimizer_status == 0: # success
             print('success!')
@@ -55,7 +57,7 @@ while True:
                 db.updateProjectStatus(projectID, 'input completed, optimized solutions is ready')
                 # update last time optimized
                 now = datetime.now(pytz.timezone('EST')).strftime("%Y-%m-%d %H:%M:%S %z")
-                db.updateProjectLastOptimized(projectID, now)
+                db.updateProjectLastOptimized(projectID, now, elapsed_time_minutes)
             else:
                 print ('OUTPUT HAS NON-BINARY VALUES !!!')
                 db.save_optimizer_log(projectID, log)
