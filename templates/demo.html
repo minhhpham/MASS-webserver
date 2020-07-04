@@ -50,13 +50,11 @@
 		<!-- What this tool does  -->
 		<h2 id="what-this-tool-does">What this tool does<a class="headerlink" href="#what-this-tool-does" title="Permanent link"></a></h2>
 
-		<p>This tool utilizes the mathematical model published by <a href="https://www.sciencedirect.com/science/article/pii/S0959652619330975" target="_blank">Rezaei et al.</a> to minimize the costs and carbon footprint and maximize the value of resource recovery of water reclamation systems. Users will be asked to provide information about potential water-treatment locations and population clusters that will be served by the potential locations. The tool will compute the optimized solutions that contain selected water-treatment locations, how locations are connected to the population clusters, what technology should be implemented in each location, and the scale of each location.</p>
+		<p>This tool utilizes the mathematical model published by <a href="https://www.sciencedirect.com/science/article/pii/S0959652619330975" target="_blank">Rezaei et al.</a> to minimize the costs and carbon footprint and maximize the value of resource recovery of water reclamation systems. Users will be asked to provide information about potential water-treatment locations and population clusters that will be served. The tool will compute the optimized solutions and the output of the model includes selected water-treatment locations, the connections between the population clusters to the treatment plants, the optimzal technolgy to be implemented in each location, and the scale of each plant.</p>
 
-		<p>To see what input data the tool needs, please check <a href="#sample-input-data">Sample input data</a>. To see what a result page would look like, please check <a href="#sample-output">Sample output</a>.</p>
+		<p>To see what input data the tool needs, please refer to the <a href="#sample-input-data">Sample input data section</a>. To see what the results would look like, please refer to the <a href="#sample-output">Sample output section</a>.</p>
 
 		<p>Full documentation is available <a href="{{ url_for('documentation') }}">here</a></p>
-
-		<p>This tool is free and open-source. It was supported by the NSF #1454559.</p>
 
 		<!-- sample input -->
 		<h2 id="sample-input-data">Sample input data<a class="headerlink" href="#sample-input-data" title="Permanent link"></a></h2>
@@ -64,7 +62,7 @@
 
 			<!-- Sample population clusters -->
 			<h4 id="population-clusters">Population clusters <a class="headerlink" href="#population-clusters" title="Permanent link"></a></h4>
-			Below is a sample input table for populations clusters. Required information includes cluster name, current population, population growth rate per year (in decimal), latitude, and longitude.
+			Below is a sample input table for populations clusters. Required information includes cluster name, current population, population growth rate per year (in decimal format), and the latitude and longitude of the cluster.
 			<br><br>
 
 			<table class=blueTable align="center">
@@ -234,7 +232,7 @@
 
 			<!-- Sample potential locations -->
 			<h4 id="potiential-water-treatment-locations">Potential water-treatment locations <a class="headerlink" href="#potiential-water-treatment-locations" title="Permanent link"></a></h4>
-			Below is a sample input table for water-treatment locations. Required information includes location name, latitude, longitude, whether a location is existing, and technology being used at an existing location.
+			Below is a sample input table for water-treatment locations. Required information includes location name, latitude, longitude, whether a location currently exists, and the technology being used at an existing location.
 			<br><br>
 
 			<table class=blueTable align="center">
@@ -329,18 +327,18 @@
 
 			<!-- Sample technologies -->
 			<h4 id="water-treatment-technologies">Water-treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
-			Below is a sample input table for water-treatment technologies. The only required input is the selection checkboxes in the first column. We have default values for columns 4 to 8, but users can modify them. The meaning of the values in columns 4 to 8 are described in the <a href="{{ url_for('documentation') }}#water-treatment-technologies">Documentation</a>.
+			Below is a sample input table for water-treatment technologies. The only required input is the selection checkboxes in the first column. Default values are shown for columns 4 to 8, but users can modify them. The meaning of the values in columns 4 to 8 are described in the <a href="{{ url_for('documentation') }}#water-treatment-technologies">Documentation</a>.
 			<br><br>
 				<table class=blueTable align="center">
 					<tr> <!-- Table headers -->
 					<th> Check to Select </th>
 					<th> Technology </th>
 					<th> Scale </th>
-					<th><label for="default_techs-rows-0-Small-Capkt">Capkt (m3/year)</label></th>
-					<th><label for="default_techs-rows-0-Small-CCkt">CCkt ($/(m3/year))</label></th>
-					<th><label for="default_techs-rows-0-Small-OCt">OCt ($/m3)</label></th>
-					<th><label for="default_techs-rows-0-Small-SRWt">SRWt ($/m3)</label></th>
-					<th><label for="default_techs-rows-0-Small-GPt">GPt (gr CO2-eq/m3)</label></th>
+					<th><label for="default_techs-rows-0-Small-Capkt">Capacity Cap<sub>kt</sub> (m<sup>3</sup>/year)</label></th>
+					<th><label for="default_techs-rows-0-Small-CCkt">Fixed Cost CC<sub>kt</sub> ($/(m<sup>3</sup>/year))</label></th>
+					<th><label for="default_techs-rows-0-Small-OCt">Annual Cost OC<sub>t</sub> ($/m<sup>3</sup>)</label></th>
+					<th><label for="default_techs-rows-0-Small-SRWt">Selling price of reclaimed water SRW<sub>t</sub> ($/m<sup>3</sup>)</label></th>
+					<th><label for="default_techs-rows-0-Small-GPt">Amount of greenhouse gas emission from process of each m3 of wastewater GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>)</label></th>
 					</tr>
 					<tr> <!-- Table rows -->
 					<td rowspan="3"><input checked id="default_techs-rows-0-Select" name="default_techs-rows-0-Select" type="checkbox" value="y"></td>
@@ -478,7 +476,7 @@
 
 		<!-- sample output -->
 		<h2 id="sample-output">Sample output<a class="headerlink" href="#sample-output" title="Permanent link"></a></h2>
-		Our model minimizes Z<sub>E</sub>, the financial costs associated with the entire reclamation system, and Z<sub>C</sub>, the greenhouse gas emission of the reclamation system. There may be multiple optimal solutions, and they will all be displayed on a 2-dimensional graph such as the one below.
+		Our model minimizes Z<sub>C</sub>, the financial costs associated with the entire reclamation system, and Z<sub>E</sub>, the greenhouse gas emission of the reclamation system. There may be multiple optimal solutions, and they will all be displayed on a 2-dimensional graph such as the one below.
 
 		<!-- show the chart for selecting solutions -->
 		<div style="width:50%;text-align:center;margin:auto;">
@@ -727,8 +725,8 @@
 				html_text += '<th>Technology</th>';
 				html_text += '<th>Scale</th>';
 				html_text += '<th>Servicing Clusters</th>';
-				html_text += '<th>Receiving Capacity (m3/year)</th>';
-				html_text += '<th>Sending Capacity (m3/year)</th>';
+				html_text += '<th>Receiving Capacity (m<sup>3</sup>/year)</th>';
+				html_text += '<th>Sending Capacity (m<sup>3</sup>/year)</th>';
 				html_text += '<th>Receiving Capacity (MGD)</th>';
 				html_text += '<th>Sending Capacity (MGD)</th>';
 

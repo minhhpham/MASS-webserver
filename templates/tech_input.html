@@ -36,16 +36,16 @@
 	<br>
 	<form method="POST" action="{{ url_for('tech_input', projectID = projectID) }}" align="center">
 		{{ techs.csrf_token }}
-		<table class=blueTable align="center">
+		<table class=blueTable align="center" style="max-width:1200px;">
 			<tr> <!-- Table headers  -->
 				<th> Check to Select </th> 
 				<th> Technology </th> 
 				<th> Scale </th>
-				<th>{{ techs.default_techs.rows[0].Small.Capkt.label }}</th>
-				<th>{{ techs.default_techs.rows[0].Small.CCkt.label }}</th>
-				<th>{{ techs.default_techs.rows[0].Small.OCt.label }}</th>
-				<th>{{ techs.default_techs.rows[0].Small.SRWt.label }}</th>
-				<th>{{ techs.default_techs.rows[0].Small.GPt.label }}</th>
+				<th> Capacity Cap<sub>kt</sub> (m<sup>3</sup>/year) </th>
+				<th> Fixed Cost CC<sub>kt</sub> ($/(m<sup>3</sup>/year)) </th>
+				<th> Annual Cost OC<sub>t</sub> ($/m<sup>3</sup>) </th>
+				<th> Selling price of reclaimed water SRW<sub>t</sub> ($/m<sup>3</sup>) </th>
+				<th> Amount of greenhouse gas emission from process of each m3 of wastewater GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>) </th>
 			</tr>
 			{% for r in techs.default_techs.rows %}
 				<tr> <!-- Table rows -->

@@ -21,7 +21,7 @@
 	</div>
 
 	<!-- NAVIGATION BAR ENDS -->
-<!-- 	<div class="TOC">
+	<div class="TOC">
 		<h2 id="table-of-content">Table of Content<a class="headerlink" href="#table-of-content" title="Permanent link"></a></h2>
 		<ul>
 			<li><a href="#project-management">Project Management</a></li>
@@ -29,30 +29,30 @@
 			<ul>
 				<li><a href="#project-dimensions">Project Dimensions</a></li>
 				<li><a href="#population-clusters">Population Clusters</a></li>
-				<li><a href="#water-treatment-technologies">Water-treatment technologies</a></li>
-				<li><a href="#potential-locations">Potential Water-treatment Locations</a></li>
+				<li><a href="#water-treatment-technologies">Wastewater treatment technologies</a></li>
+				<li><a href="#potential-locations">Potential Wastewater treatment Locations</a></li>
 				<li><a href="#model-parameters">Model Parameters</a></li>
 			</ul>
 			<li><a href="#run-optimization">How to run optimizer</a></li>
 			<li><a href="#output">How to interpret results</a></li>		
 		</ul>
-	</div> -->
+	</div>
 
 	<article class="markdown-body">
-		<h2 id="table-of-content">Table of Content<a class="headerlink" href="#table-of-content" title="Permanent link"></a></h2>
+<!-- 		<h2 id="table-of-content">Table of Content<a class="headerlink" href="#table-of-content" title="Permanent link"></a></h2>
 		<ul>
 			<li><a href="#project-management">Project Management</a></li>
 			<li><a href="#input-data">How to input data</a></li>
 			<ul>
 				<li><a href="#project-dimensions">Project Dimensions</a></li>
 				<li><a href="#population-clusters">Population Clusters</a></li>
-				<li><a href="#water-treatment-technologies">Water-treatment technologies</a></li>
+				<li><a href="#water-treatment-technologies">Wastewater treatment technologies</a></li>
 				<li><a href="#potential-locations">Potential Water-treatment Locations</a></li>
 				<li><a href="#model-parameters">Model Parameters</a></li>
 			</ul>
 			<li><a href="#run-optimization">How to run optimizer</a></li>
 			<li><a href="#output">How to interpret results</a></li>		
-		</ul>
+		</ul> -->
 
 		<h2 id="project-management">Project Management<a class="headerlink" href="#project-management" title="Permanent link"></a></h2>
 
@@ -62,6 +62,8 @@
 		<p align="center"><img src="{{ url_for('static', filename = 'Documentation1.png') }}"></p>
 		<br><br>
 		A project is identified by its unique <b>Project ID</b>. A unique <b>Project ID</b> is randomly generated when you create a project. Please save this <b>Project ID</b> to come back to your project in the future and to check its status on the optimizer. <br><br>
+		The <b>Project</b> page is divided into 2 sections, <b>Create a New Project</b> and <b>Retrieve a Project and check its status</b>. <br><br>
+		The <b>Create a New Project</b> section would give you a new <b>Project ID</b> after providing a brief description of the project.
 		<p align="center"><img src="{{ url_for('static', filename = 'Documentation2.png') }}"></p>
 		<br><br>
 		You can come back to an existing project at any time by using the <b>"Retrieve a Project and check its status"</b> option. <br><br>
@@ -81,11 +83,11 @@
 		<p align="center"><img src="{{ url_for('static', filename = 'Documentation4.png') }}"></p>
 
 			<h4 id="project-dimensions">Project Dimensions<a class="headerlink" href="#project-dimensions" title="Permanent link"></a></h4>
-			This page would ask for three integer input:
+			This page would ask for three integer inputs:
 			<ul>
-				<li>Total number of population clusters being considered for servicing in this project.</li>
-				<li>Total number of candidate locations for implementing water-treatment facility.</li>
-				<li>Lifespan of the project: how long do you expect the water-treatment facilities to last?</li>
+				<li>Total number of population clusters being considered for this project.</li>
+				<li>Total number of candidate locations for implementing water reclamation facility.</li>
+				<li>Lifespan of the project: how long do you expect the water reclamation facilities to last?</li>
 			</ul>
 			<br>
 			<p align="center"><img src="{{ url_for('static', filename = 'Documentation5.png') }}"></p>
@@ -98,39 +100,40 @@
 			<br>
 			The form asks for the following information about each population cluster:
 			<ul>
-				<li>Cluster Name: can be any string.</li>
+				<li>Cluster Name: can be any combination of text and numbers.</li>
 				<li>Current Population: has to be an integer. Please do not include the comma ",". For example, "100,000" would cause a bug but "100000" would be acceptable.</li>
-				<li>Population growth rate: the annual rate the population is growing. For example, input "1" for 1%/year growth rate.</li>
-				<li>Latitude and Longitude of the population cluster.</li>
+				<li>Population growth rate: the annual rate the population is growing. For example, input "1.15" for 1.15%/year growth rate.</li>
+				<li>Latitude and Longitude of the population cluster. For your convenience, a tool for searching latitude and longitude is provided. As shown in the picture below, you can type an address or a location name to start the search. For example, by typing "University of South Florida" and selecting the first option, we obtained the latitude and longitude of USF. Then you can enter the row number into the input box and click <b>Add</b> to add the found latitude and longitude to the table.</li>
 			</ul>
+			<p align="center"><img src="{{ url_for('static', filename = 'Documentation12.png') }}"></p>
 
 
-			<h4 id="water-treatment-technologies">Water-treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
-			In this page, we ask for specifications of the potential water-treatment technologies on Small, Medium, and Large scales. These specifications are:
+			<h4 id="water-treatment-technologies">Wastewater treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
+			In this page, we ask for specifications of the potential Wastewater treatment technologies on Small, Medium, and Large scales. These specifications are:
 			<ul>
-				<li>Capkt: Capacity (m<sup>3</sup>/year)</li>
-				<li>CCkt:  Total fixed cost of construction per plant's capacity ($/(m<sup>3</sup>/year))</li>
-				<li>OCt:   Annual operation and maintenance cost ($/m<sup>3</sup>)</li>
-				<li>SRWt:  Selling price of reclaimed water ($/m<sup>3</sup>)</li>
-				<li>GPt:   Amount of greenhouse gas emission from process of each m<sup>3</sup> of wastewater (gr CO<sub>2</sub>-eq/m<sup>3</sup>)</li>
+				<li>Cap<sub>kt</sub>: Capacity (m<sup>3</sup>/year)</li>
+				<li>CC<sub>kt</sub>:  Total fixed cost of construction per plant's capacity ($/(m<sup>3</sup>/year))</li>
+				<li>OC<sub>t</sub>:   Annual operation and maintenance cost ($/m<sup>3</sup>)</li>
+				<li>SRW<sub>t</sub>:  Selling price of reclaimed water ($/m<sup>3</sup>)</li>
+				<li>GP<sub>t</sub>:   Amount of greenhouse gas emission from process per m<sup>3</sup> of wastewater (gr CO<sub>2</sub>-eq/m<sup>3</sup>)</li>
 			</ul>
 			
-			By default, we provide specifications for five technologies. Users are welcomed to 
+			By default, we provide specifications for five technologies. Users are welcome to input data for alternative processes. 
 
-			<h4 id="potential-locations">Potential Water-treatment Locations<a class="headerlink" href="#potential-locations" title="Permanent link"></a></h4>
-			This page has a form that asks for information about potential water-treatment locations. The form is a table with the number of rows equal to the number of potential locations that you entered in <a href="#project-dimensions">Project Dimensions</a>. For example, if you entered 9 locations in <a href="#project-dimensions">Project Dimensions</a>, the table in this page would have 9 rows:
+			<h4 id="potential-locations">Potential Wastewater treatment Locations<a class="headerlink" href="#potential-locations" title="Permanent link"></a></h4>
+			This page has a form that asks for information about potential wastewater treatment locations. The form is a table with the number of rows equal to the number of potential locations that you entered in <a href="#project-dimensions">Project Dimensions</a>. For example, if you entered 9 locations in <a href="#project-dimensions">Project Dimensions</a>, the table in this page would have 9 rows:
 			<br>
 			<p align="center"><img src="{{ url_for('static', filename = 'Documentation7.png') }}"></p>
 			The form asks for the following information about each potential location:
 			<ul>
 				<li>Cluster Name: can be any string.</li>
 				<li>Latitude, Longitude</li>
-				<li>Existing Location: Check this box if the location is an operating water-treatment facility.</li>
-				<li>Technology at existing location: please select N/A if not an existing location or if you are willing to change the technology for the existing location. Otherwise, please select the technology currently used in the existing location. If the technology is not found in the drop-down list, please go back to <a href="#water-treatment-technologies">Water-treatment technologies</a> to add.</li>
+				<li>Existing Location: Check this box if the location is an operating wastewater treatment facility.</li>
+				<li>Technology at existing location: please select N/A if not an existing location or if you are willing to change the technology for the existing location. Otherwise, please select the technology currently used in the existing location. If the technology is not found in the drop-down list, please go back to <a href="#water-treatment-technologies">Wastewater treatment technologies</a> to add.</li>
 			</ul>
 			<br>
 			<h4 id="model-parameters">Model Parameters<a class="headerlink" href="#model-parameters" title="Permanent link"></a></h4>
-			This page allows you to modify some parameters that drive the optimization process. The last column provides definition and the second column provides the unit for each parameter.
+			This page allows you to modify some parameters that drive the optimization process. The last column provides the definition of the parameter and the second column provides the unit for each parameter.
 			<p align="center"><img src="{{ url_for('static', filename = 'Documentation8.png') }}"></p>
 		
 		<h2 id="run-optimization">How to run optimization<a class="headerlink" href="#output" title="Permanent link"></a></h2>
@@ -139,17 +142,17 @@
 			<li>After clicking <b>Next</b> on the <a href="#model-parameters">Model Parameters</a> page, you will land on a Review webpage where you can place the request by clicking the <b>Run optimizer</b> button at the end of the page.</li>
 			<li>You can go to the <a href="#project-management">Project Management</a> page, retrieve the project, and click <b>Run optimizer</b>.</li>
 		</ul>
-		We implement a first-come-first-serve queue to process requests to avoid the situation where multiple concurrent requests crash the server. Requests are processed one-by-one and are given all computational resources on the server. You can check your request's position on the queue by looking at the <b>Project status</b> column after retrieving your project on the <a href="#project-management">Project Management</a> page.
+		We implement a first-come-first-serve queue to process requests. Requests are processed one-by-one and are given all computational resources on the server. You can check your request's position on the queue by looking at the <b>Project status</b> column after retrieving your project on the <a href="#project-management">Project Management</a> page.
 
 		<h2 id="output">How to interpret results<a class="headerlink" href="#output" title="Permanent link"></a></h2>
 		
-		Our model minimizes Z<sub>E</sub>, the financial costs associated with the entire reclamation system, and Z<sub>C</sub>, the greenhouse gas emission of the reclamation system. The mathematical formulae for Z<sub>E</sub> and Z<sub>C</sub> can be found in <a href="https://www.sciencedirect.com/science/article/pii/S0959652619330975" target="_blank">Rezaei et al.</a>. There may be multiple optimal solutions, and they will all be displayed on a 2-dimensional graph such as the one below.
+		Our model minimizes Z<sub>C</sub>, the financial costs associated with the entire reclamation system, and Z<sub>E</sub>, the greenhouse gas emission of the reclamation system. The mathematical formulae for Z<sub>C</sub> and Z<sub>E</sub> can be found in <a href="https://www.sciencedirect.com/science/article/pii/S0959652619330975" target="_blank">Rezaei et al.</a>. There may be multiple optimal solutions, and they will all be displayed on a 2-dimensional graph such as the one below.
 		<p align="center"><img src="{{ url_for('static', filename = 'Documentation9.png') }}"></p>
 		<br>
 		The graph is interactive, you can click on the points to reveal more details about the solutions. For example, by clicking on the first point on the left, details about the first solution is presented in the following table:
 		<p align="center"><img src="{{ url_for('static', filename = 'Documentation10.png') }}"></p>
 		<br>
-		The details are ordered by water-treatment locations. The third and fourth columns show the optimal technology and scale for each location. The fifth columns show the population clusters which each location should be servicing. The last four columns show the receiving and sending water capacity.
+		The details are ordered by wastewater treatment locations. The third and fourth columns show the optimal technology and scale for each location. The fifth columns show the population clusters that each location should be servicing. The last four columns show the receiving and sending water capacity.
 		<br>
 		In addition, we also provide an interactive map for better visualization.
 		<p align="center"><img src="{{ url_for('static', filename = 'Documentation11.png') }}"></p>

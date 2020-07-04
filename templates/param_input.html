@@ -38,7 +38,7 @@
 				{{ r.Unit(type="hidden") }}
 				{{ r.Description(type="hidden") }}
 				<td>{{ r.Label.data }}</td>
-				<td>{{ r.Unit.data }}</td>
+				<td>{{ r.Unit.data|safe }}</td>
 				<td>{{ r.Value }}</td> 
 				<td>{{ r.Description.data }}</td>
 			</tr>
