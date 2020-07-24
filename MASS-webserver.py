@@ -87,9 +87,9 @@ def projects():
 
 #----------- web page to ask for input size ---------------------------------------------------------------------------------------------------
 class InputSize(FlaskForm):
-    NPop = IntegerField('Number of populations', validators = [validators.InputRequired(), validators.NumberRange(min=0)])
-    NPlant = IntegerField('Number of plants', validators = [validators.InputRequired(), validators.NumberRange(min=0)])
-    LifeSpan = IntegerField('Life Span of project', validators = [validators.InputRequired(), validators.NumberRange(min=0)])    
+    NPop = IntegerField('Number of populations', validators = [validators.InputRequired(), validators.NumberRange(min=1, max=25)])
+    NPlant = IntegerField('Number of plants', validators = [validators.InputRequired(), validators.NumberRange(min=1)])
+    LifeSpan = IntegerField('Life Span of project', validators = [validators.InputRequired(), validators.NumberRange(min=1)])    
 
 @APP.route('/input_size', methods=['GET', 'POST'])
 def input_size():
@@ -332,7 +332,7 @@ def tech_input():
         # fill in data from database to the form object
         existing_data = db.getTechnologies(projectID) # give me everything in the DB
         tech_form = misc.fill_dbdata_tech(tech_form, existing_data)
-        return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, projectID = projectID))
+        return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, projectID = projectID, data_validation_failed = False))
 
     # process POST request
     if request.method == 'POST':
@@ -344,14 +344,18 @@ def tech_input():
             # add additional tech data
             for i in range(tech_form.n_additional.data):
                 tech_form.additional_techs.rows.append_entry()
-            return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, projectID = projectID))
+            return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, projectID = projectID, data_validation_failed = False))
         # process saving data command
         elif tech_form.submit.data:
-            # TODO: data validation
-            techs = misc.tech_combine(tech_form)
-            db.saveTechnologies(techs, projectID) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
-            APP.logger.info("transfer to {}".format(url_for('parameter_input')))
-            return(redirect(url_for(next_page, projectID = projectID)))
+            if misc.tech_data_validation(tech_form): # validate data
+                techs = misc.tech_combine(tech_form)
+                db.saveTechnologies(techs, projectID) # techs is of class TechnologiesForm. In db, set type='default' if the row is in techs.default_techs, 'additional' if it is in additional_techs
+                APP.logger.info("transfer to {}".format(url_for('parameter_input')))
+                return(redirect(url_for(next_page, projectID = projectID)))
+            else: # data failed to validate
+                # return the page with an error message
+                return(render_template('tech_input.html', techs = tech_form, prev_page = prev_page, projectID = projectID, data_validation_failed = True))
+
         else:
             abort(400, 'Unknown request')
 

@@ -10,7 +10,7 @@ optimizer_data_dir: '../MASS-Optimizer/optimizer'
 
 # Available Technologies:
 techs:
-  Bardenpho:
+  CAS+F:
     Small:
       Capkt: 4745
       CCkt: 58.44
@@ -29,18 +29,37 @@ techs:
       OCt: 0.53
       SRWt: 0.41
       GPt: 1.08
-  MBR:
+  Bardenpho:
+    Small:
+      Capkt: 4745
+      CCkt: 58.44
+      OCt: 1.92
+      SRWt: 0.05
+      GPt: 3.3
+    Medium:
+      Capkt: 5584865
+      CCkt: 8.52
+      OCt: 0.59
+      SRWt: 0.13
+      GPt: 1.08
+    Large:
+      Capkt: 282801270
+      CCkt: 5.43
+      OCt: 0.53
+      SRWt: 0.41
+      GPt: 0.39
+  MBR+MF:
     Small:
       Capkt: 4745
       CCkt: 65.01
       OCt: 0.83
-      SRWt: 0.13
+      SRWt: 0.05
       GPt: 1.75
     Medium:
       Capkt: 5584865
       CCkt: 9.72
       OCt: 0.26
-      SRWt: 0.05
+      SRWt: 0.13
       GPt: 1.33
     Large:
       Capkt: 282801270
@@ -54,57 +73,57 @@ techs:
       CCkt: 76.58
       OCt: 1.89
       SRWt: 0.83
-      GPt: 3.83
+      GPt: 3.29
     Medium:
       Capkt: 5584865
       CCkt: 12.25
       OCt: 0.58
       SRWt: 0.92
-      GPt: 2.91
+      GPt: 2.87
     Large:
       Capkt: 282801270
       CCkt: 8.20
       OCt: 0.52
       SRWt: 0.92
-      GPt: 2.84
+      GPt: 2.79
   MBR + RO:
     Small:
       Capkt: 4745
       CCkt: 175.14
       OCt: 4.20
       SRWt: 0.83
-      GPt: 3.29
+      GPt: 3.83
     Medium:
       Capkt: 5584865
       CCkt: 25.53
       OCt: 1.06
       SRWt: 0.92
-      GPt: 2.87
+      GPt: 2.91
     Large:
       Capkt: 282801270
       CCkt: 16.27
       OCt: 0.69
       SRWt: 0.92
-      GPt: 2.79
-  GAC + MF:
+      GPt: 2.84
+  CAS+GAC:
     Small:
       Capkt: 4745
-      CCkt: 39.01
-      OCt: 9.05
-      SRWt: 0.13
-      GPt: 32.91
+      CCkt: 19.89
+      OCt: 2.82
+      SRWt: 0.05
+      GPt: 33.52
     Medium:
       Capkt: 5584865
-      CCkt: 5.87
-      OCt: 1.08
-      SRWt: 0.05
+      CCkt: 1.99
+      OCt: 0.23
+      SRWt: 0.13
       GPt: 33.21
     Large:
       Capkt: 282801270
-      CCkt: 3.17
-      OCt: 0.44
+      CCkt: 1.83
+      OCt: 0.01
       SRWt: 0.40
-      GPt: 33.52
+      GPt: 32.91
 
 # Parameters:
 params:
@@ -127,11 +146,11 @@ params:
   - Label: 'CTW'
     Unit: '$/mi-m<sup>3</sup>'
     Value: 0.17
-    Description: 'Unit transportation cost of wastewater'
+    Description: 'Unit conveyance cost of wastewater'
   - Label: 'CTR'
     Unit: '$/mi-m<sup>4</sup>'
     Value: 0.14
-    Description: 'Unit transportation cost of reclaimed water'
+    Description: 'Unit conveyance cost of reclaimed water'
   - Label: 'alpha'
     Unit: 'Ratio'
     Value: 0.90

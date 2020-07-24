@@ -4,6 +4,7 @@
 	<title>Water Reclamation System Planning</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='HelpTips.css') }}">
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
@@ -22,17 +23,12 @@
 
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
-	{% if techs.errors %}
-    <ul class="errors">
-        {% for field_name, field_errors in techs.errors|dictsort if field_errors %}
-            {% for error in field_errors %}
-                <li><font color="red">{{ techs[field_name].label }}: {{ error }}</font></li>
-            {% endfor %}
-        {% endfor %}
-    </ul>
+	{% if data_validation_failed %}
+    <p><font color="red">Data validation failed! Please check your input! Make sure you left no box blank.</font></p>
 	{% endif %}
 	<br>
 	<h1 align="center">Select the treatment technologies for implementation in the candidate sites</h1>
+	<p align="center">(The numbers below can be updated to suit your community)</p>
 	<br>
 	<form method="POST" action="{{ url_for('tech_input', projectID = projectID) }}" align="center">
 		{{ techs.csrf_token }}
@@ -41,11 +37,16 @@
 				<th> Check to Select </th> 
 				<th> Technology </th> 
 				<th> Scale </th>
-				<th> Capacity Cap<sub>kt</sub> (m<sup>3</sup>/year) </th>
-				<th> Fixed Cost CC<sub>kt</sub> ($/(m<sup>3</sup>/year)) </th>
-				<th> Annual Cost OC<sub>t</sub> ($/m<sup>3</sup>) </th>
-				<th> Selling price of reclaimed water SRW<sub>t</sub> ($/m<sup>3</sup>) </th>
-				<th> Amount of greenhouse gas emission from process of each m3 of wastewater GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>) </th>
+				<th> Capacity <br>Cap<sub>kt</sub> (m<sup>3</sup>/year) </th>
+				<th> Fixed Cost <br>CC<sub>kt</sub> ($/(m<sup>3</sup>/year)) </th>
+				<th> Annual Cost <br>OC<sub>t</sub> ($/m<sup>3</sup>) </th>
+				<th> Selling price of reclaimed water <br>SRW<sub>t</sub> ($/m<sup>3</sup>) </th>
+				<th> Unit greenhouse gas emissions from treatment <br>GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>) <div class="help-tip">
+					<p>The unit greenhouse gas (GHG) emissions (GP<sub>t</sub>) can be calculated as follows:
+					GP<sub>t</sub> = EF*&Sigma;E<sub>p</sub>
+					Where EF is the emissions factor for the region (kg CO<sub>2</sub>-e/kWh) and E<sub>p</sub> is the unit electricity consumption for each wastewater treatment process (kWh/m<sup>3</sup>). Emissions factors for regions within the United States’ electrical grid can be found on the US EPA’s eGRID website. Additionally, the unit electricity consumption for common wastewater treatment processes can be extracted from various sources (e.g., process data, research from the Electric Power Research Institute).
+					</p>
+					</div> </th>
 			</tr>
 			{% for r in techs.default_techs.rows %}
 				<tr> <!-- Table rows -->
@@ -99,7 +100,7 @@
 					<th>{{ techs.additional_techs.rows[0].Small.OCt.label }}</th>
 					<th>{{ techs.additional_techs.rows[0].Small.SRWt.label }}</th>
 					<th>{{ techs.additional_techs.rows[0].Small.GPt.label }}</th>
-				</tr> 			
+				</tr>
 				{% for r in techs.additional_techs.rows %}
 					<tr>
 						<td rowspan="3">{{ r.Technology }}</td>

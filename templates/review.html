@@ -187,6 +187,7 @@
 		<input id="projectID"  name="projectID"  type="hidden" value="{{ projectID }}">
 		<input name="command" type="submit" value="Run optimizer">
 	</form>
+	<p align="center"><font color="red">(This request will take at most 100 minutes after it is popped from the queue)</font></p>
 	<p align="center"><button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button></p>
 	<br>
 

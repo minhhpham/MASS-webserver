@@ -329,6 +329,11 @@
 			<h4 id="water-treatment-technologies">Water-treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
 			Below is a sample input table for water-treatment technologies. The only required input is the selection checkboxes in the first column. Default values are shown for columns 4 to 8, but users can modify them. The meaning of the values in columns 4 to 8 are described in the <a href="{{ url_for('documentation') }}#water-treatment-technologies">Documentation</a>.
 			<br><br>
+			Description for default technologies:
+			<ul>
+				<li>Bardenpho:</li>
+			</ul>
+			<br><br>
 				<table class=blueTable align="center">
 					<tr> <!-- Table headers -->
 					<th> Check to Select </th>
@@ -338,8 +343,37 @@
 					<th><label for="default_techs-rows-0-Small-CCkt">Fixed Cost CC<sub>kt</sub> ($/(m<sup>3</sup>/year))</label></th>
 					<th><label for="default_techs-rows-0-Small-OCt">Annual Cost OC<sub>t</sub> ($/m<sup>3</sup>)</label></th>
 					<th><label for="default_techs-rows-0-Small-SRWt">Selling price of reclaimed water SRW<sub>t</sub> ($/m<sup>3</sup>)</label></th>
-					<th><label for="default_techs-rows-0-Small-GPt">Amount of greenhouse gas emission from process of each m3 of wastewater GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>)</label></th>
+					<th> Unit greenhouse gas emissions from treatment <br>GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>) </th>
 					</tr>
+					<tr> <!-- Table rows -->
+					<td rowspan="3"><input checked id="default_techs-rows-0-Select" name="default_techs-rows-0-Select" type="checkbox" value="y"></td>
+					<td rowspan="3">CAS+F</td>
+					<td>Small</td> 
+					<td><input id="default_techs-rows-0-Small-Capkt" name="default_techs-rows-0-Small-Capkt" type="text" value="4745"></td> 
+					<td><input id="default_techs-rows-0-Small-CCkt" name="default_techs-rows-0-Small-CCkt" type="text" value="58.44"></td> 
+					<td><input id="default_techs-rows-0-Small-OCt" name="default_techs-rows-0-Small-OCt" type="text" value="1.92"></td>
+					<td><input id="default_techs-rows-0-Small-SRWt" name="default_techs-rows-0-Small-SRWt" type="text" value="0.13"></td> 
+					<td><input id="default_techs-rows-0-Small-GPt" name="default_techs-rows-0-Small-GPt" type="text" value="3.3"></td>
+					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="CAS"> </td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td><input id="default_techs-rows-0-Medium-Capkt" name="default_techs-rows-0-Medium-Capkt" type="text" value="5584865"></td> 
+					<td><input id="default_techs-rows-0-Medium-CCkt" name="default_techs-rows-0-Medium-CCkt" type="text" value="8.52"></td> 
+					<td><input id="default_techs-rows-0-Medium-OCt" name="default_techs-rows-0-Medium-OCt" type="text" value="0.59"></td>
+					<td><input id="default_techs-rows-0-Medium-SRWt" name="default_techs-rows-0-Medium-SRWt" type="text" value="0.05"></td> 
+					<td><input id="default_techs-rows-0-Medium-GPt" name="default_techs-rows-0-Medium-GPt" type="text" value="0.39"></td> 								
+					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="CAS"> </td>
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td><input id="default_techs-rows-0-Large-Capkt" name="default_techs-rows-0-Large-Capkt" type="text" value="282801270"></td> 
+					<td><input id="default_techs-rows-0-Large-CCkt" name="default_techs-rows-0-Large-CCkt" type="text" value="5.43"></td> 
+					<td><input id="default_techs-rows-0-Large-OCt" name="default_techs-rows-0-Large-OCt" type="text" value="0.53"></td>
+					<td><input id="default_techs-rows-0-Large-SRWt" name="default_techs-rows-0-Large-SRWt" type="text" value="0.41"></td> 
+					<td><input id="default_techs-rows-0-Large-GPt" name="default_techs-rows-0-Large-GPt" type="text" value="1.08"></td>
+					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="CAS"> </td>			
+				</tr>
 					<tr> <!-- Table rows -->
 					<td rowspan="3"><input checked id="default_techs-rows-0-Select" name="default_techs-rows-0-Select" type="checkbox" value="y"></td>
 					<td rowspan="3">Bardenpho</td>

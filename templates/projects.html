@@ -79,7 +79,7 @@
 										<form method="POST" action="{{ url_for('run_optimizer') }}" align="left">
 											<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 											<input id="projectID"  name="projectID"  type="hidden" value="{{ projectID }}">
-											<input name="command" type="submit" value="Run optimizer" class="submitLink">
+											<input name="command" type="submit" value="Run optimizer" class="submitLink"> <font color="red">(This request will take at most 100 minutes after it is popped from the queue)</font>
 										</form>
 									</li>
 								{% endif %}

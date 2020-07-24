@@ -224,3 +224,91 @@ def write_input_to_tsv(projectID, directory, filename):
 		file.write(value_array_all)
 
 	# done
+
+
+def tech_data_validation(tech_form):
+	""" 
+	validate tech data
+	tech_form is a CombinedForm
+	"""
+	### validate default tech
+	for i in range(tech_form.default_techs.rows.__len__()):
+		row = tech_form.default_techs.rows[i]
+		# check if name is blank
+		if row.Technology.data is None or row.Technology.data == '':
+			return False
+		# check Small
+		if row.Small.Capkt.data is None or row.Small.Capkt.data == '':
+			return False
+		if row.Small.CCkt.data is None or row.Small.CCkt.data == '':
+			return False
+		if row.Small.OCt.data is None or row.Small.OCt.data == '':
+			return False
+		if row.Small.SRWt.data is None or row.Small.SRWt.data == '':
+			return False
+		if row.Small.GPt.data is None or row.Small.GPt.data == '':
+			return False
+		# check medium
+		if row.Medium.Capkt.data is None or row.Medium.Capkt.data == '':
+			return False
+		if row.Medium.CCkt.data is None or row.Medium.CCkt.data == '':
+			return False
+		if row.Medium.OCt.data is None or row.Medium.OCt.data == '':
+			return False
+		if row.Medium.SRWt.data is None or row.Medium.SRWt.data == '':
+			return False
+		if row.Medium.GPt.data is None or row.Medium.GPt.data == '':
+			return False
+		# check large
+		if row.Large.Capkt.data is None or row.Large.Capkt.data == '':
+			return False
+		if row.Large.CCkt.data is None or row.Large.CCkt.data == '':
+			return False
+		if row.Large.OCt.data is None or row.Large.OCt.data == '':
+			return False
+		if row.Large.SRWt.data is None or row.Large.SRWt.data == '':
+			return False
+		if row.Large.GPt.data is None or row.Large.GPt.data == '':
+			return False
+
+	### validate additional tech
+	for i in range(tech_form.additional_techs.rows.__len__()):
+		row = tech_form.additional_techs.rows[i]
+		# check if name is blank
+		if row.Technology.data is None or row.Technology.data == '':
+			return False
+		# check Small
+		if row.Small.Capkt.data is None or row.Small.Capkt.data == '':
+			return False
+		if row.Small.CCkt.data is None or row.Small.CCkt.data == '':
+			return False
+		if row.Small.OCt.data is None or row.Small.OCt.data == '':
+			return False
+		if row.Small.SRWt.data is None or row.Small.SRWt.data == '':
+			return False
+		if row.Small.GPt.data is None or row.Small.GPt.data == '':
+			return False
+		# check medium
+		if row.Medium.Capkt.data is None or row.Medium.Capkt.data == '':
+			return False
+		if row.Medium.CCkt.data is None or row.Medium.CCkt.data == '':
+			return False
+		if row.Medium.OCt.data is None or row.Medium.OCt.data == '':
+			return False
+		if row.Medium.SRWt.data is None or row.Medium.SRWt.data == '':
+			return False
+		if row.Medium.GPt.data is None or row.Medium.GPt.data == '':
+			return False
+		# check large
+		if row.Large.Capkt.data is None or row.Large.Capkt.data == '':
+			return False
+		if row.Large.CCkt.data is None or row.Large.CCkt.data == '':
+			return False
+		if row.Large.OCt.data is None or row.Large.OCt.data == '':
+			return False
+		if row.Large.SRWt.data is None or row.Large.SRWt.data == '':
+			return False
+		if row.Large.GPt.data is None or row.Large.GPt.data == '':
+			return False
+	
+	return True
