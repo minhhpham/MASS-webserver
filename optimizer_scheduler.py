@@ -34,10 +34,10 @@ while True:
         print('updated project status')
 
         # run optimizer and export log 
-        start_time = time.process_time() # measure elapsed time
+        start_time = time.time() # measure elapsed time
         print('running optimizer ...')
         optimizer_status = os.system('sh ./run_optimizer.sh | tee {0}/log'.format(config['optimizer_data_dir']))
-        elapsed_time_minutes = (time.process_time() - start_time)/60
+        elapsed_time_minutes = int((time.time() - start_time)/60)
 
         if optimizer_status == 0: # success
             print('success!')
@@ -70,6 +70,7 @@ while True:
             print(log)
             db.save_optimizer_log(projectID, 'optimizer failed')
             db.updateProjectStatus(projectID, 'input completed, optimizer failed')
+            db.updateProjectLastOptimized(projectID, now, elapsed_time_minutes)
 
         been_sleeping = False
 

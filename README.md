@@ -54,7 +54,7 @@ MASS-Optimizer/
 
  * Run server:
     * `sudo python3 setup.py`
-    * `sudo systemctl daemon-reload && sudo systemctl start MASS-flask`
+    * `sudo systemctl daemon-reload && sudo systemctl start MASS-flask && sudo systemctl start MASS-optimizer-scheduler && sudo systemctl restart apache2`
 
 # Use the web app:
 Go to your browser and type `localhost:10000`
