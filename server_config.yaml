@@ -8,6 +8,9 @@ db:
 # sub-directory to write input data for optimizer
 optimizer_data_dir: '../MASS-Optimizer/optimizer'
 
+# number of processes for optimizer queue
+optimizer_n_process: 4
+
 # Available Technologies:
 techs:
   CAS+F:

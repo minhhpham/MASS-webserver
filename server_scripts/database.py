@@ -10,13 +10,13 @@ with open("server_config.yaml", 'r') as stream:
         print(exc)
         sys.exit()
 
-conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
-						password = config["db"]["password"], port = config["db"]["port"])
 
 table_names = ['projects', 'ns', 'populations', 'plants', 'technologies', 'params', 'request_queue', 'optimizer_output1', 'optimizer_output2', 'optimizer_outputlog']
 
 def init_db():
 	""" initialize tables if not found in the database """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	cursor = conn.cursor()
 	for table_name in table_names:
 		cursor.execute("""
@@ -31,6 +31,8 @@ def init_db():
 	conn.commit()
 
 def init_table(table_name):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	cursor = conn.cursor()
 	try:
 		if table_name == 'projects':
@@ -153,6 +155,8 @@ def init_table(table_name):
 
 def db_is_ready():
 	""" check if database has the correct tables """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 	for table_name in table_names:
 		cursor.execute("""
@@ -164,6 +168,8 @@ def db_is_ready():
 
 # Returns a list of projects
 def getProject(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -186,6 +192,8 @@ def projectExists(projectID):
 
 # Creates a new project
 def saveProject(projectID, p_desc):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 
@@ -200,6 +208,8 @@ def saveProject(projectID, p_desc):
 	conn.commit()
 
 def updateProjectStatus(projectID, new_status):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 		cursor.execute("UPDATE Projects SET status=%s WHERE projectID=%s", [new_status, projectID])
@@ -212,6 +222,8 @@ def updateProjectStatus(projectID, new_status):
 
 def updateProjectLastOptimized(projectID, last_optimized, process_time):
 	""" process time is in minutes """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 		cursor.execute("UPDATE Projects SET last_optimized=%s, process_time=%s WHERE projectID=%s", [last_optimized, str(process_time) + ' minutes', projectID])
@@ -225,6 +237,8 @@ def updateProjectLastOptimized(projectID, last_optimized, process_time):
 # Inserts an Inputsize for a given user and projectID, update records if data exists
 def saveInputSize(inputSize, projectID):
 	# insert records
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 
@@ -243,6 +257,8 @@ def saveInputSize(inputSize, projectID):
 # Retrieve an Inputsize for a given user and projectID
 # 	Returns an InputSize object
 def getInputSize(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 
@@ -267,6 +283,8 @@ def getInputSize(projectID):
 # Retrieve a population for a given user and projectID
 # 	Returns an list of dictionaries with the column names
 def getPopulations(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -289,6 +307,8 @@ def getPopulations(projectID):
 # populations has class PopulationsForm
 def savePopulations(populations, projectID):
 	# wipe existing data
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 		cursor.execute('''DELETE FROM populations WHERE projectID = %s''', [projectID])
@@ -316,6 +336,8 @@ def savePopulations(populations, projectID):
 # plants is a plantsform object
 def savePlants(plants, projectID):
 	# wipe existing data
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 		cursor.execute('''DELETE FROM plants WHERE projectID = %s''', [projectID])
@@ -341,6 +363,8 @@ def savePlants(plants, projectID):
 # Retrieve the plants for a given user and projectID
 # 	Returns an list of dictionaries with the column names
 def getPlants(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -357,6 +381,8 @@ def getPlants(projectID):
 # Retrieve the tech for a given user and projectID
 # 	Returns an list of dictionaries with the column names
 def getTechnologies(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -384,6 +410,8 @@ def getSelectedTechnologies(projectID):
 # Technologies is a technologiesform object
 def saveTechnologies(tech, projectID):
 	# wipe existing data
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor()
 		cursor.execute('''DELETE FROM technologies WHERE projectID = %s''', [projectID])
@@ -421,6 +449,8 @@ def saveTechnologies(tech, projectID):
 # Insert params table, update if present
 # params is a paramsform object
 def saveParams(params, projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	# process data before saving
 	for r in params.rows:
 		if r.Label.data == 'mu':
@@ -448,6 +478,8 @@ def saveParams(params, projectID):
 # Retrieve the params for a given user and projectID
 # 	Returns an list of dictionaries with the column names
 def getParams(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -472,6 +504,8 @@ def getParams(projectID):
 # --------------- FUNCTIONS FOR optimizer_scheduler -----------------------------
 def isQueueNotEmpty():
 	""" return True if queue is not empty in db """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		cursor.execute("SELECT * FROM request_queue")
@@ -489,6 +523,8 @@ def isQueueNotEmpty():
 
 def updateQueueOrder(projectID):
 	""" update the projectID's queue order in the projects table """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -508,6 +544,8 @@ def updateQueueOrder(projectID):
 
 def popQueue():
 	""" pop the first request in the queue """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -545,6 +583,8 @@ def popQueue():
 
 def enQueue(projectID):
 	""" add a processing request to queue """
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
@@ -576,6 +616,8 @@ def save_optimizer_output(projectID, output1, output2):
 	output2: an array of arrays. Each sub array has 3 elements: Solution label, ZC, ZE
 	"""
 	# delete records if exist
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		cursor.execute('''DELETE FROM optimizer_output1 WHERE projectid = %s''', [projectID])
@@ -615,6 +657,8 @@ def get_optimizer_output(projectID):
 	output2: array of dict with keys project_id, ze, zc
 	"""
 	# get output1
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		cursor.execute('''SELECT * FROM optimizer_output1 WHERE projectid = %s''', [projectID])
@@ -640,6 +684,8 @@ def save_optimizer_log(projectID, log):
 	log: a very long string
 	"""
 	# delete record if exists
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		cursor.execute('''DELETE FROM optimizer_outputlog WHERE projectid = %s''', [projectID])
@@ -658,6 +704,8 @@ def save_optimizer_log(projectID, log):
 	conn.commit()
 
 def get_optimizer_log(projectID):
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
 	try:
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		cursor.execute('''SELECT FROM optimizer_outputlog WHERE projectid = %s''', [projectID])
