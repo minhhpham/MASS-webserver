@@ -44,4 +44,4 @@ shutil.copyfile("./MASS-flask.service", "/etc/systemd/system/MASS-flask.service"
 shutil.copyfile("./MASS-optimizer-scheduler.service", "/etc/systemd/system/MASS-optimizer-scheduler.service")
 
 # copy apache conf file to /etc/apache2/sites-available
-shutil.copyfile("./WasteWATER.apache2.conf", "/etc/apache2/sites-available/WasteWATER.apache2.conf")
+shutil.copyfile("./WasteWATER.apache2.conf", "/etc/apache2/sites-available/000-default.conf")
