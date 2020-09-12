@@ -732,18 +732,18 @@ def delete_data():
 		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 		cursor.execute(''' SELECT projectid FROM projects WHERE now()-creation_date > interval '30 day' ''')
 		projectIDs = cursor.fetchall()
-		for projectID in projectIDs:
+		for r in projectIDs:
 			# delete from all tables;
-			cursor.execute('''DELETE FROM projects WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM ns WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM optimizer_output1 WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM optimizer_output2 WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM optimizer_outputlog WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM params WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM plants WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM populations WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM request_queue WHERE projectID = %s''', [projectID])
-			cursor.execute('''DELETE FROM technologies WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM projects WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM ns WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM optimizer_output1 WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM optimizer_output2 WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM optimizer_outputlog WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM params WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM plants WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM populations WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM request_queue WHERE projectID = %s''', [r['projectid']])
+			cursor.execute('''DELETE FROM technologies WHERE projectID = %s''', [r['projectid']])
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 
