@@ -88,5 +88,8 @@ while True:
                 print('--[worker {0}]: sleeping -------'.format(worker_id), flush=True)
                 been_sleeping = True
             time.sleep(30)
+
+        # delete data older than 30 days
+        db.delete_data()
     except Exception as e:
         print(e)

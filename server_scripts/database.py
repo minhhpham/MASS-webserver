@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 import yaml, time, sys
+from datetime import date
 
 global config    # initialized in MASS-webserver.py
 with open("server_config.yaml", 'r') as stream:
@@ -43,6 +44,7 @@ def init_table(table_name):
 							status 		varchar(255),
 							last_optimized varchar(255),
 							process_time varchar(255),
+							creation_date date,
 							PRIMARY KEY(projectID)		
 						)
 			""")
@@ -148,7 +150,7 @@ def init_table(table_name):
 			""")
 
 		else:
-			pass
+			print('table not recognized')
 	except(psycopg2.DatabaseError) as error:
 		print(error)
 	conn.commit()
@@ -197,8 +199,8 @@ def saveProject(projectID, p_desc):
 	try:
 		cursor = conn.cursor()
 
-		vals = (projectID, p_desc, 'input uncompleted, not yet optimized')
-		cursor.execute('''INSERT INTO Projects VALUES (%s, %s, %s)''', vals)
+		vals = (projectID, p_desc, 'input uncompleted, not yet optimized', '', '', date.today().strftime("%Y-%m-%d"))
+		cursor.execute('''INSERT INTO Projects VALUES (%s, %s, %s, %s, %s, %s)''', vals)
 
 	except(psycopg2.DatabaseError) as error:
 		print(error)
@@ -718,3 +720,35 @@ def get_optimizer_log(projectID):
 	# commit the changes
 	conn.commit()
 	return vals
+
+
+# ---------------- function to delete data older than 30 days -----------------
+def delete_data():
+	conn = psycopg2.connect(dbname = config["db"]["dbname"], user = config["db"]["user"], 
+						password = config["db"]["password"], port = config["db"]["port"])
+
+	try:
+		# find projects older than 30 days
+		cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cursor.execute(''' SELECT projectid FROM projects WHERE now()-creation_date > interval '30 day' ''')
+		projectIDs = cursor.fetchall()
+		for projectID in projectIDs:
+			# delete from all tables;
+			cursor.execute('''DELETE FROM projects WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM ns WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM optimizer_output1 WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM optimizer_output2 WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM optimizer_outputlog WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM params WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM plants WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM populations WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM request_queue WHERE projectID = %s''', [projectID])
+			cursor.execute('''DELETE FROM technologies WHERE projectID = %s''', [projectID])
+	except(psycopg2.DatabaseError) as error:
+		print(error)
+
+	# close communication with the PostgreSQL database server
+	cursor.close()
+	# commit the changes
+	conn.commit()
+
