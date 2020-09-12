@@ -151,7 +151,7 @@ def init_table(table_name):
 			pass
 	except(psycopg2.DatabaseError) as error:
 		print(error)
-		conn.commit()
+	conn.commit()
 
 def db_is_ready():
 	""" check if database has the correct tables """

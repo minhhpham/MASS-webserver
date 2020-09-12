@@ -52,26 +52,30 @@ def fill_plants(text, plants):
 
 def parse_optimizer_output(path_to_file1, path_to_file2):
 	""" parse data from optimizer_output_file1 and 2 into database format """
+	print(path_to_file1)
 	# parse file 1
 	output1 = []
 	with open(path_to_file1, 'r') as file1:
 		# headers
-		headers = file1.readline().strip()
+		headers = file1.readline()
+		# print(headers)
 		headers = re.split(' | \t', headers)
 		for line in file1:
 			line = line.strip()
+			# print(line)
 			data = re.split(' | \t', line)
 			output1.append(data)
-
+	# print(headers)
 	# cross-tab transform output1
 	output1_crosstab = []
 	for col_index in range(5, len(headers)):
 		solution_label = headers[col_index].strip('Sol_')
 		for row in output1:
+			# print(row)
 			# only read w and q variables
 			if row[1]!='w' and row[1]!='q':
 				continue
-			value = round(float(row[col_index]))
+			value = round(float(row[col_index])); print(value)
 			# check if value is binary
 			if value not in [0,1]:
 				print('VALUE NOT ROUNDED TO 0 OR 1: ' + str(row[col_index]))

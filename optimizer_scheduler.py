@@ -54,7 +54,7 @@ while True:
                 log = Parse.read_optimizer_log('{0}/log'.format(optimizer_dir))
                 print(log)
                 ## parse output data
-                output1, output2 = Parse.parse_optimizer_output('{0}/optimizer_output_file1.txt'.format(config['optimizer_data_dir']), '{0}/optimizer_output_file2.txt'.format(optimizer_dir))
+                output1, output2 = Parse.parse_optimizer_output('{0}/optimizer_output_file1.txt'.format(optimizer_dir), '{0}/optimizer_output_file2.txt'.format(optimizer_dir))
                 if output1 != -1: # check that no weird output value
                     print (output1)
                     print (output2)
