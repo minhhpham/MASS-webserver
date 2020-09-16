@@ -329,41 +329,42 @@
 			<h4 id="water-treatment-technologies">Water-treatment technologies<a class="headerlink" href="#water-treatment-technologies" title="Permanent link"></a></h4>
 			Below is a sample input table for water-treatment technologies. The only required input is the selection checkboxes in the first column. Default values are shown for columns 4 to 8, but users can modify them. The meaning of the values in columns 4 to 8 are described in the <a href="{{ url_for('documentation') }}#water-treatment-technologies">Documentation</a>.
 			<br><br>
-			Description for default technologies:
-			<ul>
-				<li>Bardenpho:</li>
-			</ul>
-			<br><br>
-				<table class=blueTable align="center">
-					<tr> <!-- Table headers -->
-					<th> Check to Select </th>
-					<th> Technology </th>
-					<th> Scale </th>
-					<th><label for="default_techs-rows-0-Small-Capkt">Capacity Cap<sub>kt</sub> (m<sup>3</sup>/year)</label></th>
-					<th><label for="default_techs-rows-0-Small-CCkt">Fixed Cost CC<sub>kt</sub> ($/(m<sup>3</sup>/year))</label></th>
-					<th><label for="default_techs-rows-0-Small-OCt">Annual Cost OC<sub>t</sub> ($/m<sup>3</sup>)</label></th>
-					<th><label for="default_techs-rows-0-Small-SRWt">Selling price of reclaimed water SRW<sub>t</sub> ($/m<sup>3</sup>)</label></th>
-					<th> Unit greenhouse gas emissions from treatment <br>GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>) </th>
-					</tr>
-					<tr> <!-- Table rows -->
-					<td rowspan="3"><input checked id="default_techs-rows-0-Select" name="default_techs-rows-0-Select" type="checkbox" value="y"></td>
-					<td rowspan="3">CAS+F</td>
+			<table class=blueTable align="center" style="max-width:1200px;">
+			<tr> <!-- Table headers  -->
+				<th> Check to Select </th> 
+				<th> Technology </th> 
+				<th> Scale </th>
+				<th> Capacity <br>Cap<sub>kt</sub> (m<sup>3</sup>/year) </th>
+				<th> Fixed Cost <br>CC<sub>kt</sub> ($/(m<sup>3</sup>/year)) </th>
+				<th> Annual Cost <br>OC<sub>t</sub> ($/m<sup>3</sup>) </th>
+				<th> Selling price of reclaimed water <br>SRW<sub>t</sub> ($/m<sup>3</sup>) </th>
+				<th> Unit greenhouse gas emissions from treatment <br>GP<sub>t</sub> (gr CO<sub>2</sub>-eq/m<sup>3</sup>) <div class="help-tip">
+					<p>The unit greenhouse gas (GHG) emissions (GP<sub>t</sub>) can be calculated as follows:
+					GP<sub>t</sub> = EF*&Sigma;E<sub>p</sub>
+					Where EF is the emissions factor for the region (kg CO<sub>2</sub>-e/kWh) and E<sub>p</sub> is the unit electricity consumption for each wastewater treatment process (kWh/m<sup>3</sup>). Emissions factors for regions within the United States’ electrical grid can be found on the US EPA’s eGRID website. Additionally, the unit electricity consumption for common wastewater treatment processes can be extracted from various sources (e.g., process data, research from the Electric Power Research Institute).
+					</p>
+					</div> </th>
+			</tr>
+			
+				<tr> <!-- Table rows -->
+					<td rowspan="3"><input id="default_techs-rows-0-Select" name="default_techs-rows-0-Select" type="checkbox" value="y"></td>
+					<td rowspan="3">Bardenpho</td>
 					<td>Small</td> 
 					<td><input id="default_techs-rows-0-Small-Capkt" name="default_techs-rows-0-Small-Capkt" type="text" value="4745"></td> 
 					<td><input id="default_techs-rows-0-Small-CCkt" name="default_techs-rows-0-Small-CCkt" type="text" value="58.44"></td> 
 					<td><input id="default_techs-rows-0-Small-OCt" name="default_techs-rows-0-Small-OCt" type="text" value="1.92"></td>
-					<td><input id="default_techs-rows-0-Small-SRWt" name="default_techs-rows-0-Small-SRWt" type="text" value="0.13"></td> 
+					<td><input id="default_techs-rows-0-Small-SRWt" name="default_techs-rows-0-Small-SRWt" type="text" value="0.05"></td> 
 					<td><input id="default_techs-rows-0-Small-GPt" name="default_techs-rows-0-Small-GPt" type="text" value="3.3"></td>
-					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="CAS"> </td>
+					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="Bardenpho"> </td>
 				</tr>
 				<tr>
 					<td>Medium</td> 
 					<td><input id="default_techs-rows-0-Medium-Capkt" name="default_techs-rows-0-Medium-Capkt" type="text" value="5584865"></td> 
 					<td><input id="default_techs-rows-0-Medium-CCkt" name="default_techs-rows-0-Medium-CCkt" type="text" value="8.52"></td> 
 					<td><input id="default_techs-rows-0-Medium-OCt" name="default_techs-rows-0-Medium-OCt" type="text" value="0.59"></td>
-					<td><input id="default_techs-rows-0-Medium-SRWt" name="default_techs-rows-0-Medium-SRWt" type="text" value="0.05"></td> 
-					<td><input id="default_techs-rows-0-Medium-GPt" name="default_techs-rows-0-Medium-GPt" type="text" value="0.39"></td> 								
-					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="CAS"> </td>
+					<td><input id="default_techs-rows-0-Medium-SRWt" name="default_techs-rows-0-Medium-SRWt" type="text" value="0.13"></td> 
+					<td><input id="default_techs-rows-0-Medium-GPt" name="default_techs-rows-0-Medium-GPt" type="text" value="1.08"></td> 								
+					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="Bardenpho"> </td>
 				</tr>
 				<tr>
 					<td>Large</td> 
@@ -371,142 +372,232 @@
 					<td><input id="default_techs-rows-0-Large-CCkt" name="default_techs-rows-0-Large-CCkt" type="text" value="5.43"></td> 
 					<td><input id="default_techs-rows-0-Large-OCt" name="default_techs-rows-0-Large-OCt" type="text" value="0.53"></td>
 					<td><input id="default_techs-rows-0-Large-SRWt" name="default_techs-rows-0-Large-SRWt" type="text" value="0.41"></td> 
-					<td><input id="default_techs-rows-0-Large-GPt" name="default_techs-rows-0-Large-GPt" type="text" value="1.08"></td>
-					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="CAS"> </td>			
+					<td><input id="default_techs-rows-0-Large-GPt" name="default_techs-rows-0-Large-GPt" type="text" value="0.39"></td>
+					<td><input id="default_techs-rows-0-Technology" name="default_techs-rows-0-Technology" type="hidden" value="Bardenpho"> </td>			
 				</tr>
-					<tr> <!-- Table rows -->
-					<td rowspan="3"><input checked id="default_techs-rows-0-Select" name="default_techs-rows-0-Select" type="checkbox" value="y"></td>
-					<td rowspan="3">Bardenpho</td>
-					<td>Small</td>
-					<td><input id="default_techs-rows-0-Small-Capkt" name="default_techs-rows-0-Small-Capkt" type="text" value="4745.0"></td>
-					<td><input id="default_techs-rows-0-Small-CCkt" name="default_techs-rows-0-Small-CCkt" type="text" value="58.44"></td>
-					<td><input id="default_techs-rows-0-Small-OCt" name="default_techs-rows-0-Small-OCt" type="text" value="1.92"></td>
-					<td><input id="default_techs-rows-0-Small-SRWt" name="default_techs-rows-0-Small-SRWt" type="text" value="0.13"></td>
-					<td><input id="default_techs-rows-0-Small-GPt" name="default_techs-rows-0-Small-GPt" type="text" value="3.3"></td>
-					</tr>
-					<tr>
-					<td>Medium</td>
-					<td><input id="default_techs-rows-0-Medium-Capkt" name="default_techs-rows-0-Medium-Capkt" type="text" value="5584865.0"></td>
-					<td><input id="default_techs-rows-0-Medium-CCkt" name="default_techs-rows-0-Medium-CCkt" type="text" value="8.52"></td>
-					<td><input id="default_techs-rows-0-Medium-OCt" name="default_techs-rows-0-Medium-OCt" type="text" value="0.59"></td>
-					<td><input id="default_techs-rows-0-Medium-SRWt" name="default_techs-rows-0-Medium-SRWt" type="text" value="0.05"></td>
-					<td><input id="default_techs-rows-0-Medium-GPt" name="default_techs-rows-0-Medium-GPt" type="text" value="0.39"></td>
-					</tr>
-					<tr>
-					<td>Large</td>
-					<td><input id="default_techs-rows-0-Large-Capkt" name="default_techs-rows-0-Large-Capkt" type="text" value="282801270.0"></td>
-					<td><input id="default_techs-rows-0-Large-CCkt" name="default_techs-rows-0-Large-CCkt" type="text" value="5.43"></td>
-					<td><input id="default_techs-rows-0-Large-OCt" name="default_techs-rows-0-Large-OCt" type="text" value="0.53"></td>
-					<td><input id="default_techs-rows-0-Large-SRWt" name="default_techs-rows-0-Large-SRWt" type="text" value="0.41"></td>
-					<td><input id="default_techs-rows-0-Large-GPt" name="default_techs-rows-0-Large-GPt" type="text" value="1.08"></td>
-					</tr>
-					<tr> <!-- Table rows -->
-					<td rowspan="3"><input checked id="default_techs-rows-1-Select" name="default_techs-rows-1-Select" type="checkbox" value="y"></td>
-					<td rowspan="3">MBR</td>
-					<td>Small</td>
-					<td><input id="default_techs-rows-1-Small-Capkt" name="default_techs-rows-1-Small-Capkt" type="text" value="4745.0"></td>
-					<td><input id="default_techs-rows-1-Small-CCkt" name="default_techs-rows-1-Small-CCkt" type="text" value="65.01"></td>
+			
+				<tr> <!-- Table rows -->
+					<td rowspan="3"><input id="default_techs-rows-1-Select" name="default_techs-rows-1-Select" type="checkbox" value="y"></td>
+					<td rowspan="3">MBR+MF</td>
+					<td>Small</td> 
+					<td><input id="default_techs-rows-1-Small-Capkt" name="default_techs-rows-1-Small-Capkt" type="text" value="4745"></td> 
+					<td><input id="default_techs-rows-1-Small-CCkt" name="default_techs-rows-1-Small-CCkt" type="text" value="65.01"></td> 
 					<td><input id="default_techs-rows-1-Small-OCt" name="default_techs-rows-1-Small-OCt" type="text" value="0.83"></td>
-					<td><input id="default_techs-rows-1-Small-SRWt" name="default_techs-rows-1-Small-SRWt" type="text" value="0.13"></td>
+					<td><input id="default_techs-rows-1-Small-SRWt" name="default_techs-rows-1-Small-SRWt" type="text" value="0.05"></td> 
 					<td><input id="default_techs-rows-1-Small-GPt" name="default_techs-rows-1-Small-GPt" type="text" value="1.75"></td>
-					</tr>
-					<tr>
-					<td>Medium</td>
-					<td><input id="default_techs-rows-1-Medium-Capkt" name="default_techs-rows-1-Medium-Capkt" type="text" value="5584865.0"></td>
-					<td><input id="default_techs-rows-1-Medium-CCkt" name="default_techs-rows-1-Medium-CCkt" type="text" value="9.72"></td>
+					<td><input id="default_techs-rows-1-Technology" name="default_techs-rows-1-Technology" type="hidden" value="MBR+MF"> </td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td><input id="default_techs-rows-1-Medium-Capkt" name="default_techs-rows-1-Medium-Capkt" type="text" value="5584865"></td> 
+					<td><input id="default_techs-rows-1-Medium-CCkt" name="default_techs-rows-1-Medium-CCkt" type="text" value="9.72"></td> 
 					<td><input id="default_techs-rows-1-Medium-OCt" name="default_techs-rows-1-Medium-OCt" type="text" value="0.26"></td>
-					<td><input id="default_techs-rows-1-Medium-SRWt" name="default_techs-rows-1-Medium-SRWt" type="text" value="0.05"></td>
-					<td><input id="default_techs-rows-1-Medium-GPt" name="default_techs-rows-1-Medium-GPt" type="text" value="1.33"></td>
-					</tr>
-					<tr>
-					<td>Large</td>
-					<td><input id="default_techs-rows-1-Large-Capkt" name="default_techs-rows-1-Large-Capkt" type="text" value="282801270.0"></td>
-					<td><input id="default_techs-rows-1-Large-CCkt" name="default_techs-rows-1-Large-CCkt" type="text" value="4.49"></td>
+					<td><input id="default_techs-rows-1-Medium-SRWt" name="default_techs-rows-1-Medium-SRWt" type="text" value="0.13"></td> 
+					<td><input id="default_techs-rows-1-Medium-GPt" name="default_techs-rows-1-Medium-GPt" type="text" value="1.33"></td> 								
+					<td><input id="default_techs-rows-1-Technology" name="default_techs-rows-1-Technology" type="hidden" value="MBR+MF"> </td>
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td><input id="default_techs-rows-1-Large-Capkt" name="default_techs-rows-1-Large-Capkt" type="text" value="282801270"></td> 
+					<td><input id="default_techs-rows-1-Large-CCkt" name="default_techs-rows-1-Large-CCkt" type="text" value="4.49"></td> 
 					<td><input id="default_techs-rows-1-Large-OCt" name="default_techs-rows-1-Large-OCt" type="text" value="0.19"></td>
-					<td><input id="default_techs-rows-1-Large-SRWt" name="default_techs-rows-1-Large-SRWt" type="text" value="0.41"></td>
+					<td><input id="default_techs-rows-1-Large-SRWt" name="default_techs-rows-1-Large-SRWt" type="text" value="0.41"></td> 
 					<td><input id="default_techs-rows-1-Large-GPt" name="default_techs-rows-1-Large-GPt" type="text" value="1.25"></td>
-					</tr>
-					<tr> <!-- Table rows -->
-					<td rowspan="3"><input checked id="default_techs-rows-2-Select" name="default_techs-rows-2-Select" type="checkbox" value="y"></td>
+					<td><input id="default_techs-rows-1-Technology" name="default_techs-rows-1-Technology" type="hidden" value="MBR+MF"> </td>			
+				</tr>
+			
+				<tr> <!-- Table rows -->
+					<td rowspan="3"><input id="default_techs-rows-2-Select" name="default_techs-rows-2-Select" type="checkbox" value="y"></td>
 					<td rowspan="3">MBR + UF</td>
-					<td>Small</td>
-					<td><input id="default_techs-rows-2-Small-Capkt" name="default_techs-rows-2-Small-Capkt" type="text" value="4745.0"></td>
-					<td><input id="default_techs-rows-2-Small-CCkt" name="default_techs-rows-2-Small-CCkt" type="text" value="76.58"></td>
+					<td>Small</td> 
+					<td><input id="default_techs-rows-2-Small-Capkt" name="default_techs-rows-2-Small-Capkt" type="text" value="4745"></td> 
+					<td><input id="default_techs-rows-2-Small-CCkt" name="default_techs-rows-2-Small-CCkt" type="text" value="76.58"></td> 
 					<td><input id="default_techs-rows-2-Small-OCt" name="default_techs-rows-2-Small-OCt" type="text" value="1.89"></td>
-					<td><input id="default_techs-rows-2-Small-SRWt" name="default_techs-rows-2-Small-SRWt" type="text" value="0.83"></td>
-					<td><input id="default_techs-rows-2-Small-GPt" name="default_techs-rows-2-Small-GPt" type="text" value="3.83"></td>
-					</tr>
-					<tr>
-					<td>Medium</td>
-					<td><input id="default_techs-rows-2-Medium-Capkt" name="default_techs-rows-2-Medium-Capkt" type="text" value="5584865.0"></td>
-					<td><input id="default_techs-rows-2-Medium-CCkt" name="default_techs-rows-2-Medium-CCkt" type="text" value="12.25"></td>
+					<td><input id="default_techs-rows-2-Small-SRWt" name="default_techs-rows-2-Small-SRWt" type="text" value="0.83"></td> 
+					<td><input id="default_techs-rows-2-Small-GPt" name="default_techs-rows-2-Small-GPt" type="text" value="3.29"></td>
+					<td><input id="default_techs-rows-2-Technology" name="default_techs-rows-2-Technology" type="hidden" value="MBR + UF"> </td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td><input id="default_techs-rows-2-Medium-Capkt" name="default_techs-rows-2-Medium-Capkt" type="text" value="5584865"></td> 
+					<td><input id="default_techs-rows-2-Medium-CCkt" name="default_techs-rows-2-Medium-CCkt" type="text" value="12.25"></td> 
 					<td><input id="default_techs-rows-2-Medium-OCt" name="default_techs-rows-2-Medium-OCt" type="text" value="0.58"></td>
-					<td><input id="default_techs-rows-2-Medium-SRWt" name="default_techs-rows-2-Medium-SRWt" type="text" value="0.92"></td>
-					<td><input id="default_techs-rows-2-Medium-GPt" name="default_techs-rows-2-Medium-GPt" type="text" value="2.91"></td>
-					</tr>
-					<tr>
-					<td>Large</td>
-					<td><input id="default_techs-rows-2-Large-Capkt" name="default_techs-rows-2-Large-Capkt" type="text" value="282801270.0"></td>
-					<td><input id="default_techs-rows-2-Large-CCkt" name="default_techs-rows-2-Large-CCkt" type="text" value="8.2"></td>
+					<td><input id="default_techs-rows-2-Medium-SRWt" name="default_techs-rows-2-Medium-SRWt" type="text" value="0.92"></td> 
+					<td><input id="default_techs-rows-2-Medium-GPt" name="default_techs-rows-2-Medium-GPt" type="text" value="2.87"></td> 								
+					<td><input id="default_techs-rows-2-Technology" name="default_techs-rows-2-Technology" type="hidden" value="MBR + UF"> </td>
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td><input id="default_techs-rows-2-Large-Capkt" name="default_techs-rows-2-Large-Capkt" type="text" value="282801270"></td> 
+					<td><input id="default_techs-rows-2-Large-CCkt" name="default_techs-rows-2-Large-CCkt" type="text" value="8.2"></td> 
 					<td><input id="default_techs-rows-2-Large-OCt" name="default_techs-rows-2-Large-OCt" type="text" value="0.52"></td>
-					<td><input id="default_techs-rows-2-Large-SRWt" name="default_techs-rows-2-Large-SRWt" type="text" value="0.92"></td>
-					<td><input id="default_techs-rows-2-Large-GPt" name="default_techs-rows-2-Large-GPt" type="text" value="2.84"></td>
-					</tr>
-					<tr> <!-- Table rows -->
-					<td rowspan="3"><input checked id="default_techs-rows-3-Select" name="default_techs-rows-3-Select" type="checkbox" value="y"></td>
+					<td><input id="default_techs-rows-2-Large-SRWt" name="default_techs-rows-2-Large-SRWt" type="text" value="0.92"></td> 
+					<td><input id="default_techs-rows-2-Large-GPt" name="default_techs-rows-2-Large-GPt" type="text" value="2.79"></td>
+					<td><input id="default_techs-rows-2-Technology" name="default_techs-rows-2-Technology" type="hidden" value="MBR + UF"> </td>			
+				</tr>
+			
+				<tr> <!-- Table rows -->
+					<td rowspan="3"><input id="default_techs-rows-3-Select" name="default_techs-rows-3-Select" type="checkbox" value="y"></td>
 					<td rowspan="3">MBR + RO</td>
-					<td>Small</td>
-					<td><input id="default_techs-rows-3-Small-Capkt" name="default_techs-rows-3-Small-Capkt" type="text" value="4745.0"></td>
-					<td><input id="default_techs-rows-3-Small-CCkt" name="default_techs-rows-3-Small-CCkt" type="text" value="175.14"></td>
+					<td>Small</td> 
+					<td><input id="default_techs-rows-3-Small-Capkt" name="default_techs-rows-3-Small-Capkt" type="text" value="4745"></td> 
+					<td><input id="default_techs-rows-3-Small-CCkt" name="default_techs-rows-3-Small-CCkt" type="text" value="175.14"></td> 
 					<td><input id="default_techs-rows-3-Small-OCt" name="default_techs-rows-3-Small-OCt" type="text" value="4.2"></td>
-					<td><input id="default_techs-rows-3-Small-SRWt" name="default_techs-rows-3-Small-SRWt" type="text" value="0.83"></td>
-					<td><input id="default_techs-rows-3-Small-GPt" name="default_techs-rows-3-Small-GPt" type="text" value="3.29"></td>
-					</tr>
-					<tr>
-					<td>Medium</td>
-					<td><input id="default_techs-rows-3-Medium-Capkt" name="default_techs-rows-3-Medium-Capkt" type="text" value="5584865.0"></td>
-					<td><input id="default_techs-rows-3-Medium-CCkt" name="default_techs-rows-3-Medium-CCkt" type="text" value="25.53"></td>
+					<td><input id="default_techs-rows-3-Small-SRWt" name="default_techs-rows-3-Small-SRWt" type="text" value="0.83"></td> 
+					<td><input id="default_techs-rows-3-Small-GPt" name="default_techs-rows-3-Small-GPt" type="text" value="3.83"></td>
+					<td><input id="default_techs-rows-3-Technology" name="default_techs-rows-3-Technology" type="hidden" value="MBR + RO"> </td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td><input id="default_techs-rows-3-Medium-Capkt" name="default_techs-rows-3-Medium-Capkt" type="text" value="5584865"></td> 
+					<td><input id="default_techs-rows-3-Medium-CCkt" name="default_techs-rows-3-Medium-CCkt" type="text" value="25.53"></td> 
 					<td><input id="default_techs-rows-3-Medium-OCt" name="default_techs-rows-3-Medium-OCt" type="text" value="1.06"></td>
-					<td><input id="default_techs-rows-3-Medium-SRWt" name="default_techs-rows-3-Medium-SRWt" type="text" value="0.92"></td>
-					<td><input id="default_techs-rows-3-Medium-GPt" name="default_techs-rows-3-Medium-GPt" type="text" value="2.87"></td>
-					</tr>
-					<tr>
-					<td>Large</td>
-					<td><input id="default_techs-rows-3-Large-Capkt" name="default_techs-rows-3-Large-Capkt" type="text" value="282801270.0"></td>
-					<td><input id="default_techs-rows-3-Large-CCkt" name="default_techs-rows-3-Large-CCkt" type="text" value="16.27"></td>
+					<td><input id="default_techs-rows-3-Medium-SRWt" name="default_techs-rows-3-Medium-SRWt" type="text" value="0.92"></td> 
+					<td><input id="default_techs-rows-3-Medium-GPt" name="default_techs-rows-3-Medium-GPt" type="text" value="2.91"></td> 								
+					<td><input id="default_techs-rows-3-Technology" name="default_techs-rows-3-Technology" type="hidden" value="MBR + RO"> </td>
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td><input id="default_techs-rows-3-Large-Capkt" name="default_techs-rows-3-Large-Capkt" type="text" value="282801270"></td> 
+					<td><input id="default_techs-rows-3-Large-CCkt" name="default_techs-rows-3-Large-CCkt" type="text" value="16.27"></td> 
 					<td><input id="default_techs-rows-3-Large-OCt" name="default_techs-rows-3-Large-OCt" type="text" value="0.69"></td>
-					<td><input id="default_techs-rows-3-Large-SRWt" name="default_techs-rows-3-Large-SRWt" type="text" value="0.92"></td>
-					<td><input id="default_techs-rows-3-Large-GPt" name="default_techs-rows-3-Large-GPt" type="text" value="2.79"></td>
-					</tr>
-					<tr> <!-- Table rows -->
-					<td rowspan="3"><input checked id="default_techs-rows-4-Select" name="default_techs-rows-4-Select" type="checkbox" value="y"></td>
-					<td rowspan="3">GAC + MF</td>
-					<td>Small</td>
-					<td><input id="default_techs-rows-4-Small-Capkt" name="default_techs-rows-4-Small-Capkt" type="text" value="4745.0"></td>
-					<td><input id="default_techs-rows-4-Small-CCkt" name="default_techs-rows-4-Small-CCkt" type="text" value="39.01"></td>
-					<td><input id="default_techs-rows-4-Small-OCt" name="default_techs-rows-4-Small-OCt" type="text" value="9.05"></td>
-					<td><input id="default_techs-rows-4-Small-SRWt" name="default_techs-rows-4-Small-SRWt" type="text" value="0.13"></td>
-					<td><input id="default_techs-rows-4-Small-GPt" name="default_techs-rows-4-Small-GPt" type="text" value="32.91"></td>
-					</tr>
-					<tr>
-					<td>Medium</td>
-					<td><input id="default_techs-rows-4-Medium-Capkt" name="default_techs-rows-4-Medium-Capkt" type="text" value="5584865.0"></td>
-					<td><input id="default_techs-rows-4-Medium-CCkt" name="default_techs-rows-4-Medium-CCkt" type="text" value="5.87"></td>
-					<td><input id="default_techs-rows-4-Medium-OCt" name="default_techs-rows-4-Medium-OCt" type="text" value="1.08"></td>
-					<td><input id="default_techs-rows-4-Medium-SRWt" name="default_techs-rows-4-Medium-SRWt" type="text" value="0.05"></td>
-					<td><input id="default_techs-rows-4-Medium-GPt" name="default_techs-rows-4-Medium-GPt" type="text" value="33.21"></td>
-					</tr>
-					<tr>
-					<td>Large</td>
-					<td><input id="default_techs-rows-4-Large-Capkt" name="default_techs-rows-4-Large-Capkt" type="text" value="282801270.0"></td>
-					<td><input id="default_techs-rows-4-Large-CCkt" name="default_techs-rows-4-Large-CCkt" type="text" value="3.17"></td>
-					<td><input id="default_techs-rows-4-Large-OCt" name="default_techs-rows-4-Large-OCt" type="text" value="0.44"></td>
-					<td><input id="default_techs-rows-4-Large-SRWt" name="default_techs-rows-4-Large-SRWt" type="text" value="0.4"></td>
-					<td><input id="default_techs-rows-4-Large-GPt" name="default_techs-rows-4-Large-GPt" type="text" value="33.52"></td>
-					</tr>
-				</table>
+					<td><input id="default_techs-rows-3-Large-SRWt" name="default_techs-rows-3-Large-SRWt" type="text" value="0.92"></td> 
+					<td><input id="default_techs-rows-3-Large-GPt" name="default_techs-rows-3-Large-GPt" type="text" value="2.84"></td>
+					<td><input id="default_techs-rows-3-Technology" name="default_techs-rows-3-Technology" type="hidden" value="MBR + RO"> </td>			
+				</tr>
+			
+				<tr> <!-- Table rows -->
+					<td rowspan="3"><input id="default_techs-rows-4-Select" name="default_techs-rows-4-Select" type="checkbox" value="y"></td>
+					<td rowspan="3">CAS+GAC</td>
+					<td>Small</td> 
+					<td><input id="default_techs-rows-4-Small-Capkt" name="default_techs-rows-4-Small-Capkt" type="text" value="4745"></td> 
+					<td><input id="default_techs-rows-4-Small-CCkt" name="default_techs-rows-4-Small-CCkt" type="text" value="19.89"></td> 
+					<td><input id="default_techs-rows-4-Small-OCt" name="default_techs-rows-4-Small-OCt" type="text" value="2.82"></td>
+					<td><input id="default_techs-rows-4-Small-SRWt" name="default_techs-rows-4-Small-SRWt" type="text" value="0.05"></td> 
+					<td><input id="default_techs-rows-4-Small-GPt" name="default_techs-rows-4-Small-GPt" type="text" value="33.52"></td>
+					<td><input id="default_techs-rows-4-Technology" name="default_techs-rows-4-Technology" type="hidden" value="CAS+GAC"> </td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td><input id="default_techs-rows-4-Medium-Capkt" name="default_techs-rows-4-Medium-Capkt" type="text" value="5584865"></td> 
+					<td><input id="default_techs-rows-4-Medium-CCkt" name="default_techs-rows-4-Medium-CCkt" type="text" value="1.99"></td> 
+					<td><input id="default_techs-rows-4-Medium-OCt" name="default_techs-rows-4-Medium-OCt" type="text" value="0.23"></td>
+					<td><input id="default_techs-rows-4-Medium-SRWt" name="default_techs-rows-4-Medium-SRWt" type="text" value="0.13"></td> 
+					<td><input id="default_techs-rows-4-Medium-GPt" name="default_techs-rows-4-Medium-GPt" type="text" value="33.21"></td> 								
+					<td><input id="default_techs-rows-4-Technology" name="default_techs-rows-4-Technology" type="hidden" value="CAS+GAC"> </td>
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td><input id="default_techs-rows-4-Large-Capkt" name="default_techs-rows-4-Large-Capkt" type="text" value="282801270"></td> 
+					<td><input id="default_techs-rows-4-Large-CCkt" name="default_techs-rows-4-Large-CCkt" type="text" value="1.83"></td> 
+					<td><input id="default_techs-rows-4-Large-OCt" name="default_techs-rows-4-Large-OCt" type="text" value="0.01"></td>
+					<td><input id="default_techs-rows-4-Large-SRWt" name="default_techs-rows-4-Large-SRWt" type="text" value="0.4"></td> 
+					<td><input id="default_techs-rows-4-Large-GPt" name="default_techs-rows-4-Large-GPt" type="text" value="32.91"></td>
+					<td><input id="default_techs-rows-4-Technology" name="default_techs-rows-4-Technology" type="hidden" value="CAS+GAC"> </td>			
+				</tr>
+			
+				<tr> <!-- Table rows -->
+					<td rowspan="3"><input id="default_techs-rows-5-Select" name="default_techs-rows-5-Select" type="checkbox" value="y"></td>
+					<td rowspan="3">CAS+MF</td>
+					<td>Small</td> 
+					<td><input id="default_techs-rows-5-Small-Capkt" name="default_techs-rows-5-Small-Capkt" type="text" value="4745"></td> 
+					<td><input id="default_techs-rows-5-Small-CCkt" name="default_techs-rows-5-Small-CCkt" type="text" value="22.95"></td> 
+					<td><input id="default_techs-rows-5-Small-OCt" name="default_techs-rows-5-Small-OCt" type="text" value="5.33"></td>
+					<td><input id="default_techs-rows-5-Small-SRWt" name="default_techs-rows-5-Small-SRWt" type="text" value="0.05"></td> 
+					<td><input id="default_techs-rows-5-Small-GPt" name="default_techs-rows-5-Small-GPt" type="text" value="2.75"></td>
+					<td><input id="default_techs-rows-5-Technology" name="default_techs-rows-5-Technology" type="hidden" value="CAS+MF"> </td>
+				</tr>
+				<tr>
+					<td>Medium</td> 
+					<td><input id="default_techs-rows-5-Medium-Capkt" name="default_techs-rows-5-Medium-Capkt" type="text" value="5584865"></td> 
+					<td><input id="default_techs-rows-5-Medium-CCkt" name="default_techs-rows-5-Medium-CCkt" type="text" value="3.45"></td> 
+					<td><input id="default_techs-rows-5-Medium-OCt" name="default_techs-rows-5-Medium-OCt" type="text" value="0.63"></td>
+					<td><input id="default_techs-rows-5-Medium-SRWt" name="default_techs-rows-5-Medium-SRWt" type="text" value="0.13"></td> 
+					<td><input id="default_techs-rows-5-Medium-GPt" name="default_techs-rows-5-Medium-GPt" type="text" value="0.43"></td> 								
+					<td><input id="default_techs-rows-5-Technology" name="default_techs-rows-5-Technology" type="hidden" value="CAS+MF"> </td>
+				</tr>
+				<tr>
+					<td>Large</td> 
+					<td><input id="default_techs-rows-5-Large-Capkt" name="default_techs-rows-5-Large-Capkt" type="text" value="282801270"></td> 
+					<td><input id="default_techs-rows-5-Large-CCkt" name="default_techs-rows-5-Large-CCkt" type="text" value="1.86"></td> 
+					<td><input id="default_techs-rows-5-Large-OCt" name="default_techs-rows-5-Large-OCt" type="text" value="0.26"></td>
+					<td><input id="default_techs-rows-5-Large-SRWt" name="default_techs-rows-5-Large-SRWt" type="text" value="0.4"></td> 
+					<td><input id="default_techs-rows-5-Large-GPt" name="default_techs-rows-5-Large-GPt" type="text" value="1.39"></td>
+					<td><input id="default_techs-rows-5-Technology" name="default_techs-rows-5-Technology" type="hidden" value="CAS+MF"> </td>			
+				</tr>
+			</table>
 			<br>
+			Below are the details for the default technologies:
 
+			<table class=blueTable align="center">
+				<tr>
+					<th>Treatment Process</th>
+					<th colspan="2">Pre-treatment</th>
+					<th>Primary Treatment</th>
+					<th colspan="2">Secondary Treatment</th>
+					<th colspan="2">Tertiary Treatment</th>
+				</tr>
+				<tr>
+					<td>Bardenpho</td>
+					<td>Screening</td>
+					<td>Grit removal</td>
+					<td>N/A</td>
+					<td>Dissolved air bioreactor</td>
+					<td>Secondary clarifier</td>
+					<td>Filtration</td>
+					<td>UV Disinfection</td>
+				</tr>
+				<tr>
+					<td>MBR+MF</td>
+					<td>Screening</td>
+					<td>Grit removal</td>
+					<td>Primary clarifier</td>
+					<td>Membrane bioreactor</td>
+					<td>N/A</td>
+					<td>Micro filtration</td>
+					<td>UV Disinfection</td>
+				</tr>
+				<tr>
+					<td>MBR+UF</td>
+					<td>Screening</td>
+					<td>Grit removal</td>
+					<td>Primary clarifier</td>
+					<td>Membrane bioreactor</td>
+					<td>N/A</td>
+					<td>Ultra filtration</td>
+					<td>UV Disinfection</td>
+				</tr>
+				<tr>
+					<td>MBR+RO</td>
+					<td>Screening</td>
+					<td>Grit removal</td>
+					<td>Primary clarifier</td>
+					<td>Membrane bioreactor</td>
+					<td>N/A</td>
+					<td>Reverse osmosis</td>
+					<td>UV Disinfection</td>
+				</tr>
+				<tr>
+					<td>CAS+GAC</td>
+					<td>Screening</td>
+					<td>Grit removal</td>
+					<td>Primary clarifier</td>
+					<td>Aeration basin</td>
+					<td>Secondary clarifier</td>
+					<td>Granular activated carbon/Filtration</td>
+					<td>UV Disinfection</td>
+				</tr>
+				<tr>
+					<td>CAS+MF</td>
+					<td>Screening</td>
+					<td>Grit removal</td>
+					<td>Primary clarifier</td>
+					<td>Aeration basin</td>
+					<td>Secondary clarifier</td>
+					<td>Micro filtration</td>
+					<td>UV Disinfection</td>
+				</tr>
+			</table>
 
 		<!-- sample output -->
 		<h2 id="sample-output">Sample output<a class="headerlink" href="#sample-output" title="Permanent link"></a></h2>

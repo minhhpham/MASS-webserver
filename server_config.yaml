@@ -13,25 +13,6 @@ optimizer_n_process: 4
 
 # Available Technologies:
 techs:
-  CAS+F:
-    Small:
-      Capkt: 4745
-      CCkt: 58.44
-      OCt: 1.92
-      SRWt: 0.13
-      GPt: 3.3
-    Medium:
-      Capkt: 5584865
-      CCkt: 8.52
-      OCt: 0.59
-      SRWt: 0.05
-      GPt: 0.39
-    Large:
-      Capkt: 282801270
-      CCkt: 5.43
-      OCt: 0.53
-      SRWt: 0.41
-      GPt: 1.08
   Bardenpho:
     Small:
       Capkt: 4745
@@ -127,6 +108,26 @@ techs:
       OCt: 0.01
       SRWt: 0.40
       GPt: 32.91
+  CAS+MF:
+    Small:
+      Capkt: 4745
+      CCkt: 22.95
+      OCt: 5.33
+      SRWt: 0.05
+      GPt: 2.75
+    Medium:
+      Capkt: 5584865
+      CCkt: 3.45
+      OCt: 0.63
+      SRWt: 0.13
+      GPt: 0.43
+    Large:
+      Capkt: 282801270
+      CCkt: 1.86
+      OCt: 0.26
+      SRWt: 0.40
+      GPt: 1.39
+
 
 # Parameters:
 params:
