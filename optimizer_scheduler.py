@@ -45,7 +45,7 @@ while True:
             # run optimizer and export log 
             start_time = time.time() # measure elapsed time
             print('--[worker {0}]: projectID {1} - running optimizer ...'.format(worker_id, projectID), flush=True)
-            optimizer_status = os.system('sh ./run_optimizer.sh {0}| tee {0}/log'.format(optimizer_dir))
+            optimizer_status = os.system('sh ./run_optimizer.sh {0} 2> {0}/log'.format(optimizer_dir))
             elapsed_time_minutes = int((time.time() - start_time)/60)
 
             if optimizer_status == 0: # success
@@ -90,6 +90,7 @@ while True:
             time.sleep(30)
 
         # delete data older than 30 days
+        #print('purge old data')
         db.delete_data()
     except Exception as e:
         print(e)

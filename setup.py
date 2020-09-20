@@ -55,7 +55,7 @@ for i in range(1, n_worker+1):
 		file.write('Environment="JULIA_NUM_THREADS=8"\n')
 		file.write("WorkingDirectory={}\n".format(CWD))
 		file.write("ExecStart={0} {1}/optimizer_scheduler.py {2}\n".format(PythonPath, CWD, i))
-		file.write("Restart=Always\n\n")
+		file.write("Restart=always\n\n")
 		file.write("[Install]\n")
 		file.write("WantedBy=multi-user.target\n")
 

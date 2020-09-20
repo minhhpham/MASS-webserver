@@ -160,7 +160,7 @@ def write_input_to_tsv(projectID, directory, filename):
 
 	# determine the max number of column (later we will pad all rows with \t to reach this number of columns)
 	n_col_tsv = max(3, 					# number of cols in first row
-					7,					# second row
+					8,					# second row
 					len(populations),
 					len(techs), 		# row 4-8
 					len(plants)			# row 9 and after
