@@ -109,3 +109,15 @@
   margin-right: -4px;
   float: right;
 }
+
+footer {
+    position: flex;
+    left: 0; bottom: 0; right: 0;
+    margin: auto;
+    justify-content: center;
+    text-align: center;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 0px;
+}
