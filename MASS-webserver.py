@@ -185,7 +185,7 @@ def population_input():
 
     # process POST requests
     if request.method == 'POST':
-        if request.form['command'] == 'Next':
+        if request.form['command'] == 'Save and Continue':
             # process saving data command
             if populations.validate():
                 # if validation pass, save data to DB and redirect to next page
@@ -263,7 +263,7 @@ def plant_input():
 
     # process POST request
     if request.method == 'POST':
-        if request.form['command'] == 'Next':
+        if request.form['command'] == 'Save and Continue':
             # set tech choices for data validation
             numplants = db.getInputSize(projectID = projectID)['numplants']
             for i in range(numplants):
@@ -314,7 +314,7 @@ class CombinedForm(FlaskForm):
     additional_techs = FormField(TechnologiesForm)
     n_additional = IntegerField('Add more techs')
     addMoreTechs = SubmitField('Input more Technologies')
-    submit = SubmitField('Next')
+    submit = SubmitField('Save and Continue')
 
 @APP.route('/tech_input', methods = ['GET', 'POST'])
 def tech_input():
@@ -379,7 +379,7 @@ class OneParam(FlaskForm):
     Description = StringField('Description')
 class ParamsForm(FlaskForm):
     rows = FieldList(FormField(OneParam), min_entries = 0)
-    submit = SubmitField('Next')
+    submit = SubmitField('Save and Continue')
 
 @APP.route('/parameter_input', methods = ['POST', 'GET'])
 def parameter_input():
@@ -427,6 +427,7 @@ def review():
 
     ### step0: check if input is completed for this project, if not then abort ###
     project_status = db.getProject(projectID)
+    print(project_status)
     if project_status['status'] == 'input uncompleted, not yet optimized':
         abort(400, 'input data not completed')
 

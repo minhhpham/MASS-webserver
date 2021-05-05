@@ -51,11 +51,11 @@
 		<table class=blueTable align="center">
 			<tr> <!-- Table headers  -->
 				<th> Index </th> 
-				<th>{{ populations.rows[0].Name.label }}</th> 
-				<th>{{ populations.rows[0].Pr.label }}</th>
-				<th>   Population Growth Rate (%/year) </th>
-				<th>{{ populations.rows[0].lat.label }}</th> 
-				<th>{{ populations.rows[0].lon.label }}</th> 
+				<th>{{ populations.rows[0].Name.label }}<span style="color:red;">*</span></th> 
+				<th>{{ populations.rows[0].Pr.label }}<span style="color:red;">*</span></th>
+				<th>   Population Growth Rate (%/year)<span style="color:red;">*</span></th>
+				<th>{{ populations.rows[0].lat.label }}<span style="color:red;">*</span></th> 
+				<th>{{ populations.rows[0].lon.label }}<span style="color:red;">*</span></th> 
 			</tr>
 			{% for r in populations.rows %}
 			<tr> <!-- Table rows -->
@@ -72,7 +72,7 @@
 		<br>
 		<p align="center">
 			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
-			<input type="submit" name = "command" value="Next">
+			<input type="submit" name = "command" value="Save and Continue">
 		</p>
 	</form>
 

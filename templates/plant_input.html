@@ -53,9 +53,9 @@
 				<th> Index 
 					<div class="help-tip"><p>If you have an existing location that you do not want to modify, please do NOT include it. If you have an existing location that you want to change the scale but keep the existing technology, please check the box on the fifth column and select the technology. If you have an existing location but you are willing to implement a new technlogy on it, please check the box on the fifth columns and leave the sixth column empty. </p></div>
 				</th> 
-				<th>{{ plants.rows[0].LocationName.label }}</th> 
-				<th>{{ plants.rows[0].lat.label }}</th> 
-				<th>{{ plants.rows[0].lon.label }}</th> 
+				<th>{{ plants.rows[0].LocationName.label }}<span style="color:red;">*</span></th> 
+				<th>{{ plants.rows[0].lat.label }}<span style="color:red;">*</span></th> 
+				<th>{{ plants.rows[0].lon.label }}<span style="color:red;">*</span></th> 
 				<th>{{ plants.rows[0].existing_location.label }}
 					<div class="help-tip"><p>Is this location currently operating?</p></div>
 				</th>
@@ -77,7 +77,7 @@
 		<br>
 		<p align="center">
 			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
-			<input type="submit" name="command" value="Next">
+			<input type="submit" name="command" value="Save and Continue">
 		</p>
 	</form>
 
