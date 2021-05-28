@@ -13,7 +13,7 @@
 	<!-- NAVIGATION BAR -->
 	<div id='cssmenu'>
 	<ul>
-	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('home') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
@@ -26,7 +26,10 @@
 
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
-	<h1 align="center">Please review your inputs</h1>
+
+	<img src="{{ url_for('static',filename='progressBar/7Review.png') }}" style="width:auto;height:50%;display:block;margin-left:auto;margin-right:auto;">
+	<br><br>
+	<h1 align="center">Review and Run Optimizer</h1>
 	<h2 align="center">Project {{ project_name }}</h2>
 
 	<!-------- DISPLAY POPULATIONS AND LOCATIONS ON MAPBOX ------------------------------->
@@ -188,7 +191,7 @@
 		<input name="command" type="submit" value="Run optimizer">
 	</form>
 	<p align="center"><font color="red">(This request will take at most 100 minutes after it is popped from the queue)</font></p>
-	<p align="center"><button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button></p>
+	<p align="center"><button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">Back</button></p>
 	<br>
 
 	<footer>

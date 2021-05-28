@@ -15,7 +15,7 @@
 	<!-- NAVIGATION BAR -->
 	<div id='cssmenu'>
 	<ul>
-	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('home') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
@@ -51,7 +51,7 @@
     <!-- BACK TO PROJECTS Page-->
 	<br>
 	<p align="center">
-		<button onclick="location.href='{{ url_for('projects') }}'" type="button">Back to Projects Page</button>
+		<button onclick="location.href='{{ url_for('projects') }}'" type="button" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">Back to Projects Page</button>
 	</p>
 	<br>
     

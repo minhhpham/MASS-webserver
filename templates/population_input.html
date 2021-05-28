@@ -21,7 +21,7 @@
 	<!-- NAVIGATION BAR -->
 	<div id='cssmenu'>
 	<ul>
-	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('home') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
@@ -44,8 +44,15 @@
 	</ul>
 	{% endif %}
 	<br>
-	<h1 align="center">Input your populations</h1>
+
+	<img src="{{ url_for('static',filename='progressBar/3Pop.png') }}" style="width:auto;height:50%;display:block;margin-left:auto;margin-right:auto;">
+	<br><br>
+	<h1 align="center">Population Clusters</h1>
 	<br>
+	<div style="padding-right:200px; padding-left:200px; font-size:14px;">
+		<p><i>This page has a form that asks for information about the population clusters. The form is a table with the number of rows equal to the number of population clusters that you entered in Project Dimensions. For example, if you entered 19 population clusters in Project Dimensions, the table in this page would have 19 rows:</i></p>
+		<p>Insert data on population clusters to be served <span style="color:red;">*</span></p>
+	</span>
 	<form method="POST" action="{{ url_for('population_input') }}?projectID={{ projectID }}" align="center">
 		{{ populations.csrf_token }}
 		<table class=blueTable align="center">
@@ -71,8 +78,8 @@
 		
 		<br>
 		<p align="center">
-			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
-			<input type="submit" name = "command" value="Save and Continue">
+			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">Back</button>
+			<input type="submit" name = "command" value="Save and Continue" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">
 		</p>
 	</form>
 
@@ -86,14 +93,20 @@
 	<form action="{{ url_for('population_input') }}?projectID={{ projectID }}" method="POST" align = "center">
 		{{ populations.csrf_token }}
 		<p align="center"><textarea name="ExcelData" rows="5" cols="70"></textarea></p>
-		<p align="center"><input type="submit" name="command" value="Insert Data"></p>
+		<p align="center"><input type="submit" name="command" value="Insert Data" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;"></p>
 	</form>
 	<br>
 
 	<!-- SEARCH MAP -->
 	<div align="center"><span id="json-response" style="color:red; font-weight:bold; font-size:12pt;">
-		Search for a place by address. Coordinates will be displayed here!
+		You can use the map below to search for Latitude and Longitude<br>
+		Coordinates will be displayed here!
 	</span></div>
+	<div align="center"><p style="font-size:10pt;padding-left:200pt;padding-right:200pt;">
+		<i>For example, by typing "University of South Florida" and selecting the first option, we obtained the latitude and longitude of USF.
+		Then you can enter the row number into the input box and click Add to add the found latitude and longitude to the table</i>
+	</p></div>
+
 
 	<div id="Button Holder" align="center"></div>
 	<br>

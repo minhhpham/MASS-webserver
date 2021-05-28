@@ -4,12 +4,17 @@
 	<title>Water Reclamation System Planning</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='NavBarStyle.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='TableStyle.css') }}">
+	<style type="text/css">
+		input[type=button], input[type=submit], input[type=reset] {
+			padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;
+		}
+	</style>
 </head>
 <body>
 	<!-- NAVIGATION BAR -->
 	<div id='cssmenu'>
 	<ul>
-	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('home') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
@@ -22,8 +27,14 @@
 
 	<!-- NAVIGATION BAR ENDS -->
 	<br>
-	<h1 align="center">Input your parameters</h1>
-	<p align="center">(The numbers below can be updated to suit your community)</p>
+
+	<img src="{{ url_for('static',filename='progressBar/6Param.png') }}" style="width:auto;height:50%;display:block;margin-left:auto;margin-right:auto;">
+	<br><br>
+	<h1 align="center">Add parameters</h1>
+	<div style="padding-right:200px; padding-left:200px; font-size:14px;">
+		<p style="margin:0px;"><i>This page allows you to modify some parameters that drive the optimization process. The last column provides the definition of the parameter and the second column provides the unit for each parameter.</i></p>
+		<p style="margin:0px;"><i>(The numbers below can be updated to suit your community)</i></p>
+	</div>
 	<br>
 	<form method="POST" action="{{ url_for('parameter_input', projectID = projectID) }}" align="center">
 		{{ params.csrf_token }}
@@ -49,7 +60,7 @@
 		
 		<br>
 		<p align="center">
-			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button">Back</button>
+			<button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">Back</button>
 			{{ params.submit }} 
 		</p>
 	</form>

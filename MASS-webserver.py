@@ -37,6 +37,10 @@ if not db.db_is_ready():
 def index():
     return(redirect(url_for('tos')))
 
+@APP.route('/home', methods = ['GET'])
+def home():
+    return(render_template('index.html'))
+
 #----------- term of service ------------------------
 @APP.route('/tos', methods = ['GET', 'POST'])
 def tos():
@@ -44,8 +48,8 @@ def tos():
         return(render_template('term_of_service.html'))
 
     if request.method == 'POST':
-        if request.form['Button'] == 'I agree':
-            return(render_template('index.html'))
+        if request.form['Button'] == 'Accept & Continue':
+            return(redirect(url_for('home')))
         else:
             return('Thank you for your interest in using the wasteWATER tool. Only users that agree to the terms and condition may enter the site.')
 

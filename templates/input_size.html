@@ -9,7 +9,7 @@
 	<!-- NAVIGATION BAR -->
 	<div id='cssmenu'>
 	<ul>
-	   <li><a href="{{ url_for('index') }}">Home</a></li>
+	   <li><a href="{{ url_for('home') }}">Home</a></li>
 	   <li><a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li><a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li><a href="{{ url_for('documentation') }}">Documentation</a></li>
@@ -33,7 +33,9 @@
     </ul>
 	{% endif %}
 	<br>
-	<h2 align="center">Project Information</h2>
+	<img src="{{ url_for('static',filename='progressBar/2Dim.png') }}" style="width:auto;height:50%;display:block;margin-left:auto;margin-right:auto;">
+	<br><br>
+	<h2 align="center">Add Dimensions</h2>
 	<form method="POST" action="{{ url_for('input_size') }}?projectID={{ projectID }}" align="center" >
 		{{ inputSize.csrf_token }}
 		<table align="center">
@@ -52,14 +54,14 @@
 				<td> {{ inputSize.NPlant }} </td>
 			</tr>
 			<tr align="left">
-				<td> Lifespan of the design<span style="color:red;">*</span>: </td>
+				<td> Lifespan of the design (in years)<span style="color:red;">*</span>: </td>
 				<td> {{ inputSize.LifeSpan }} </td>
 			</tr>
 		</table>
 		<br><br>
 		<p align="center">
-			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button">Back</button>
-			<input type="submit" value="Save and Continue"> 
+			<button onclick="location.href='{{ url_for(prev_page) }}'" type="button" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">Back</button>
+			<input type="submit" value="Save and Continue" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;"> 
 		</p>
 	</form>
 

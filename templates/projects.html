@@ -11,7 +11,7 @@
 	<!-- NAVIGATION BAR -->
 	<div id='cssmenu'>
 	<ul>
-	   <li>					<a href="{{ url_for('index') }}">Home</a></li>
+	   <li>					<a href="{{ url_for('home') }}">Home</a></li>
 	   <li class="active">	<a href="{{ url_for('projects') }}">Projects</a></li>
 	   <li>					<a href="{{ url_for('demo') }}">Demo</a></li>
 	   <li>					<a href="{{ url_for('documentation') }}">Documentation</a></li>
@@ -22,26 +22,7 @@
 	<!-- NAVIGATION BAR ENDS -->
 
 	<article class="markdown-body">
-		<h2>Create a New Project</h2>
-		<form method="POST" action="{{ url_for('projects') }}">
-			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-			<table>
-				<tr align="left">
-					<td>Project Description</td><td><textarea name="p_desc" rows="2" cols="50" placeholder="Describe this project in any way you want">{{ proj_description }}</textarea></td>
-			</table>
-			<br>
 
-			{% if project_just_created %}
-				<p>A new project has been created with Project ID <b>{{  projectID }}</b></p>
-				<p>Please save this Project ID to retrieve the project later. If you lose it, you will have to start over again.</p>
-				<p><input type="submit" value="Start this project" name="command"></p>
-				<input type="hidden" name="projectID" value="{{ projectID }}">
-			{% else %}
-				<p><input type="submit" value="Create Project" name="command"></p>
-			{% endif %}
-		</form>
-
-		<br>
 		<h2>Retrieve a Project and check its status</h2>
 		<form method="POST" action="{{ url_for('projects') }}">
 			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -49,7 +30,7 @@
 				<tr align="left">
 					<td>Project ID</td>
 					<td><input required type="text" name="projectID" size="50" placeholder="the Project ID given when creating the project"></td>
-					<td><input type="submit" value="Check project status" name="command"></td>
+					<td><input type="submit" value="Check project status" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;" name="command"></td>
 				</tr>
 			</table>
 		</form>
@@ -92,6 +73,30 @@
 				</table>
 			{% endif %}
 		{% endif %}
+
+		<br><br>
+		<img src="{{ url_for('static',filename='progressBar/1Projects.png') }}" style="width:auto;height:50%;margin-left:auto;margin-right:auto;">
+		<br><br>
+		<h2>Create a New Project</h2>
+		<form method="POST" action="{{ url_for('projects') }}">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<table>
+				<tr align="left">
+					<td>Project Description</td><td><textarea name="p_desc" rows="2" cols="50" placeholder="Describe this project in any way you want">{{ proj_description }}</textarea></td>
+			</table>
+
+			{% if project_just_created %}
+				<p>A new project has been created with Project ID <b>{{  projectID }}</b></p>
+				<p>Please save this Project ID to retrieve the project later. If you lose it, you will have to start over again.</p>
+				<p><input type="submit" value="Start this project" name="command" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;"></p>
+				<input type="hidden" name="projectID" value="{{ projectID }}">
+			{% else %}
+				<p><input type="submit" value="Create Project" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;" name="command"></p>
+			{% endif %}
+		</form>
+
+		<br>
+		
 	</article>
 	<footer>
 		<p>Copyright © 2020, University of South Florida.  All Rights Reserved.  The contributor to the development of the web-based tool at the University of South Florida include:</p>
