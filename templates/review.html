@@ -188,7 +188,7 @@
 	<form method="POST" action="{{ url_for('run_optimizer') }}" align="center">
 		<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 		<input id="projectID"  name="projectID"  type="hidden" value="{{ projectID }}">
-		<input name="command" type="submit" value="Run optimizer">
+		<input name="command" type="submit" value="Run optimizer" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">
 	</form>
 	<p align="center"><font color="red">(This request will take at most 100 minutes after it is popped from the queue)</font></p>
 	<p align="center"><button onclick="location.href='{{ url_for(prev_page, projectID = projectID) }}'" type="button" style="padding: 4px 5px;font-size:14px; background-color:#478ec9; color:#e7e7e7; font-weight: bold;">Back</button></p>
