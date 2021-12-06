@@ -2,14 +2,14 @@
 db:
   dbname: 'optimizerdb'
   user: 'optimizer'
-  password: '123456'
+  password: 'askMinh'
   port: 5432
 
 # sub-directory to write input data for optimizer
 optimizer_data_dir: '../MASS-Optimizer/optimizer'
 
 # number of processes for optimizer queue
-optimizer_n_process: 4
+optimizer_n_process: 2
 
 # Available Technologies:
 techs:
